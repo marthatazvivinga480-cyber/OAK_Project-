@@ -69,22 +69,6 @@ button {
   text-align: center;
 }
 
-.oak-logo {
-  font-family: Georgia, serif;
-  font-size: 14px;
-  line-height: 14px;
-  letter-spacing: 1px;
-  color: var(--oak-navy);
-}
-
-.oak-foundation {
-  margin-top: 1px;
-  font-size: 4px;
-  line-height: 6px;
-  letter-spacing: 0.7px;
-  color: #77849a;
-}
-
 .sidebar-event {
   margin-top: 7px;
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   UsersRound,
   CalendarDays,
@@ -65,9 +66,14 @@ export default function Home() {
       {/* LEFT NAVIGATION */}
       <aside className="sidebar w-[256px] min-h-screen bg-white border-r border-[#1C2E5A]/10">
         <div className="sidebar-top">
-          <div className="oak-brand">
-            <div className="oak-logo">OAK</div>
-            <div className="oak-foundation">FOUNDATION</div>
+          <div className="oak-brand flex w-full h-fit flex-col pb-6 border-b border-[#1C2E5A]/10">
+            <Image
+              src="/Logo-Oak-Foundation.svg (1) 1 (2).svg"
+              alt="OAK Foundation"
+              width={85}
+              height={53}
+              className="mx-auto h-auto w-full max-w-[85px]"
+            />
           </div>
 
           <div className="sidebar-event">
