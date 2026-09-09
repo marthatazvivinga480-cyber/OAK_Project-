@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseClient";
 import { getCurrentParticipant } from "@/lib/session";
+import { getCurrentAdmin } from "@/lib/session";
 
 export async function POST(request: Request) {
-  const scanner = await getCurrentParticipant();
-  if (!scanner || scanner.role !== "Coordination Team") {
-    return NextResponse.json(
-      { error: "Not authorized to check in participants" },
-      { status: 403 }
-    );
+  const scanner = await getCurrentAdmin();
+
+  if (!scanner) {
+    return NextResponse.json({ error: "Not authorized to check in participants" }, { status: 403 });
   }
 
   const { qr_code_id } = await request.json();
