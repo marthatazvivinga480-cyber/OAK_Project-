@@ -4,9 +4,12 @@ import {
   UsersRound,
   CalendarDays,
   Layers3,
+  UserRoundPlus,
+  Globe,
 } from "lucide-react";
 
 import type { ReactNode } from "react";
+import SectionLabel from "./components/SectionLabel";
 
 function StatCard({
   value,
@@ -64,56 +67,61 @@ function TextInput({
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen bg-[#f5f6f8] text-[#16243a] [font-family:Inter,Arial,sans-serif]">
+    <main className="flex h-[1534.5px] w-[1321px] min-h-screen bg-[#f5f6f8] text-[#16243a] [font-family:Inter,Arial,sans-serif]">
       {/* LEFT NAVIGATION */}
-      <aside className="flex min-h-screen w-[256px] flex-col justify-between border-r border-[#1C2E5A]/10 bg-white px-1.5 py-[14px] pb-4 max-md:min-h-0 max-md:w-full max-md:flex-row max-md:items-center max-md:border-b max-md:border-r-0 max-md:px-4 max-md:py-3">
+      <aside className="flex h-[1535px] w-64 flex-col justify-between border-r border-[#1C2E5A1A] bg-white px-1.5 py-[14px] pb-4 max-md:h-auto max-md:min-h-0 max-md:w-full max-md:flex-row max-md:items-center max-md:border-b max-md:border-r-0 max-md:px-4 max-md:py-3">
         <div className="w-full max-md:flex max-md:items-center max-md:gap-3">
-          <div className="flex h-fit w-full flex-col border-b border-[#1C2E5A]/10 pb-6 text-center max-md:border-0 max-md:pb-0">
+          <div className="flex h-[130px] w-[255px] flex-col items-start border-b border-[#1C2E5A1A] p-6 max-md:h-auto max-md:w-auto max-md:border-0 max-md:p-0">
             <Image
               src="/Logo-Oak-Foundation.svg (1) 1 (2).svg"
               alt="OAK Foundation"
               width={85}
               height={53}
-              className="mx-auto h-auto w-full max-w-[85px]"
+              className="h-[53px] w-[85px] object-contain"
             />
-            <span className="w-fit self-center font-semibold text-[12px] leading-4 tracking-[1.2px] uppercase text-[#6B7590] max-md:hidden">
+            <SectionLabel className="max-md:hidden">
               PARTNER CONVENING 2026
-            </span>
+            </SectionLabel>
           </div>
 
           <nav className="mt-[14px] max-md:mt-0">
             <Link
               href="/"
-              className="flex min-h-[44px] w-full flex-row items-center justify-center gap-3 rounded-2xl bg-[#162E55] px-4 py-3 text-white shadow-[0_4px_16px_rgba(28,46,90,0.07)] transition hover:bg-[#1d3b6d] active:translate-y-px"
+              className="flex h-11 w-[223px] items-center justify-center gap-3 rounded-2xl bg-[#162E55] px-4 py-3 text-[#FFFFFF] shadow-[0_4px_20px_0_#1C2E5A4D] transition hover:bg-[#1d3b6d] active:translate-y-px"
             >
-              <span className="font-[Inter] font-semibold text-[14px] leading-[20px] text-center tracking-normal text-[#FFFFFF]">
-                Register
-              </span>
+              <UserRoundPlus className="h-[18px] w-[18px] text-[#FFFFFF]" aria-hidden="true" />
+              <span className="text-[#FFFFFF]">Register</span>
             </Link>
           </nav>
         </div>
 
-        <div className="flex h-auto w-full flex-col border-t border-[#1C2E5A]/10 p-5 text-[10px] leading-[15px] text-[#6e7788] max-md:hidden">
-          <div className="location-dot">●</div>
+        <footer className="flex h-[73px] w-[255px] items-center border-t border-t-[#1C2E5A1A] p-5 max-md:hidden">
+          <div className="flex h-8 w-[215px] items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#EEF1F5]">
+              <Globe className="h-[14px] w-[14px] text-[#A8BBCE]" aria-hidden="true" />
+            </div>
 
-          <div>
-            <p className="font-[Inter] font-semibold text-[12px] leading-[16px] tracking-normal text-[#0E1726]">
-              Harare, Zimbabwe
-            </p>
-            <span className="font-[Inter] font-normal text-[10px] leading-[15px] tracking-normal text-[#6B7590]">
-              9–11 November 2026
-            </span>
+            <div className="h-[31px] w-[119.484375px]">
+              <p className="h-4 text-xs font-semibold leading-4 text-[#0E1726]">
+                Harare, Zimbabwe
+              </p>
+              <p className="h-[15px] text-[10px] font-normal leading-[15px] text-[#6B7590]">
+                9–11 March 2026
+              </p>
+            </div>
           </div>
-        </div>
+        </footer>
       </aside>
 
       {/* MAIN CONTENT */}
-      <section className="mx-auto flex min-h-screen w-full max-w-[672px] flex-col px-8 py-10 max-md:px-4 max-md:py-6 max-[420px]:px-3 max-[420px]:py-4">
+      <section className="mx-auto flex h-[1534.5px] min-h-[941px] w-[672px] max-w-[672px] flex-col px-8 py-10 max-md:h-auto max-md:min-h-screen max-md:w-full max-md:px-4 max-md:py-6 max-[420px]:px-3 max-[420px]:py-4">
         <div className="flex h-auto w-full flex-1 flex-col">
 
           {/* HERO */}
-          <header className="h-[167px] w-full overflow-hidden rounded-3xl bg-[#162e55] shadow-[0_4px_16px_rgba(28,46,90,0.07)] max-[420px]:h-auto max-[420px]:min-h-[167px]">
-            <div className="m-6 flex h-[calc(100%-48px)] w-[calc(100%-48px)] flex-col max-[420px]:m-5 max-[420px]:h-[calc(100%-40px)] max-[420px]:w-[calc(100%-40px)]">
+          <header className="relative h-[167px] w-full overflow-hidden rounded-3xl bg-[#162e55] shadow-[0_4px_16px_rgba(28,46,90,0.07)] max-[420px]:h-auto max-[420px]:min-h-[167px]">
+            <div className="absolute -top-10 left-[456px] h-48 w-48 rounded-full bg-[radial-gradient(70.71%_70.71%_at_50%_50%,rgba(168,187,206,0.2)_0%,rgba(168,187,206,0)_70%)]" />
+
+            <div className="relative ml-6 mt-6 flex h-[119px] w-[calc(100%-48px)] flex-col pt-4 max-[420px]:m-5 max-[420px]:h-[calc(100%-40px)] max-[420px]:w-[calc(100%-40px)] max-[420px]:pt-0">
               <h1 className="w-[242px] font-bold text-[30px] leading-[37.5px] text-white [font-family:Chillax,sans-serif] max-[420px]:w-auto max-[420px]:text-[26px] max-[420px]:leading-8">
                 Partner
                 <br />
@@ -121,7 +129,7 @@ export default function Home() {
               </h1>
 
               <p className="mt-2 text-[14px] leading-5 text-white/50">
-                Cresta Lodge, Msasa · 9–11 November 2026
+                Geneva · 9–11 March 2026
               </p>
             </div>
           </header>
