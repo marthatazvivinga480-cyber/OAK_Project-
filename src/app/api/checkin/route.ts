@@ -3,7 +3,6 @@ import { supabaseAdmin } from "@/lib/supabaseClient";
 import { getCurrentParticipant } from "@/lib/session";
 
 export async function POST(request: Request) {
-  
   const scanner = await getCurrentParticipant();
   if (!scanner || scanner.role !== "Coordination Team") {
     return NextResponse.json(
@@ -24,24 +23,13 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (lookupError || !participant) {
-    
     return NextResponse.json({ error: "Participant Not Found" }, { status: 404 });
   }
 
-  const { data: existing } = await supabaseAdmin
-    .from("checkins")
-    .select("id")
-    .eq("participant_id", participant.id)
-    .maybeSingle();
-
-  if (existing) {
-    
-    return NextResponse.json(
-      { error: "Duplicate QR Code — already checked in" },
-      { status: 409 }
-    );
-  }
-
+  // Insert directly and let the database's unique constraint
+  // (participant_id, check_in_date) catch duplicates atomically —
+  // this closes the race condition a separate "check, then insert"
+  // step had if two scanners hit the same participant at once.
   const { data: checkin, error: insertError } = await supabaseAdmin
     .from("checkins")
     .insert({ participant_id: participant.id, checked_in_by: scanner.id })
@@ -49,6 +37,13 @@ export async function POST(request: Request) {
     .single();
 
   if (insertError) {
+    if (insertError.code === "23505") {
+      // Postgres unique_violation — the constraint did its job.
+      return NextResponse.json(
+        { error: "Duplicate QR Code — already checked in today" },
+        { status: 409 }
+      );
+    }
     return NextResponse.json({ error: insertError.message }, { status: 500 });
   }
 
