@@ -21,13 +21,11 @@ function StatCard({
   icon: ReactNode;
 }) {
   return (
-    <div className="flex min-h-[62px] items-start gap-2 rounded-xl border border-[#e3e7ec] bg-white p-3 shadow-[0_2px_8px_rgba(28,46,90,0.04)]">
-      <div className="flex h-4 w-4 items-center justify-center text-[10px] text-[#162e55]">{icon}</div>
+    <div className="flex h-[98px] flex-col gap-1.5 rounded-3xl border-t border-[#1C2E5A1A] bg-white p-4 shadow-[0_4px_16px_#1C2E5A12,0_1px_3px_#1C2E5A0D]">
+      <div className="h-4 w-4 text-[#162E55]">{icon}</div>
 
-      <div className="flex flex-col">
-        <span className="w-fit text-[13px] font-bold leading-4 text-[#16243a]">{value}</span>
-        <span className="mt-px text-[12px] font-normal leading-4 text-[#6B7590]">{label}</span>
-      </div>
+      <div className="h-5 text-lg font-semibold leading-5 text-[#0E1726]">{value}</div>
+      <p className="h-4 text-xs font-normal leading-4 text-[#6B7590]">{label}</p>
     </div>
   );
 }
@@ -122,7 +120,7 @@ export default function Home() {
             <div className="absolute -top-10 left-[456px] h-48 w-48 rounded-full bg-[radial-gradient(70.71%_70.71%_at_50%_50%,rgba(168,187,206,0.2)_0%,rgba(168,187,206,0)_70%)]" />
 
             <div className="relative ml-6 mt-6 flex h-[119px] w-[calc(100%-48px)] flex-col pt-4 max-[420px]:m-5 max-[420px]:h-[calc(100%-40px)] max-[420px]:w-[calc(100%-40px)] max-[420px]:pt-0">
-              <h1 className="w-[242px] font-bold text-[30px] leading-[37.5px] text-white [font-family:Chillax,sans-serif] max-[420px]:w-auto max-[420px]:text-[26px] max-[420px]:leading-8">
+              <h1 className="font-chillax text-[30px] font-bold leading-[37.5px] text-white">
                 Partner
                 <br />
                 Convening 2026
@@ -135,7 +133,8 @@ export default function Home() {
           </header>
 
           {/* STATS */}
-          <div className="mt-2 grid w-full grid-cols-3 gap-2 max-md:grid-cols-1">
+          <div className="h-[114px] w-full pt-4">
+            <div className="grid h-[98px] w-full grid-cols-3 gap-3 max-md:grid-cols-1 max-md:h-auto">
 
             {/* ATTENDEES */}
             <StatCard
@@ -144,7 +143,7 @@ export default function Home() {
               icon={
                 <UsersRound
                   size={16}
-                  strokeWidth={1.7}
+                  strokeWidth={2}
                   aria-hidden="true"
                 />
               }
@@ -176,6 +175,7 @@ export default function Home() {
               }
             />
 
+            </div>
           </div>
 
           {/* REGISTRATION CARD */}
