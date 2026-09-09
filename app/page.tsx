@@ -37,7 +37,7 @@ function FieldLabel({
   required?: boolean;
 }) {
   return (
-    <label className="field-label">
+    <label className="field-label block w-fit h-auto font-semibold text-[12px] leading-[16px] tracking-[0.3px] uppercase text-[#6B7590]">
       {children}
       {required && <span className="required">*</span>}
     </label>

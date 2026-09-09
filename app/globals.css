@@ -286,16 +286,7 @@ button {
 }
 
 .field-label {
-  display: block;
-
   margin-bottom: 5px;
-
-  font-size: 7px;
-  line-height: 10px;
-  font-weight: 500;
-  text-transform: uppercase;
-
-  color: #667187;
 }
 
 .required {
