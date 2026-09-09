@@ -333,6 +333,17 @@ button {
   opacity: 1;
 }
 
+.field-placeholder-text {
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 400;
+  color: #6b7590;
+}
+
+.field-placeholder-text::placeholder {
+  color: #6b7590;
+}
+
 .form-input:focus,
 .form-textarea:focus {
   background: #e9edf3;

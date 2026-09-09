@@ -47,15 +47,17 @@ function FieldLabel({
 function TextInput({
   placeholder,
   type = "text",
+  className = "",
 }: {
   placeholder: string;
   type?: string;
+  className?: string;
 }) {
   return (
     <input
       type={type}
       placeholder={placeholder}
-      className="form-input"
+      className={`form-input ${className}`}
     />
   );
 }
@@ -212,7 +214,7 @@ export default function Home() {
                   Sub-Partner / Programme Area
                 </FieldLabel>
 
-                <TextInput placeholder="Optional" />
+                  <TextInput placeholder="Optional" className="field-placeholder-text" />
               </div>
 
               {/* ROLE */}
@@ -223,7 +225,7 @@ export default function Home() {
 
                 <div className="select-wrapper">
                   <select
-                    className="form-input form-select"
+                    className="form-input form-select field-placeholder-text"
                     defaultValue=""
                   >
                     <option value="" disabled>
@@ -262,6 +264,7 @@ export default function Home() {
                 <TextInput
                   type="email"
                   placeholder="you@organisation.org"
+                  className="field-placeholder-text"
                 />
               </div>
 
@@ -274,6 +277,7 @@ export default function Home() {
                 <TextInput
                   type="tel"
                   placeholder="+41 xx xxx xx xx"
+                  className="field-placeholder-text"
                 />
               </div>
 
