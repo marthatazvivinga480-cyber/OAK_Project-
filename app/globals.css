@@ -69,17 +69,6 @@ button {
   text-align: center;
 }
 
-.sidebar-event {
-  margin-top: 7px;
-
-  font-size: 4px;
-  line-height: 6px;
-  letter-spacing: 0.45px;
-  text-align: center;
-
-  color: #6e7890;
-}
-
 .sidebar-nav {
   margin-top: 14px;
 }

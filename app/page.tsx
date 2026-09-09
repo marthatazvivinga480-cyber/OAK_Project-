@@ -74,10 +74,9 @@ export default function Home() {
               height={53}
               className="mx-auto h-auto w-full max-w-[85px]"
             />
-          </div>
-
-          <div className="sidebar-event">
-            PARTNER CONVENING 2026
+            <span className="sidebar-event font-semibold text-[12px] leading-[16px] tracking-[1.2px] uppercase text-[#6B7590] w-fit h-auto">
+              PARTNER CONVENING 2026
+            </span>
           </div>
 
           <nav className="sidebar-nav">
