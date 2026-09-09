@@ -15,8 +15,6 @@ export async function POST(request: Request) {
     .eq("username", username)
     .maybeSingle();
 
-  // Deliberately identical error for "no such user" and "wrong password" —
-  // telling an attacker which one was wrong makes username-guessing easier.
   if (error || !admin) {
     return NextResponse.json({ error: "Invalid username or password" }, { status: 401 });
   }

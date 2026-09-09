@@ -41,11 +41,11 @@ export default function QRScanner() {
     const scanner = new Html5QrcodeScanner(
       "qr-reader",
       { fps: 10, qrbox: { width: 250, height: 250 } },
-      /* verbose= */ false
+      false
     );
     scanner.render(
       (decodedText) => submitCode(decodedText),
-      () => {} // ignore per-frame "no code found" callbacks — expected, not an error
+      () => {}
     );
     scannerRef.current = scanner;
 

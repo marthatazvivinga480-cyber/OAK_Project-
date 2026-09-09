@@ -24,10 +24,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Participant Not Found" }, { status: 404 });
   }
 
-  // Insert directly and let the database's unique constraint
-  // (participant_id, check_in_date) catch duplicates atomically —
-  // this closes the race condition a separate "check, then insert"
-  // step had if two scanners hit the same participant at once.
   const { data: checkin, error: insertError } = await supabaseAdmin
     .from("checkins")
     .insert({ participant_id: participant.id, checked_in_by: scanner.id })
@@ -36,7 +32,6 @@ export async function POST(request: Request) {
 
   if (insertError) {
     if (insertError.code === "23505") {
-      // Postgres unique_violation — the constraint did its job.
       return NextResponse.json(
         { error: "Duplicate QR Code — already checked in today" },
         { status: 409 }

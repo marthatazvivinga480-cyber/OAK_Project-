@@ -33,8 +33,6 @@ export async function DELETE(request: Request) {
 
   const { id } = await request.json();
 
-  // Protect master accounts from deletion via the API entirely —
-  // matches the original prototype's rule: no UI path to remove master.
   const { data: target } = await supabaseAdmin
     .from("admins")
     .select("is_master")

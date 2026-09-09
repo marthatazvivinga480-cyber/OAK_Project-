@@ -11,7 +11,7 @@ export async function setAdminSessionCookie(adminId: string) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 8, // 8 hours — shorter than the attendee session, since this is a privileged account
+    maxAge: 60 * 60 * 8,
   });
 }
 
@@ -39,7 +39,7 @@ export async function setSessionCookie(registrationId: string) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 14, // 14 days
+    maxAge: 60 * 60 * 24 * 14,
   });
 }
 
