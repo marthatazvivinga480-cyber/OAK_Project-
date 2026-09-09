@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseClient";
-import { getCurrentParticipant } from "@/lib/session";
 import { getCurrentAdmin } from "@/lib/session";
 
 export async function POST(request: Request) {
