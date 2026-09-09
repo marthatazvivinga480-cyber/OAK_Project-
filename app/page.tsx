@@ -106,7 +106,7 @@ export default function Home() {
       </aside>
 
       {/* MAIN CONTENT */}
-      <section className="registration-screen">
+      <main className="registration-screen flex flex-col max-w-[672px] px-8 py-10 min-h-screen mx-auto w-full h-auto">
         <div className="registration-content flex w-full h-auto flex-1 flex-col">
 
           {/* HERO */}
@@ -329,7 +329,7 @@ export default function Home() {
           </p>
 
         </div>
-      </section>
+      </main>
     </main>
   );
 }
