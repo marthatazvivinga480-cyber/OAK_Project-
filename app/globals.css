@@ -225,12 +225,6 @@ button {
 
 .stat-label {
   margin-top: 1px;
-
-  font-size: 7px;
-  line-height: 10px;
-  font-weight: 400;
-
-  color: var(--oak-muted);
 }
 
 /* =========================================

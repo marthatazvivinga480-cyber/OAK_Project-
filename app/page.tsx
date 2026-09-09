@@ -22,8 +22,8 @@ function StatCard({
       <div className="stat-icon">{icon}</div>
 
       <div className="stat-content">
-        <span className="stat-value">{value}</span>
-        <span className="stat-label">{label}</span>
+        <span className="stat-value w-fit h-auto">{value}</span>
+        <span className="stat-label font-normal text-[12px] leading-[16px] text-[#6B7590] w-auto h-auto">{label}</span>
       </div>
     </div>
   );
@@ -106,7 +106,7 @@ export default function Home() {
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="registration-screen flex flex-col max-w-[672px] px-8 py-10 min-h-screen mx-auto w-full h-auto">
+      <section className="registration-screen flex flex-col max-w-[672px] px-8 py-10 min-h-screen mx-auto w-full h-auto">
         <div className="registration-content flex w-full h-auto flex-1 flex-col">
 
           {/* HERO */}
@@ -329,7 +329,7 @@ export default function Home() {
           </p>
 
         </div>
-      </main>
+      </section>
     </main>
   );
 }
