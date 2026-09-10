@@ -6,14 +6,7 @@ import { Globe, UserRoundPlus } from "lucide-react";
 export default function Home() {
   return (
     <main className="flex min-h-screen bg-[#F7F8FA] max-md:flex-col">
-      {/* =========================
-          SIDEBAR
-      ========================== */}
       <aside className="flex min-h-screen w-64 shrink-0 max-md:min-h-0 max-md:w-full flex-col border-r border-[#1C2E5A1A] bg-white">
-        
-        {/* =========================
-            LOGO CONTAINER
-        ========================== */}
         <div className="h-[130px] w-[255px] border-b border-[#1C2E5A1A] p-6">
           <Image
             src="/Logo-Oak-Foundation.svg (1) 1 (2).svg"
@@ -29,9 +22,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* =========================
-            SIDEBAR NAVIGATION
-        ========================== */}
         <nav className="w-[255px] flex-1 p-4">
           <Link
             href="/"
@@ -47,13 +37,8 @@ export default function Home() {
           </Link>
         </nav>
 
-        {/* =========================
-            SIDEBAR FOOTER
-        ========================== */}
         <footer className="h-[73px] w-[255px] border-t border-[#1C2E5A1A] p-5">
           <div className="flex h-8 w-[215px] items-center gap-2.5">
-            
-            {/* Globe icon container */}
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#EEF1F5]">
               <Globe
                 className="h-[14px] w-[14px] text-[#6B7590]"
@@ -61,7 +46,6 @@ export default function Home() {
               />
             </div>
 
-            {/* Location and date */}
             <div className="font-[var(--font-inter)]">
               <p className="h-4 text-xs font-semibold leading-4 tracking-normal text-[#0E1726]">
                 Harare, Zimbabwe

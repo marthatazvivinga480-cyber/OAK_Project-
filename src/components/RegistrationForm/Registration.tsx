@@ -166,10 +166,6 @@ export default function RegistrationForm() {
 
   return (
     <div className="w-full pt-4">
-
-      {/* ========================================
-          WHITE REGISTRATION CARD
-      ======================================== */}
       <div
         className="
           w-full
@@ -181,10 +177,6 @@ export default function RegistrationForm() {
           shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]
         "
       >
-
-        {/* ========================================
-            TITLE
-        ======================================== */}
         <h2
           className="
             h-7
@@ -200,15 +192,10 @@ export default function RegistrationForm() {
           Registration Form
         </h2>
 
-        {/* ========================================
-            FORM
-        ======================================== */}
         <form
           onSubmit={handleSubmit}
           className="w-full pt-5"
         >
-
-          {/* ERROR */}
           {error && (
             <p
               role="alert"
@@ -227,12 +214,7 @@ export default function RegistrationForm() {
             </p>
           )}
 
-          {/* ========================================
-              FIRST NAME + LAST NAME
-          ======================================== */}
           <div className="grid w-full grid-cols-2 gap-3">
-
-            {/* First Name */}
             <div className="w-full">
               <label
                 htmlFor="first_name"
@@ -252,7 +234,6 @@ export default function RegistrationForm() {
               />
             </div>
 
-            {/* Last Name */}
             <div className="w-full">
               <label
                 htmlFor="last_name"
@@ -273,9 +254,6 @@ export default function RegistrationForm() {
             </div>
           </div>
 
-          {/* ========================================
-              ORGANISATION
-          ======================================== */}
           <div className="pt-3">
             <label
               htmlFor="organization"
@@ -295,9 +273,6 @@ export default function RegistrationForm() {
             />
           </div>
 
-          {/* ========================================
-              SUB-PARTNER / PROGRAMME AREA
-          ======================================== */}
           <div className="pt-3">
             <label
               htmlFor="sub_partner_program_area"
@@ -315,9 +290,6 @@ export default function RegistrationForm() {
             />
           </div>
 
-          {/* ========================================
-              ROLE / CAPACITY
-          ======================================== */}
           <div
             ref={roleDropdownRef}
             className="relative pt-3"
@@ -330,14 +302,12 @@ export default function RegistrationForm() {
               <span className="text-[#E14C4C]">*</span>
             </label>
 
-            {/* Keeps form.get("role") working */}
             <input
               type="hidden"
               name="role"
               value={selectedRole}
             />
 
-            {/* Closed role field */}
             <button
               type="button"
               aria-haspopup="listbox"
@@ -396,20 +366,6 @@ export default function RegistrationForm() {
               />
             </button>
 
-            {/* ======================================
-                OPEN ROLE MENU
-
-                Figma Frame 3:
-                width: 558px
-                height: 200px
-                padding-top: 15px
-                padding-right: 17px
-                padding-bottom: 17px
-
-                Inner Frame:
-                width: 539px
-                gap: 7px
-            ======================================= */}
             {roleOpen && (
               <div
                 className="
@@ -445,8 +401,6 @@ export default function RegistrationForm() {
                     gap-[7px]
                   "
                 >
-
-                  {/* Selected placeholder-style row */}
                   <div
                     className="
                       flex
@@ -514,9 +468,6 @@ export default function RegistrationForm() {
             )}
           </div>
 
-          {/* ========================================
-              EMAIL ADDRESS
-          ======================================== */}
           <div className="pt-3">
             <label
               htmlFor="email"
@@ -536,9 +487,6 @@ export default function RegistrationForm() {
             />
           </div>
 
-          {/* ========================================
-              PHONE NUMBER
-          ======================================== */}
           <div className="pt-3">
             <label
               htmlFor="phone"
@@ -556,9 +504,6 @@ export default function RegistrationForm() {
             />
           </div>
 
-          {/* ========================================
-              REQUIREMENTS
-          ======================================== */}
           <div className="h-[324.5px] w-full pt-4">
             <div
               className="
@@ -571,7 +516,6 @@ export default function RegistrationForm() {
                 p-4
               "
             >
-
               <p
                 className="
                   h-[15px]
@@ -587,7 +531,6 @@ export default function RegistrationForm() {
                 Requirements
               </p>
 
-              {/* Dietary */}
               <div className="h-[86.5px] w-full pt-3">
                 <label
                   htmlFor="dietary_requirements"
@@ -605,7 +548,6 @@ export default function RegistrationForm() {
                 />
               </div>
 
-              {/* Accessibility */}
               <div className="h-[86.5px] w-full pt-3">
                 <label
                   htmlFor="accessibility_requirements"
@@ -623,7 +565,6 @@ export default function RegistrationForm() {
                 />
               </div>
 
-              {/* Travel & Accommodation */}
               <div className="h-[86.5px] w-full pt-3">
                 <label
                   htmlFor="travel_requirements"
@@ -643,9 +584,6 @@ export default function RegistrationForm() {
             </div>
           </div>
 
-          {/* ========================================
-              CONSENT
-          ======================================== */}
           <div className="h-28 w-full py-4">
             <label
               className="
@@ -704,9 +642,6 @@ export default function RegistrationForm() {
             </label>
           </div>
 
-          {/* ========================================
-              REGISTER BUTTON
-          ======================================== */}
           <button
             type="submit"
             disabled={submitting}

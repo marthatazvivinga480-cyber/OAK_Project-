@@ -23,8 +23,6 @@ export async function POST(request: Request) {
     );
   }
 
-  // Re-fetch the actual hash — getCurrentAdmin() deliberately never
-  // returns password_hash, so we look it up fresh here for the compare.
   const { data: fullAdmin, error: lookupError } = await supabaseAdmin
     .from("admins")
     .select("id, password_hash")
