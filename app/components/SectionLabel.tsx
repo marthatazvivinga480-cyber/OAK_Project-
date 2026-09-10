@@ -7,8 +7,8 @@ interface LabelProps {
 
 export default function SectionLabel({ children, className = "" }: LabelProps) {
   return (
-    <div className={`h-7 w-[207px] pt-3 ${className}`}>
-      <p className="font-[Inter] text-xs font-semibold uppercase leading-4 tracking-[1.2px] text-[#6B7590]">
+    <div className={`w-[207px] h-7 pt-3 ${className}`}>
+      <p className="font-inter text-xs font-semibold uppercase leading-4 tracking-[1.2px] text-[#6B7590]">
         {children}
       </p>
     </div>

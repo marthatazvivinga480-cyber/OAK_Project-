@@ -1,19 +1,15 @@
-@import url("https://api.fontshare.com/v2/css?f[]=chillax@700&display=swap");
 @import "tailwindcss";
-
 
 @font-face {
   font-family: "Chillax";
   src: url("/chillax/Chillax-Regular.otf") format("opentype");
   font-weight: 400;
-  font-style: normal;
 }
 
 @font-face {
   font-family: "Chillax";
   src: url("/chillax/Chillax-Bold.otf") format("opentype");
   font-weight: 700;
-  font-style: normal;
 }
 
 .font-chillax {
