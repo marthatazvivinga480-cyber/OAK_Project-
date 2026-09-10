@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2, Download, RotateCcw } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import SectionLabel from "../components/SectionLabel";
+import SectionLabel from "@/components/SectionLabel";
 
 // Temporary visual data — Supabase will replace this later.
 const attendee = {
