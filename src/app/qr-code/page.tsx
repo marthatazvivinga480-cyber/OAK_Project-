@@ -9,9 +9,5 @@ export default async function QRCodePage() {
     redirect("/");
   }
 
-  return (
-    <main className="min-h-screen px-6 py-12">
-      <QRCodeDisplay participant={participant} />
-    </main>
-  );
+  return <QRCodeDisplay participant={participant} />;
 }
