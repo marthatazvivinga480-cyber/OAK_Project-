@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Check, ChevronDown } from "lucide-react";
 import type { Role } from "@/lib/types";
 
 const ROLES: Role[] = [
@@ -20,8 +21,43 @@ export default function RegistrationForm() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [selectedRole, setSelectedRole] = useState<Role | "">("");
+  const [roleOpen, setRoleOpen] = useState(false);
+
+  const roleDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleOutsideClick(event: MouseEvent) {
+      if (
+        roleDropdownRef.current &&
+        !roleDropdownRef.current.contains(event.target as Node)
+      ) {
+        setRoleOpen(false);
+      }
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setRoleOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (!selectedRole) {
+      setError("Please select your role.");
+      return;
+    }
 
     setSubmitting(true);
     setError(null);
@@ -34,7 +70,9 @@ export default function RegistrationForm() {
       organization: form.get("organization"),
       sub_partner_program_area:
         form.get("sub_partner_program_area") || null,
+
       role: form.get("role"),
+
       email: form.get("email"),
       phone: form.get("phone") || null,
 
@@ -47,13 +85,6 @@ export default function RegistrationForm() {
       travel_requirements:
         form.get("travel_requirements") || null,
 
-      /*
-        The Figma design has one combined
-        "Travel & Accommodation" field.
-
-        For now accommodation_requirements is left null
-        so the UI stays faithful to the design.
-      */
       accommodation_requirements: null,
     };
 
@@ -94,29 +125,51 @@ export default function RegistrationForm() {
     }
   }
 
-  return (
-    /*
-      ========================================
-      FORM MARGIN CONTAINER
+  const inputClass = `
+    mt-[6px]
+    h-[52.5px]
+    w-full
+    rounded-[14px]
+    border
+    border-[#1C2E5A1A]
+    bg-[#EEF1F5]
+    px-4
+    py-[14px]
+    font-[var(--font-inter)]
+    text-[15px]
+    font-normal
+    leading-[18px]
+    text-[#0E1726]
+    placeholder:text-[#6B7590]
+    outline-none
+    focus:border-[#1C2E5A1A]
+    focus:outline-none
+    focus:ring-0
+    focus:ring-offset-0
+    focus-visible:border-[#1C2E5A1A]
+    focus-visible:outline-none
+    focus-visible:ring-0
+    focus-visible:ring-offset-0
+  `;
 
-      Figma:
-      width: 608px
-      padding-top: 16px
-      ========================================
-    */
+  const labelClass = `
+    block
+    h-4
+    font-[var(--font-inter)]
+    text-xs
+    font-semibold
+    uppercase
+    leading-4
+    tracking-[0.3px]
+    text-[#6B7590]
+  `;
+
+  return (
     <div className="w-full pt-4">
 
-      {/*
-        ========================================
-        WHITE REGISTRATION CARD
-
-        Figma:
-        width: 608px
-        border radius: 24px
-        border: 1px
-        padding: 20px
-        ========================================
-      */}
+      {/* ========================================
+          WHITE REGISTRATION CARD
+      ======================================== */}
       <div
         className="
           w-full
@@ -128,11 +181,10 @@ export default function RegistrationForm() {
           shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]
         "
       >
-        {/*
-          ========================================
-          TITLE
-          ========================================
-        */}
+
+        {/* ========================================
+            TITLE
+        ======================================== */}
         <h2
           className="
             h-7
@@ -148,20 +200,15 @@ export default function RegistrationForm() {
           Registration Form
         </h2>
 
-        {/*
-          ========================================
-          FORM
-          ========================================
-        */}
+        {/* ========================================
+            FORM
+        ======================================== */}
         <form
           onSubmit={handleSubmit}
           className="w-full pt-5"
         >
-          {/*
-            ========================================
-            ERROR MESSAGE
-            ========================================
-          */}
+
+          {/* ERROR */}
           {error && (
             <p
               role="alert"
@@ -180,36 +227,19 @@ export default function RegistrationForm() {
             </p>
           )}
 
-          {/*
-            ========================================
-            FIRST + LAST NAME
-            566px total
-            2 columns
-            12px gap
-            ========================================
-          */}
+          {/* ========================================
+              FIRST NAME + LAST NAME
+          ======================================== */}
           <div className="grid w-full grid-cols-2 gap-3">
 
-            {/* FIRST NAME */}
+            {/* First Name */}
             <div className="w-full">
               <label
                 htmlFor="first_name"
-                className="
-                  block
-                  h-4
-                  font-[var(--font-inter)]
-                  text-xs
-                  font-semibold
-                  uppercase
-                  leading-4
-                  tracking-[0.3px]
-                  text-[#6B7590]
-                "
+                className={labelClass}
               >
                 First Name{" "}
-                <span className="text-[#E14C4C]">
-                  *
-                </span>
+                <span className="text-[#E14C4C]">*</span>
               </label>
 
               <input
@@ -218,48 +248,18 @@ export default function RegistrationForm() {
                 type="text"
                 placeholder="Maria"
                 required
-                className="
-                  mt-[6px]
-                  h-[52.5px]
-                  w-full
-                  rounded-[14px]
-                  border
-                  border-[#1C2E5A1A]
-                  bg-[#EEF1F5]
-                  px-4
-                  py-[14px]
-                  font-[var(--font-inter)]
-                  text-[15px]
-                  font-normal
-                  leading-[18px]
-                  text-[#0E1726]
-                  outline-none
-                  placeholder:text-[#6B7590]
-                  focus:border-[#162E55]
-                "
+                className={inputClass}
               />
             </div>
 
-            {/* LAST NAME */}
+            {/* Last Name */}
             <div className="w-full">
               <label
                 htmlFor="last_name"
-                className="
-                  block
-                  h-4
-                  font-[var(--font-inter)]
-                  text-xs
-                  font-semibold
-                  uppercase
-                  leading-4
-                  tracking-[0.3px]
-                  text-[#6B7590]
-                "
+                className={labelClass}
               >
                 Last Name{" "}
-                <span className="text-[#E14C4C]">
-                  *
-                </span>
+                <span className="text-[#E14C4C]">*</span>
               </label>
 
               <input
@@ -268,53 +268,21 @@ export default function RegistrationForm() {
                 type="text"
                 placeholder="Schmidt"
                 required
-                className="
-                  mt-[6px]
-                  h-[52.5px]
-                  w-full
-                  rounded-[14px]
-                  border
-                  border-[#1C2E5A1A]
-                  bg-[#EEF1F5]
-                  px-4
-                  py-[14px]
-                  font-[var(--font-inter)]
-                  text-[15px]
-                  font-normal
-                  leading-[18px]
-                  text-[#0E1726]
-                  outline-none
-                  placeholder:text-[#6B7590]
-                  focus:border-[#162E55]
-                "
+                className={inputClass}
               />
             </div>
           </div>
 
-          {/*
-            ========================================
-            ORGANISATION
-            ========================================
-          */}
+          {/* ========================================
+              ORGANISATION
+          ======================================== */}
           <div className="pt-3">
             <label
               htmlFor="organization"
-              className="
-                block
-                h-4
-                font-[var(--font-inter)]
-                text-xs
-                font-semibold
-                uppercase
-                leading-4
-                tracking-[0.3px]
-                text-[#6B7590]
-              "
+              className={labelClass}
             >
               Organisation{" "}
-              <span className="text-[#E14C4C]">
-                *
-              </span>
+              <span className="text-[#E14C4C]">*</span>
             </label>
 
             <input
@@ -323,47 +291,17 @@ export default function RegistrationForm() {
               type="text"
               placeholder="Your organisation name"
               required
-              className="
-                mt-[6px]
-                h-[52.5px]
-                w-full
-                rounded-[14px]
-                border
-                border-[#1C2E5A1A]
-                bg-[#EEF1F5]
-                px-4
-                py-[14px]
-                font-[var(--font-inter)]
-                text-[15px]
-                font-normal
-                leading-[18px]
-                text-[#0E1726]
-                outline-none
-                placeholder:text-[#6B7590]
-                focus:border-[#162E55]
-              "
+              className={inputClass}
             />
           </div>
 
-          {/*
-            ========================================
-            SUB-PARTNER / PROGRAMME AREA
-            ========================================
-          */}
+          {/* ========================================
+              SUB-PARTNER / PROGRAMME AREA
+          ======================================== */}
           <div className="pt-3">
             <label
               htmlFor="sub_partner_program_area"
-              className="
-                block
-                h-4
-                font-[var(--font-inter)]
-                text-xs
-                font-semibold
-                uppercase
-                leading-4
-                tracking-[0.3px]
-                text-[#6B7590]
-              "
+              className={labelClass}
             >
               Sub-Partner / Programme Area
             </label>
@@ -373,63 +311,48 @@ export default function RegistrationForm() {
               name="sub_partner_program_area"
               type="text"
               placeholder="Optional"
-              className="
-                mt-[6px]
-                h-[52.5px]
-                w-full
-                rounded-[14px]
-                border
-                border-[#1C2E5A1A]
-                bg-[#EEF1F5]
-                px-4
-                py-[14px]
-                font-[var(--font-inter)]
-                text-[15px]
-                font-normal
-                leading-[18px]
-                text-[#0E1726]
-                outline-none
-                placeholder:text-[#6B7590]
-                focus:border-[#162E55]
-              "
+              className={inputClass}
             />
           </div>
 
-          {/*
-            ========================================
-            ROLE / CAPACITY
-            ========================================
-          */}
-          <div className="pt-3">
+          {/* ========================================
+              ROLE / CAPACITY
+          ======================================== */}
+          <div
+            ref={roleDropdownRef}
+            className="relative pt-3"
+          >
             <label
-              htmlFor="role"
-              className="
-                block
-                h-4
-                font-[var(--font-inter)]
-                text-xs
-                font-semibold
-                uppercase
-                leading-4
-                tracking-[0.3px]
-                text-[#6B7590]
-              "
+              id="role-label"
+              className={labelClass}
             >
               Role / Capacity{" "}
-              <span className="text-[#E14C4C]">
-                *
-              </span>
+              <span className="text-[#E14C4C]">*</span>
             </label>
 
-            <select
-              id="role"
+            {/* Keeps form.get("role") working */}
+            <input
+              type="hidden"
               name="role"
-              required
-              defaultValue=""
+              value={selectedRole}
+            />
+
+            {/* Closed role field */}
+            <button
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded={roleOpen}
+              aria-labelledby="role-label"
+              onClick={() => {
+                setRoleOpen((current) => !current);
+              }}
               className="
                 mt-[6px]
+                flex
                 h-[52.5px]
                 w-full
+                items-center
+                justify-between
                 rounded-[14px]
                 border
                 border-[#1C2E5A1A]
@@ -438,48 +361,169 @@ export default function RegistrationForm() {
                 font-[var(--font-inter)]
                 text-[15px]
                 font-normal
-                leading-[23px]
-                text-[#0E1726]
+                leading-[22.5px]
                 outline-none
-                focus:border-[#162E55]
+                focus:border-[#1C2E5A1A]
+                focus:outline-none
+                focus:ring-0
+                focus:ring-offset-0
+                focus-visible:border-[#1C2E5A1A]
+                focus-visible:outline-none
+                focus-visible:ring-0
+                focus-visible:ring-offset-0
               "
             >
-              <option value="" disabled>
-                Select your role
-              </option>
+              <span
+                className={
+                  selectedRole
+                    ? "text-[#0E1726]"
+                    : "text-[#6B7590]"
+                }
+              >
+                {selectedRole || "Select your role"}
+              </span>
 
-              {ROLES.map((role) => (
-                <option key={role} value={role}>
-                  {role}
-                </option>
-              ))}
-            </select>
+              <ChevronDown
+                className={`
+                  h-4
+                  w-4
+                  shrink-0
+                  text-[#6B7590]
+                  transition-transform
+                  ${roleOpen ? "rotate-180" : ""}
+                `}
+                aria-hidden="true"
+              />
+            </button>
+
+            {/* ======================================
+                OPEN ROLE MENU
+
+                Figma Frame 3:
+                width: 558px
+                height: 200px
+                padding-top: 15px
+                padding-right: 17px
+                padding-bottom: 17px
+
+                Inner Frame:
+                width: 539px
+                gap: 7px
+            ======================================= */}
+            {roleOpen && (
+              <div
+                className="
+                  absolute
+                  left-1/2
+                  top-[81px]
+                  z-50
+                  h-[200px]
+                  w-[558px]
+                  max-w-[calc(100vw-32px)]
+                  -translate-x-1/2
+                  rounded-[14px]
+                  border
+                  border-[#1C2E5A1A]
+                  bg-white
+                  pt-[15px]
+                  pr-[17px]
+                  pb-[17px]
+                  pl-[2px]
+                  shadow-[0_4px_16px_0_#1C2E5A12]
+                "
+              >
+                <div
+                  role="listbox"
+                  aria-labelledby="role-label"
+                  className="
+                    ml-auto
+                    flex
+                    h-[171px]
+                    w-[539px]
+                    max-w-full
+                    flex-col
+                    gap-[7px]
+                  "
+                >
+
+                  {/* Selected placeholder-style row */}
+                  <div
+                    className="
+                      flex
+                      h-[30px]
+                      w-full
+                      items-center
+                      rounded-[5px]
+                      bg-[#162E55]
+                      px-[10px]
+                      py-[3px]
+                      font-[var(--font-inter)]
+                      text-[15px]
+                      font-normal
+                      leading-[22.5px]
+                      text-white
+                    "
+                  >
+                    Select your role
+                  </div>
+
+                  {ROLES.map((role) => (
+                    <button
+                      key={role}
+                      type="button"
+                      role="option"
+                      aria-selected={selectedRole === role}
+                      onClick={() => {
+                        setSelectedRole(role);
+                        setRoleOpen(false);
+                        setError(null);
+                      }}
+                      className="
+                        flex
+                        h-[22px]
+                        w-full
+                        items-center
+                        justify-between
+                        bg-white
+                        px-[10px]
+                        text-left
+                        font-[var(--font-inter)]
+                        text-[15px]
+                        font-normal
+                        leading-[22.5px]
+                        text-[#0E1726]
+                        outline-none
+                        hover:bg-[#F4F5F7]
+                        focus:bg-[#F4F5F7]
+                        focus:outline-none
+                        focus:ring-0
+                      "
+                    >
+                      <span>{role}</span>
+
+                      {selectedRole === role && (
+                        <Check
+                          className="h-4 w-4 text-[#162E55]"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/*
-            ========================================
-            EMAIL
-            ========================================
-          */}
+          {/* ========================================
+              EMAIL ADDRESS
+          ======================================== */}
           <div className="pt-3">
             <label
               htmlFor="email"
-              className="
-                block
-                h-4
-                font-[var(--font-inter)]
-                text-xs
-                font-semibold
-                uppercase
-                leading-4
-                tracking-[0.3px]
-                text-[#6B7590]
-              "
+              className={labelClass}
             >
               Email Address{" "}
-              <span className="text-[#E14C4C]">
-                *
-              </span>
+              <span className="text-[#E14C4C]">*</span>
             </label>
 
             <input
@@ -488,47 +532,17 @@ export default function RegistrationForm() {
               type="email"
               placeholder="you@organisation.org"
               required
-              className="
-                mt-[6px]
-                h-[52.5px]
-                w-full
-                rounded-[14px]
-                border
-                border-[#1C2E5A1A]
-                bg-[#EEF1F5]
-                px-4
-                py-[14px]
-                font-[var(--font-inter)]
-                text-[15px]
-                font-normal
-                leading-[18px]
-                text-[#0E1726]
-                outline-none
-                placeholder:text-[#6B7590]
-                focus:border-[#162E55]
-              "
+              className={inputClass}
             />
           </div>
 
-          {/*
-            ========================================
-            PHONE
-            ========================================
-          */}
+          {/* ========================================
+              PHONE NUMBER
+          ======================================== */}
           <div className="pt-3">
             <label
               htmlFor="phone"
-              className="
-                block
-                h-4
-                font-[var(--font-inter)]
-                text-xs
-                font-semibold
-                uppercase
-                leading-4
-                tracking-[0.3px]
-                text-[#6B7590]
-              "
+              className={labelClass}
             >
               Phone Number
             </label>
@@ -538,49 +552,14 @@ export default function RegistrationForm() {
               name="phone"
               type="tel"
               placeholder="+41 xx xxx xx xx"
-              className="
-                mt-[6px]
-                h-[52.5px]
-                w-full
-                rounded-[14px]
-                border
-                border-[#1C2E5A1A]
-                bg-[#EEF1F5]
-                px-4
-                py-[14px]
-                font-[var(--font-inter)]
-                text-[15px]
-                font-normal
-                leading-[18px]
-                text-[#0E1726]
-                outline-none
-                placeholder:text-[#6B7590]
-                focus:border-[#162E55]
-              "
+              className={inputClass}
             />
           </div>
 
-          {/*
-            ========================================
-            REQUIREMENTS OUTER MARGIN
-
-            Figma:
-            566 × 324.5
-            padding-top: 16px
-            ========================================
-          */}
+          {/* ========================================
+              REQUIREMENTS
+          ======================================== */}
           <div className="h-[324.5px] w-full pt-4">
-
-            {/*
-              ======================================
-              REQUIREMENTS INNER CARD
-
-              Figma:
-              height: 308.5
-              padding: 16px
-              radius: 16px
-              ======================================
-            */}
             <div
               className="
                 h-[308.5px]
@@ -592,6 +571,7 @@ export default function RegistrationForm() {
                 p-4
               "
             >
+
               <p
                 className="
                   h-[15px]
@@ -607,21 +587,11 @@ export default function RegistrationForm() {
                 Requirements
               </p>
 
-              {/* DIETARY */}
+              {/* Dietary */}
               <div className="h-[86.5px] w-full pt-3">
                 <label
                   htmlFor="dietary_requirements"
-                  className="
-                    block
-                    h-4
-                    font-[var(--font-inter)]
-                    text-xs
-                    font-semibold
-                    uppercase
-                    leading-4
-                    tracking-[0.3px]
-                    text-[#6B7590]
-                  "
+                  className={labelClass}
                 >
                   Dietary Requirements
                 </label>
@@ -631,43 +601,15 @@ export default function RegistrationForm() {
                   name="dietary_requirements"
                   type="text"
                   placeholder="e.g. Vegetarian, Halal, Gluten-free"
-                  className="
-                    mt-[6px]
-                    h-[52.5px]
-                    w-full
-                    rounded-[14px]
-                    border
-                    border-[#1C2E5A1A]
-                    bg-[#EEF1F5]
-                    px-4
-                    py-[14px]
-                    font-[var(--font-inter)]
-                    text-[15px]
-                    font-normal
-                    leading-[18px]
-                    text-[#0E1726]
-                    outline-none
-                    placeholder:text-[#6B7590]
-                    focus:border-[#162E55]
-                  "
+                  className={inputClass}
                 />
               </div>
 
-              {/* ACCESSIBILITY */}
+              {/* Accessibility */}
               <div className="h-[86.5px] w-full pt-3">
                 <label
                   htmlFor="accessibility_requirements"
-                  className="
-                    block
-                    h-4
-                    font-[var(--font-inter)]
-                    text-xs
-                    font-semibold
-                    uppercase
-                    leading-4
-                    tracking-[0.3px]
-                    text-[#6B7590]
-                  "
+                  className={labelClass}
                 >
                   Accessibility Requirements
                 </label>
@@ -677,43 +619,15 @@ export default function RegistrationForm() {
                   name="accessibility_requirements"
                   type="text"
                   placeholder="e.g. Wheelchair access, hearing loop"
-                  className="
-                    mt-[6px]
-                    h-[52.5px]
-                    w-full
-                    rounded-[14px]
-                    border
-                    border-[#1C2E5A1A]
-                    bg-[#EEF1F5]
-                    px-4
-                    py-[14px]
-                    font-[var(--font-inter)]
-                    text-[15px]
-                    font-normal
-                    leading-[18px]
-                    text-[#0E1726]
-                    outline-none
-                    placeholder:text-[#6B7590]
-                    focus:border-[#162E55]
-                  "
+                  className={inputClass}
                 />
               </div>
 
-              {/* TRAVEL + ACCOMMODATION */}
+              {/* Travel & Accommodation */}
               <div className="h-[86.5px] w-full pt-3">
                 <label
                   htmlFor="travel_requirements"
-                  className="
-                    block
-                    h-4
-                    font-[var(--font-inter)]
-                    text-xs
-                    font-semibold
-                    uppercase
-                    leading-4
-                    tracking-[0.3px]
-                    text-[#6B7590]
-                  "
+                  className={labelClass}
                 >
                   Travel &amp; Accommodation
                 </label>
@@ -723,43 +637,15 @@ export default function RegistrationForm() {
                   name="travel_requirements"
                   type="text"
                   placeholder="e.g. Flight from London, hotel needed"
-                  className="
-                    mt-[6px]
-                    h-[52.5px]
-                    w-full
-                    rounded-[14px]
-                    border
-                    border-[#1C2E5A1A]
-                    bg-[#EEF1F5]
-                    px-4
-                    py-[14px]
-                    font-[var(--font-inter)]
-                    text-[15px]
-                    font-normal
-                    leading-[18px]
-                    text-[#0E1726]
-                    outline-none
-                    placeholder:text-[#6B7590]
-                    focus:border-[#162E55]
-                  "
+                  className={inputClass}
                 />
               </div>
             </div>
           </div>
 
-          {/*
-            ========================================
-            CONSENT
-
-            Figma outer:
-            height: 112px
-
-            Inner:
-            height: 80px
-            padding: 16px
-            gap: 12px
-            ========================================
-          */}
+          {/* ========================================
+              CONSENT
+          ======================================== */}
           <div className="h-28 w-full py-4">
             <label
               className="
@@ -788,6 +674,11 @@ export default function RegistrationForm() {
                   border-2
                   border-[#1C2E5A2E]
                   accent-[#162E55]
+                  outline-none
+                  focus:outline-none
+                  focus:ring-0
+                  focus-visible:outline-none
+                  focus-visible:ring-0
                 "
               />
 
@@ -813,12 +704,9 @@ export default function RegistrationForm() {
             </label>
           </div>
 
-          {/*
-            ========================================
-            REGISTER BUTTON
-            566 × 56
-            ========================================
-          */}
+          {/* ========================================
+              REGISTER BUTTON
+          ======================================== */}
           <button
             type="submit"
             disabled={submitting}
@@ -829,6 +717,7 @@ export default function RegistrationForm() {
               items-center
               justify-center
               rounded-2xl
+              border-0
               bg-[#162E55]
               font-chillax
               text-base
@@ -836,7 +725,12 @@ export default function RegistrationForm() {
               leading-6
               text-white
               shadow-[0_4px_20px_0_#1C2E5A4D]
+              outline-none
               transition-opacity
+              focus:outline-none
+              focus:ring-0
+              focus-visible:outline-none
+              focus-visible:ring-0
               disabled:cursor-not-allowed
               disabled:opacity-60
             "
