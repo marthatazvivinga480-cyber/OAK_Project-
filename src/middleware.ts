@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { PAGE_ACCESS, type Role } from "@/lib/types";
 
-const ADMIN_ONLY_PATHS = ["/checkin", "/attendance", "/admin-manage"];
+const ADMIN_ONLY_PATHS = ["/checkin", "/attendance", "/admin-manage", "/admin-change-password"];
 
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
@@ -31,5 +31,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/qr-code", "/programme", "/partners", "/checkin", "/attendance", "/admin-manage"],
+  matcher: ["/qr-code", "/programme", "/partners", "/checkin", "/attendance", "/admin-manage", "/admin-change-password"],
 };
