@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   CalendarDays,
   Globe,
-  Layers3,
   UserRoundPlus,
 } from "lucide-react";
 
