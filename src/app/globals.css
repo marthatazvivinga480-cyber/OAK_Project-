@@ -13,21 +13,50 @@
   --oak-error: #ef4444;
 }
 
-/* Maps our existing --oak-* palette onto Tailwind's utility-class
-   tokens, so classes like bg-primary / text-text-heading / bg-success
-   work without redefining any color twice. */
-@theme inline {
-  --color-primary: var(--oak-navy);
-  --color-primary-hover: var(--oak-shadow);
-  --color-success: var(--oak-success);
-  --color-error: var(--oak-error);
-  --color-background: var(--oak-page);
-  --color-surface: var(--oak-white);
-  --color-text-heading: var(--oak-text);
-  --color-text-body: var(--oak-text);
-  --color-text-muted: var(--oak-muted);
-  --color-border: var(--oak-border);
-  --color-input-bg: var(--oak-input);
+@layer utilities {
+  .bg-primary {
+    background-color: var(--oak-navy);
+  }
+
+  .bg-primary-hover {
+    background-color: var(--oak-shadow);
+  }
+
+  .bg-success {
+    background-color: var(--oak-success);
+  }
+
+  .bg-error {
+    background-color: var(--oak-error);
+  }
+
+  .bg-surface {
+    background-color: var(--oak-white);
+  }
+
+  .bg-input-bg {
+    background-color: var(--oak-input);
+  }
+
+  .text-text-heading {
+    color: var(--oak-text);
+  }
+
+  .text-text-body {
+    color: var(--oak-text);
+  }
+
+  .text-text-muted {
+    color: var(--oak-muted);
+  }
+
+  .border-border {
+    border-color: var(--oak-border);
+  }
+
+  .text-error {
+    color: var(--oak-error);
+  }
 }
 
 @font-face {

@@ -141,7 +141,7 @@ export default function QRScanner() {
               <h3 className="font-bold text-text-heading">What this could mean</h3>
             </div>
             <ul className="space-y-3 text-sm text-text-body">
-              <li>• The code doesn't match any registered attendee</li>
+              <li>• The code doesn&apos;t match any registered attendee</li>
               <li>• The QR code may have expired (valid for 24 hours)</li>
               <li>• This attendee may already be checked in today</li>
             </ul>
