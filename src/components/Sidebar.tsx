@@ -1,52 +1,136 @@
 import Image from "next/image";
 import Link from "next/link";
-
-import SectionLabel from "@/components/SectionLabel";
+import {
+  CalendarDays,
+  Globe,
+  UserRoundPlus,
+} from "lucide-react";
 
 export default function Sidebar() {
   return (
-    <aside className="flex min-h-screen w-[256px] shrink-0 flex-col justify-between border-r border-[#1C2E5A]/10 bg-white px-1.5 py-[14px] pb-4 max-md:min-h-0 max-md:w-full max-md:flex-row max-md:items-center max-md:border-b max-md:border-r-0 max-md:px-4 max-md:py-3">
-      <div className="w-full max-md:flex max-md:items-center max-md:gap-3">
-        <div className="flex h-fit w-full flex-col items-start border-b border-[#1C2E5A]/10 pb-6 pl-5 max-md:border-0 max-md:pb-0 max-md:pl-0">
-          <Image
-            src="/Logo-Oak-Foundation.svg (1) 1 (2).svg"
-            alt="OAK Foundation"
-            width={85}
-            height={53}
-            className="h-auto w-full max-w-[85px]"
-            priority
-          />
+    <aside className="flex min-h-screen w-64 shrink-0 max-md:min-h-0 max-md:w-full flex-col border-r border-[#1C2E5A1A] bg-white">
 
-          <SectionLabel className="max-md:hidden">
-            Partner Convening 2026
-          </SectionLabel>
-        </div>
+      {/* Logo */}
+      <div className="h-[130px] w-[255px] border-b border-[#1C2E5A1A] p-6">
+        <Image
+          src="/Logo-Oak-Foundation.svg (1) 1 (2).svg"
+          alt="OAK Foundation"
+          width={85}
+          height={53}
+          className="h-[53px] w-[85px] object-contain"
+          priority
+        />
 
-        <nav className="mt-[14px] max-md:mt-0">
+        <p className="h-7 w-[207px] pt-3 font-chillax text-xs font-semibold uppercase leading-4 tracking-[1.2px] text-[#6B7590]">
+          Partner Convening 2026
+        </p>
+      </div>
+
+      {/* Navigation */}
+      <nav className="w-[255px] flex-1 p-4">
+        {/* Register */}
+        <Link
+          href="/"
+          className="
+      flex
+      h-11
+      w-[223px]
+      items-center
+      gap-3
+      rounded-2xl
+      bg-[#162E55]
+      px-4
+      py-3
+      font-[var(--font-inter)]
+      text-[14px]
+      font-semibold
+      leading-5
+      text-white
+      shadow-[0_4px_20px_0_#1C2E5A4D]
+    "
+        >
+          <UserRoundPlus className="h-[18px] w-[18px]" />
+          <span>Register</span>
+        </Link>
+
+        {/* Programme */}
+        <div className="h-12 w-[223px] pt-1">
           <Link
-            href="/"
-            className="flex min-h-[44px] w-full flex-row items-center justify-start gap-3 rounded-2xl bg-[#162E55] px-5 py-3 text-white shadow-[0_4px_16px_rgba(28,46,90,0.07)] transition hover:bg-[#1d3b6d] active:translate-y-px"
+            href="/programme"
+            className="
+        flex
+        h-11
+        w-[223px]
+        items-center
+        gap-3
+        rounded-2xl
+        px-4
+        py-3
+        font-[var(--font-inter)]
+        text-[14px]
+        font-semibold
+        leading-5
+        text-[#6B7590]
+      "
           >
-            <span className="font-[Inter] text-[14px] font-semibold leading-[20px]">
-              Register
-            </span>
+            <CalendarDays
+              className="h-[18px] w-[18px] text-[#6B7590]"
+              strokeWidth={1.31}
+            />
+            <span>Programme</span>
           </Link>
-        </nav>
-      </div>
-
-      <div className="flex h-auto w-full flex-col border-t border-[#1C2E5A]/10 p-5 text-[10px] leading-[15px] text-[#6e7788] max-md:hidden">
-        <div className="text-[#6B7590]">●</div>
-
-        <div>
-          <p className="font-[Inter] text-[12px] font-semibold leading-[16px] text-[#0E1726]">
-            Harare, Zimbabwe
-          </p>
-
-          <span className="font-[Inter] text-[10px] font-normal leading-[15px] text-[#6B7590]">
-            9–11 November 2026
-          </span>
         </div>
-      </div>
+
+        {/* Partners */}
+        <div className="h-12 w-[223px] pt-1">
+          <Link
+            href="/partners"
+            className="
+        flex
+        h-11
+        w-[223px]
+        items-center
+        gap-3
+        rounded-2xl
+        px-4
+        py-3
+        font-[var(--font-inter)]
+        text-[14px]
+        font-semibold
+        leading-5
+        text-[#6B7590]
+      "
+          >
+            <Globe
+              className="h-[18px] w-[18px] text-[#6B7590]"
+              strokeWidth={1.31}
+            />
+            <span>Partners</span>
+          </Link>
+        </div>
+      </nav>
+
+      {/* Footer */}
+      <footer className="h-[73px] w-[255px] border-t border-[#1C2E5A1A] p-5">
+        <div className="flex h-8 w-[215px] items-center gap-2.5">
+
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#EEF1F5]">
+            <Globe className="h-[14px] w-[14px] text-[#6B7590]" />
+          </div>
+
+          <div className="font-[var(--font-inter)]">
+            <p className="text-xs font-semibold leading-4 text-[#0E1726]">
+              Harare, Zimbabwe
+            </p>
+
+            <p className="text-[10px] leading-[15px] text-[#6B7590]">
+              9–11 November 2026
+            </p>
+          </div>
+
+        </div>
+      </footer>
+
     </aside>
   );
 }
