@@ -14,11 +14,14 @@ export function proxy(request: NextRequest) {
       url.pathname = "/admin-login";
       return NextResponse.redirect(url);
     }
+
     return NextResponse.next();
   }
 
   const allowedRoles = PAGE_ACCESS[path];
-  if (!allowedRoles) return NextResponse.next();
+  if (!allowedRoles) {
+    return NextResponse.next();
+  }
 
   const role = request.cookies.get("oak_role")?.value as Role | undefined;
   if (!role || !allowedRoles.includes(role)) {
@@ -27,9 +30,18 @@ export function proxy(request: NextRequest) {
     url.searchParams.set("denied", path);
     return NextResponse.redirect(url);
   }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/qr-code", "/programme", "/partners", "/checkin", "/attendance", "/admin-manage", "/admin-change-password"],
+  matcher: [
+    "/qr-code",
+    "/programme",
+    "/partners",
+    "/checkin",
+    "/attendance",
+    "/admin-manage",
+    "/admin-change-password",
+  ],
 };
