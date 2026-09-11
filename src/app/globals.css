@@ -9,6 +9,54 @@
   --oak-muted: #6b7590;
   --oak-border: #1c2e5a1a;
   --oak-white: #ffffff;
+  --oak-success: #10b981;
+  --oak-error: #ef4444;
+}
+
+@layer utilities {
+  .bg-primary {
+    background-color: var(--oak-navy);
+  }
+
+  .bg-primary-hover {
+    background-color: var(--oak-shadow);
+  }
+
+  .bg-success {
+    background-color: var(--oak-success);
+  }
+
+  .bg-error {
+    background-color: var(--oak-error);
+  }
+
+  .bg-surface {
+    background-color: var(--oak-white);
+  }
+
+  .bg-input-bg {
+    background-color: var(--oak-input);
+  }
+
+  .text-text-heading {
+    color: var(--oak-text);
+  }
+
+  .text-text-body {
+    color: var(--oak-text);
+  }
+
+  .text-text-muted {
+    color: var(--oak-muted);
+  }
+
+  .border-border {
+    border-color: var(--oak-border);
+  }
+
+  .text-error {
+    color: var(--oak-error);
+  }
 }
 
 @font-face {

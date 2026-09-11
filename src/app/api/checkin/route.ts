@@ -40,6 +40,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: insertError.message }, { status: 500 });
   }
 
+  const { count: totalRegistered } = await supabaseAdmin
+  .from("participants")
+  .select("*", { count: "exact", head: true });
+
+const { count: totalCheckedIn } = await supabaseAdmin
+  .from("checkins")
+  .select("*", { count: "exact", head: true })
+  .eq("check_in_date", new Date().toISOString().split("T")[0]);
+
+return NextResponse.json({
+  participant: {
+    first_name: participant.first_name,
+    last_name: participant.last_name,
+    organization: participant.organization,
+    role: participant.role,
+  },
+  check_in_time: checkin.check_in_time,
+  live_stats: { total_registered: totalRegistered ?? 0, total_checked_in: totalCheckedIn ?? 0 },
+});
+
   return NextResponse.json({
     participant: {
       first_name: participant.first_name,
