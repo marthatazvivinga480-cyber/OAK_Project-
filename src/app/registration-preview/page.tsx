@@ -6,7 +6,6 @@ import { CheckCircle2, Download, RotateCcw } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import SectionLabel from "@/components/SectionLabel";
 
-// Temporary visual data — Supabase will replace this later.
 const attendee = {
   qrCodeId: "OAK-2026-7842-XKPH",
   userName: "Tinashe Smith",
