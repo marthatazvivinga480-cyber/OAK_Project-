@@ -9,6 +9,25 @@
   --oak-muted: #6b7590;
   --oak-border: #1c2e5a1a;
   --oak-white: #ffffff;
+  --oak-success: #10b981;
+  --oak-error: #ef4444;
+}
+
+/* Maps our existing --oak-* palette onto Tailwind's utility-class
+   tokens, so classes like bg-primary / text-text-heading / bg-success
+   work without redefining any color twice. */
+@theme inline {
+  --color-primary: var(--oak-navy);
+  --color-primary-hover: var(--oak-shadow);
+  --color-success: var(--oak-success);
+  --color-error: var(--oak-error);
+  --color-background: var(--oak-page);
+  --color-surface: var(--oak-white);
+  --color-text-heading: var(--oak-text);
+  --color-text-body: var(--oak-text);
+  --color-text-muted: var(--oak-muted);
+  --color-border: var(--oak-border);
+  --color-input-bg: var(--oak-input);
 }
 
 @font-face {
