@@ -4,7 +4,7 @@ import { PAGE_ACCESS, type Role } from "@/lib/types";
 
 const ADMIN_ONLY_PATHS = ["/checkin", "/attendance", "/admin-manage", "/admin-change-password"];
 
-export function proxy(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   if (ADMIN_ONLY_PATHS.includes(path)) {
