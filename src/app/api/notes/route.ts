@@ -32,3 +32,30 @@ export async function POST(request: Request) {
   }
   return NextResponse.json(data);
 }
+
+export async function GET(request: Request) {
+  const participant = await getCurrentParticipant();
+  if (!participant) {
+    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const session_id = searchParams.get("session_id");
+
+  let query = supabaseAdmin
+    .from("session_notes")
+    .select("id, session_id, note_text, updated_at")
+    .eq("participant_id", participant.id);
+
+  if (session_id) {
+    query = query.eq("session_id", session_id);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data);
+}

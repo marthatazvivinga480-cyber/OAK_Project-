@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseClient";
-import { getCurrentAdmin } from "@/lib/session";
+import { getAuthorizedStaff } from "@/lib/session";
 
 export async function POST(request: Request) {
-  const scanner = await getCurrentAdmin();
+  const scanner = await getAuthorizedStaff();
 
   if (!scanner) {
     return NextResponse.json({ error: "Not authorized to check in participants" }, { status: 403 });
@@ -24,9 +24,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Participant Not Found" }, { status: 404 });
   }
 
+  const adminId = scanner.type === "admin" ? scanner.id : null; // Only store UUID if it matches admin schema
+
   const { data: checkin, error: insertError } = await supabaseAdmin
     .from("checkins")
-    .insert({ participant_id: participant.id, checked_in_by: scanner.id })
+    .insert({ participant_id: participant.id, checked_in_by: adminId })
     .select()
     .single();
 
@@ -37,28 +39,21 @@ export async function POST(request: Request) {
         { status: 409 }
       );
     }
-    return NextResponse.json({ error: insertError.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to record check-in" }, { status: 500 });
   }
 
-  const { count: totalRegistered } = await supabaseAdmin
-  .from("participants")
-  .select("*", { count: "exact", head: true });
+  // Optimize counting using promise.all
+  const formatter = new Intl.DateTimeFormat("en-US", { timeZone: "Africa/Harare", year: "numeric", month: "2-digit", day: "2-digit" });
+  const parts = formatter.formatToParts(new Date());
+  const year = parts.find(p => p.type === "year")?.value;
+  const month = parts.find(p => p.type === "month")?.value;
+  const day = parts.find(p => p.type === "day")?.value;
+  const todayStr = `${year}-${month}-${day}`;
 
-const { count: totalCheckedIn } = await supabaseAdmin
-  .from("checkins")
-  .select("*", { count: "exact", head: true })
-  .eq("check_in_date", new Date().toISOString().split("T")[0]);
-
-return NextResponse.json({
-  participant: {
-    first_name: participant.first_name,
-    last_name: participant.last_name,
-    organization: participant.organization,
-    role: participant.role,
-  },
-  check_in_time: checkin.check_in_time,
-  live_stats: { total_registered: totalRegistered ?? 0, total_checked_in: totalCheckedIn ?? 0 },
-});
+  const [registeredRes, checkedInRes] = await Promise.all([
+    supabaseAdmin.from("participants").select("id", { count: "exact", head: true }),
+    supabaseAdmin.from("checkins").select("id", { count: "exact", head: true }).eq("check_in_date", todayStr)
+  ]);
 
   return NextResponse.json({
     participant: {
@@ -68,5 +63,9 @@ return NextResponse.json({
       role: participant.role,
     },
     check_in_time: checkin.check_in_time,
+    live_stats: { 
+      total_registered: registeredRes.count ?? 0, 
+      total_checked_in: checkedInRes.count ?? 0 
+    },
   });
 }

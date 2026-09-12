@@ -2,10 +2,12 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseClient";
 import { setSessionCookie } from "@/lib/session";
 import type { Role } from "@/lib/types";
+import crypto from "crypto";
+import { signCookieValue } from "@/lib/cookieSecurity";
 
 function generateRegistrationId(): string {
-  const rand = () => Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `OAK-2026-${rand()}-${rand()}`;
+  const rand = crypto.randomBytes(4).toString("hex").toUpperCase();
+  return `OAK-2026-${rand.slice(0,4)}-${rand.slice(4,8)}`;
 }
 
 export async function POST(request: Request) {
@@ -31,27 +33,53 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid role" }, { status: 400 });
   }
 
-  const registration_id = generateRegistrationId();
-  const qr_code_id = role === "Partner" ? registration_id : null;
+  let assignedRole = role;
+  // Prevent unauthorized privilege escalation
+  if (["Coordination Team", "OAK Staff"].includes(role)) {
+    const accessCode = body.staff_access_code; // Expecting a staff code if registering as staff
+    const expectedCode = process.env.STAFF_ACCESS_CODE || "OAK-STAFF-2026";
+    if (accessCode !== expectedCode) {
+      assignedRole = "Partner"; // Fallback to safe role
+    }
+  }
 
-  const { data, error } = await supabaseAdmin
-    .from("participants")
-    .insert({
-      registration_id, first_name, last_name, organization,
-      sub_partner_program_area, role, email, phone,
-      dietary_requirements, accessibility_requirements,
-      travel_requirements, accommodation_requirements, qr_code_id,
-    })
-    .select()
-    .single();
+  let registration_id = "";
+  let data = null;
+  let attempts = 0;
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  while (attempts < 3) {
+    registration_id = generateRegistrationId();
+    const qr_code_id = assignedRole === "Partner" ? registration_id : null;
+
+    const { data: insertData, error } = await supabaseAdmin
+      .from("participants")
+      .insert({
+        registration_id, first_name, last_name, organization,
+        sub_partner_program_area, role: assignedRole, email, phone,
+        dietary_requirements, accessibility_requirements,
+        travel_requirements, accommodation_requirements, qr_code_id,
+      })
+      .select()
+      .single();
+
+    if (!error) {
+      data = insertData;
+      break;
+    }
+    
+    if (error.code !== "23505") { // Not a unique constraint violation
+      return NextResponse.json({ error: "Failed to register. Please try again." }, { status: 500 });
+    }
+    attempts++;
+  }
+
+  if (!data) {
+    return NextResponse.json({ error: "Failed to generate unique ID" }, { status: 500 });
   }
 
   await setSessionCookie(registration_id);
 
   const response = NextResponse.json({ role: data.role, registration_id: data.registration_id });
-  response.cookies.set("oak_role", data.role, { path: "/", maxAge: 60 * 60 * 24 * 14 });
+  response.cookies.set("oak_role", signCookieValue(data.role), { path: "/", maxAge: 60 * 60 * 24 * 14 });
   return response;
 }
