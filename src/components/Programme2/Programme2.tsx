@@ -61,7 +61,7 @@ const takeaways = [
   "Peer exchange is rated more valuable than expert-led sessions (92% vs 74%)",
 ];
 
-const resources = [
+const resources: { title: string; meta: string; href?: string; filename?: string }[] = [
   {
     title: "Opening Plenary Presentation",
     meta: "PDF · 3.2 MB · Day 1",
@@ -80,7 +80,9 @@ const resources = [
   },
   {
     title: "Photo Gallery (High Res)",
-    meta: "ZIP · 184 MB · All Days",
+    meta: "ZIP · 183.2 MB · All Days",
+    href: "/photo%20gallery/New%20Compressed%20(zipped)%20Folder%20(2).zip",
+    filename: "OAK-Photo-Gallery.zip",
   },
 ];
 
@@ -114,6 +116,7 @@ const gallery = [
 export default function ProgrammePage() {
   const [activeTab, setActiveTab] = useState<"Schedule" | "Docs">("Docs");
   const [notes, setNotes] = useState(sessionNotes);
+  const [downloadMessage, setDownloadMessage] = useState("");
 
   const addNote = () => {
     const newNote: SessionNote = {
@@ -389,9 +392,8 @@ export default function ProgrammePage() {
 
               <div className="flex w-full flex-col gap-3 pt-3">
                 {resources.map((resource) => (
-                  <button
+                  <div
                     key={resource.title}
-                    type="button"
                     className="flex w-full items-center gap-[14px] rounded-[24px] border border-[#1C2E5A1A] bg-white p-4 text-left shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--oak-input)]">
@@ -410,16 +412,41 @@ export default function ProgrammePage() {
                       <p className="pt-0.5 font-inter text-[12px] leading-4 text-[var(--oak-muted)]">
                         {resource.meta}
                       </p>
+                      {!resource.href && (
+                        <p className="pt-1 font-inter text-[12px] text-[var(--oak-muted)]">
+                          File not yet available
+                        </p>
+                      )}
                     </div>
 
-                    <Download
-                      size={15}
-                      strokeWidth={2}
-                      className="shrink-0 text-[var(--oak-muted)]"
-                    />
-                  </button>
+                    {resource.href ? (
+                      <a
+                        href={resource.href}
+                        download={resource.filename}
+                        aria-label={`Download ${resource.title}`}
+                        title={`Download ${resource.title}`}
+                        onClick={() => setDownloadMessage("")}
+                        className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl text-[var(--oak-muted)] transition hover:bg-[var(--oak-input)] hover:text-[var(--oak-navy)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--oak-navy)] active:scale-95"
+                      >
+                        <Download size={18} strokeWidth={2} aria-hidden="true" />
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        aria-label={`Download ${resource.title}`}
+                        title={`Download ${resource.title}`}
+                        onClick={() => setDownloadMessage(`${resource.title} is not available to download yet. Please try again once the file has been added.`)}
+                        className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl text-[var(--oak-muted)] transition hover:bg-[var(--oak-input)] hover:text-[var(--oak-navy)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--oak-navy)] active:scale-95"
+                      >
+                        <Download size={18} strokeWidth={2} aria-hidden="true" />
+                      </button>
+                    )}
+                  </div>
                 ))}
               </div>
+              <p role="status" aria-live="polite" className="pt-3 font-inter text-[12px] leading-5 text-[var(--oak-muted)]">
+                {downloadMessage}
+              </p>
             </section>
           </>
         )}
