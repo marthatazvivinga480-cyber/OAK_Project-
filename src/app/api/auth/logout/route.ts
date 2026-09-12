@@ -5,3 +5,4 @@ export async function POST() {
   await clearSessionCookies();
   return NextResponse.json({ success: true });
 }
+

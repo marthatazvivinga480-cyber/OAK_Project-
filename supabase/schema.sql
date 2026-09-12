@@ -83,3 +83,4 @@ CREATE INDEX IF NOT EXISTS idx_participants_email ON public.participants(email);
 CREATE INDEX IF NOT EXISTS idx_participants_registration_id ON public.participants(registration_id);
 CREATE INDEX IF NOT EXISTS idx_checkins_date ON public.checkins(check_in_date);
 CREATE INDEX IF NOT EXISTS idx_sessions_day_time ON public.sessions(day, start_time);
+

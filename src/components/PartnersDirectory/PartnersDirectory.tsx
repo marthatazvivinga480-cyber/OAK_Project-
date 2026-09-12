@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import {
   ChevronRight,
@@ -8,93 +8,6 @@ import {
 } from "lucide-react";
 
 import Sidebar from "@/components/Sidebar";
-
-type Partner = {
-  initials: string;
-  name: string;
-  region: string;
-  tags: string[];
-  since: string;
-  website: string;
-  slug: string;
-  mutedLogo?: boolean;
-};
-
-const PARTNERS: Partner[] = [
-  {
-    initials: "OSF",
-    name: "Open Society Foundations",
-    region: "Global",
-    tags: ["Foundation", "Democracy", "Human Rights"],
-    since: "2018",
-    website: "opensocietyfoundations.org",
-    slug: "open-society-foundations",
-  },
-  {
-    initials: "ACA",
-    name: "Africa Climate Alliance",
-    region: "Sub-Saharan Africa",
-    tags: ["NGO", "Climate Justice", "Youth Advocacy"],
-    since: "2020",
-    website: "africaclimatealliance.org",
-    slug: "africa-climate-alliance",
-  },
-  {
-    initials: "NEC",
-    name: "Nordic Evaluation Centre",
-    region: "Northern Europe",
-    tags: ["Research", "Evaluation", "Learning"],
-    since: "2021",
-    website: "nordicevaluation.org",
-    slug: "nordic-evaluation-centre",
-  },
-  {
-    initials: "MRG",
-    name: "MENA Rights Group",
-    region: "Middle East & North Africa",
-    tags: ["NGO", "Human Rights", "Documentation"],
-    since: "2019",
-    website: "menarights.org",
-    slug: "mena-rights-group",
-  },
-  {
-    initials: "DFI",
-    name: "Digital Frontiers Institute",
-    region: "Global / East Africa",
-    tags: ["Research", "Digital Rights", "Internet Freedom"],
-    since: "2022",
-    website: "digitalfrontiers.org",
-    slug: "digital-frontiers-institute",
-  },
-  {
-    initials: "GAL",
-    name: "Global Advocacy Lab",
-    region: "Global",
-    tags: ["NGO", "Communications", "Campaigns"],
-    since: "2023",
-    website: "globaladvocacylab.org",
-    slug: "global-advocacy-lab",
-  },
-  {
-    initials: "SP",
-    name: "Sciences Po Paris",
-    region: "Western Europe",
-    tags: ["Academic", "Research", "Policy"],
-    since: "2020",
-    website: "sciencespo.fr",
-    slug: "sciences-po-paris",
-    mutedLogo: true,
-  },
-  {
-    initials: "EFG",
-    name: "Environmental Funders Group",
-    region: "Europe",
-    tags: ["Network", "Environment", "Climate"],
-    since: "2017",
-    website: "envfunders.eu",
-    slug: "environmental-funders-group",
-  },
-];
 
 const REGIONS = [
   "All Regions",
@@ -105,37 +18,45 @@ const REGIONS = [
 ];
 
 const SUB_PARTNERS = [
-  {
-    initials: "OSF",
-    name: "OSF",
-    region: "Global",
-  },
-  {
-    initials: "ACA",
-    name: "ACA",
-    region: "Sub-Saharan Africa",
-  },
-  {
-    initials: "NEC",
-    name: "NEC",
-    region: "Northern Europe",
-  },
+  { initials: "OSF", name: "OSF", region: "Global" },
+  { initials: "ACA", name: "ACA", region: "Sub-Saharan Africa" },
+  { initials: "NEC", name: "NEC", region: "Northern Europe" },
 ];
 
 export default function PartnersDirectory() {
   const [search, setSearch] = useState("");
-  const [selectedRegion, setSelectedRegion] =
-    useState("All Regions");
+  const [selectedRegion, setSelectedRegion] = useState("All Regions");
+  const [partners, setPartners] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/partners")
+      .then((res) => res.json())
+      .then((data) => {
+        const mapped = (data || []).map((p: any) => ({
+          initials: p.name ? p.name.substring(0, 3).toUpperCase() : "PRT",
+          name: p.name || "Unknown",
+          region: "Global",
+          tags: p.areas_of_work ? p.areas_of_work.split(",") : ["Partner"],
+          since: "2024",
+          website: p.website_url ? p.website_url.replace(/^https?:\/\//, '') : "",
+          slug: p.id,
+        }));
+        setPartners(mapped);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   const filteredPartners = useMemo(() => {
     const searchValue = search.trim().toLowerCase();
 
-    return PARTNERS.filter((partner) => {
+    return partners.filter((partner) => {
       const matchesSearch =
         !searchValue ||
         partner.name.toLowerCase().includes(searchValue) ||
         partner.region.toLowerCase().includes(searchValue) ||
-        partner.tags.some((tag) =>
+        partner.tags.some((tag: string) =>
           tag.toLowerCase().includes(searchValue)
         );
 
@@ -145,7 +66,7 @@ export default function PartnersDirectory() {
 
       return matchesSearch && matchesRegion;
     });
-  }, [search, selectedRegion]);
+  }, [search, selectedRegion, partners]);
 
   return (
     <div className="flex min-h-[1735px] bg-[#F4F5F7]">

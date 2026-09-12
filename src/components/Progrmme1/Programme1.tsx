@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ChevronDown,
   MapPin,
@@ -27,11 +27,28 @@ type SessionCardProps = {
 };
 
 export default function Programme() {
-  const [selectedDay, setSelectedDay] =
-    useState<DayKey>("day1");
+  const [selectedDay, setSelectedDay] = useState<DayKey>("day1");
+  const [activeTab, setActiveTab] = useState<"schedule" | "docs">("schedule");
+  const [sessions, setSessions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [activeTab, setActiveTab] =
-    useState<"schedule" | "docs">("schedule");
+  useEffect(() => {
+    fetch("/api/sessions")
+      .then((res) => res.json())
+      .then((data) => {
+        setSessions(data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const dayMap: Record<DayKey, string> = {
+    day1: "Day 1",
+    day2: "Day 2",
+    day3: "Day 3",
+  };
+  const currentDayLabel = dayMap[selectedDay];
+  const currentSessions = sessions.filter((s) => s.day === currentDayLabel);
 
   return (
     <div className="flex min-h-[1179px] bg-[#F4F5F7]">
@@ -114,163 +131,46 @@ export default function Programme() {
                 </div>
               </div>
 
-              {selectedDay === "day1" ? (
+              {loading ? (
+                <div className="mt-[20px] text-center text-[#6B7590]">Loading schedule...</div>
+              ) : currentSessions.length > 0 ? (
                 <>
-                  {/* FEATURED SESSION */}
-                  <div className="h-[183.5px] w-full pt-[20px]">
-                    <section className="relative h-[163.5px] w-full overflow-hidden rounded-[24px] bg-[linear-gradient(135deg,#0E1726_0%,#1A2A4A_100%)] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-                      <div className="pointer-events-none absolute right-[-32px] top-[-18px] h-[160px] w-[160px] rounded-full bg-[radial-gradient(circle,rgba(168,187,206,0.18)_0%,rgba(168,187,206,0)_70%)]" />
-
-                      <div className="absolute left-[20px] top-[20px] h-[124px] w-[568px]">
-                        <div className="flex h-[15px] items-center gap-[8px]">
-                          <div className="flex items-center gap-[4px]">
-                            <Star
-                              className="h-[11px] w-[11px] text-[#A8BBCE]"
-                              strokeWidth={1}
-                            />
-
-                            <span className="font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#A8BBCE]">
-                              Featured
-                            </span>
-                          </div>
-
-                          <span className="font-inter text-[16px] font-normal leading-[24px] text-white/20">
-                            ·
-                          </span>
-
-                          <span className="font-inter text-[10px] font-semibold leading-[15px] text-white/40">
-                            09:00 – 10:30
-                          </span>
-                        </div>
-
-                        <h2 className="m-0 h-[40px] w-full pt-[12px] font-chillax text-[20px] font-bold leading-[27.5px] tracking-[0px] text-white">
-                          Opening Plenary: Pathways to
-                          Impact
-                        </h2>
-
-                        <div className="flex h-[32px] w-full items-start gap-[6px] pt-[12px]">
-                          <div className="flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-white/10">
-                            <span className="font-inter text-[9px] font-bold leading-[12.86px] text-white">
-                              D
-                            </span>
-                          </div>
-
-                          <span className="font-inter text-[14px] font-normal leading-[20px] text-[#A8BBCEB2]">
-                            Dr. Helena Moreau · OAK
-                            Foundation
-                          </span>
-                        </div>
-
-                        <div className="mt-[8px] flex items-center gap-[4px]">
-                          <MapPin
-                            className="h-[11px] w-[11px] shrink-0 text-[#A8BBCE73]"
-                            strokeWidth={1.25}
-                          />
-
-                          <span className="font-inter text-[12px] font-normal leading-[16px] text-[#A8BBCE73]">
-                            Main Hall A
-                          </span>
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-
                   {/* LEGEND */}
                   <div className="flex h-[32.5px] w-full items-start gap-[12px] pt-[16px]">
-                    <LegendItem
-                      label="Plenary"
-                      colour="#1C2E5A"
-                    />
-
-                    <LegendItem
-                      label="Breakout"
-                      colour="#F59E0B"
-                    />
-
-                    <LegendItem
-                      label="Workshop"
-                      colour="#8B5CF6"
-                    />
-
-                    <LegendItem
-                      label="Social"
-                      colour="#F97316"
-                    />
+                    <LegendItem label="Plenary" colour="#1C2E5A" />
+                    <LegendItem label="Breakout" colour="#F59E0B" />
+                    <LegendItem label="Workshop" colour="#8B5CF6" />
+                    <LegendItem label="Social" colour="#F97316" />
                   </div>
 
-                  {/* 08:00 */}
-                  <TimelineDivider
-                    time="08:00"
-                    label="Registration & Welcome Coffee"
-                    compact
-                  />
+                  {currentSessions.map((s, idx) => {
+                    const tTitle = s.title.toLowerCase();
+                    let type: SessionType = "Plenary";
+                    if (tTitle.includes("breakout")) type = "Breakout";
+                    if (tTitle.includes("workshop")) type = "Workshop";
+                    if (tTitle.includes("social") || tTitle.includes("reception") || tTitle.includes("dinner")) type = "Social";
+                    
+                    if (tTitle.includes("break") || tTitle.includes("lunch") || tTitle.includes("registration")) {
+                       return <TimelineDivider key={idx} time={s.start_time} label={s.title} compact={tTitle.includes("registration")} />;
+                    }
 
-                  {/* 10:30 */}
-                  <TimelineDivider
-                    time="10:30"
-                    label="Coffee Break"
-                  />
-
-                  {/* BREAKOUT */}
-                  <SessionCard
-                    start="10:50"
-                    end="12:00"
-                    title="Thematic Dialogue: Climate Justice & Grantmaking"
-                    person="Samuel Okafor · Africa Climate Alliance"
-                    location="Conference Room B2"
-                    type="Breakout"
-                  />
-
-                  {/* WORKSHOP */}
-                  <SessionCard
-                    start="10:50"
-                    end="12:00"
-                    title="Workshop: Measuring Long-term Change"
-                    person="Dr. Ingrid Holm · Nordic Evaluation Centre"
-                    location="Workshop Room C"
-                    type="Workshop"
-                  />
-
-                  {/* 12:00 */}
-                  <TimelineDivider
-                    time="12:00"
-                    label="Networking Lunch"
-                  />
-
-                  {/* PLENARY */}
-                  <SessionCard
-                    start="13:30"
-                    end="14:30"
-                    title="Partner Spotlight: Rights-Based Approaches"
-                    person="Fatima Zahra Benali · MENA Rights Group"
-                    location="Main Hall A"
-                    type="Plenary"
-                  />
-
-                  {/* BREAKOUT */}
-                  <SessionCard
-                    start="14:45"
-                    end="16:00"
-                    title="Digital Rights in Authoritarian Contexts"
-                    person="Li Wei · Digital Frontiers Institute"
-                    location="Conference Room B1"
-                    type="Breakout"
-                  />
-
-                  {/* SOCIAL */}
-                  <SessionCard
-                    start="18:00"
-                    end="20:00"
-                    title="Welcome Reception & Dinner"
-                    location="Rooftop Terrace"
-                    type="Social"
-                  />
+                    return (
+                      <SessionCard
+                        key={idx}
+                        start={s.start_time}
+                        end={s.end_time || ""}
+                        title={s.title}
+                        person={s.speaker || undefined}
+                        location={s.venue || "TBD"}
+                        type={type}
+                      />
+                    );
+                  })}
                 </>
               ) : (
                 <div className="mt-[20px] rounded-[24px] border border-[#1C2E5A1A] bg-white p-[24px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
                   <p className="m-0 font-inter text-[14px] font-normal leading-[20px] text-[#6B7590]">
-                    Programme details for this day will
-                    be added here.
+                    Programme details for this day will be added here.
                   </p>
                 </div>
               )}
