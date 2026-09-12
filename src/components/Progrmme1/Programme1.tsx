@@ -80,7 +80,7 @@ export default function Programme() {
           {activeTab === "schedule" ? (
             <>
               {/* DAYS */}
-              <div className="h-[90px] w-full pt-[5px]">
+              <div className="w-full pt-[15px]">
                 <div className="grid h-[85px] w-full grid-cols-3 gap-[10px]">
                   <DayButton
                     active={selectedDay === "day1"}
