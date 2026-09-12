@@ -1,427 +1,497 @@
-
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  CalendarDays,
-  FileText,
-  Image as ImageIcon,
-  Lightbulb,
-  Paperclip,
-  Plus,
-  Download,
-  ArrowUpRight,
-  StickyNote,
+  ChevronDown,
+  MapPin,
+  Star,
 } from "lucide-react";
 
-type SessionNote = {
-  initials: string;
-  name: string;
-  organisation: string;
-  time: string;
-  note: string;
+import Sidebar from "@/components/Sidebar";
+
+type DayKey = "day1" | "day2" | "day3";
+
+type SessionType =
+  | "Plenary"
+  | "Breakout"
+  | "Workshop"
+  | "Social";
+
+type SessionCardProps = {
+  start: string;
+  end: string;
+  title: string;
+  person?: string;
+  location: string;
+  type: SessionType;
 };
 
-const sessionNotes: SessionNote[] = [
-  {
-    initials: "MS",
-    name: "Maria Schmidt",
-    organisation: "Open Society Foundations",
-    time: "Day 1 · 14:32",
-    note: "The rights-based approaches session surfaced strong demand for a shared learn...",
-  },
-  {
-    initials: "JO",
-    name: "James Odhiambo",
-    organisation: "OAK Foundation",
-    time: "Day 1 · 16:50",
-    note: "Digital Rights breakout: participants want a working group to share tools for operating in restricted digital environments. Interested orgs: Digital Frontiers, Access Now, EFF.",
-  },
-  {
-    initials: "AD",
-    name: "Awa Diallo",
-    organisation: "Geneva Secretariat",
-    time: "Day 2 · 11:15",
-    note: "Strategic communications workshop highly rated. Rashida's adaptive messaging framework is directly applicable across 60% of the portfolio. Requesting follow-up toolkit.",
-  },
-  {
-    initials: "PAD",
-    name: "Prof. Amara Diallo",
-    organisation: "Sciences Po Paris",
-    time: "Day 2 · 16:00",
-    note: "Fishbowl revealed consensus: philanthropy needs to accept longer time horizons (10+ years) and better share learning. Key ask: OAK to publish failure cases alongside success stories.",
-  },
-];
+export default function Programme() {
+  const [selectedDay, setSelectedDay] =
+    useState<DayKey>("day1");
 
-const takeaways = [
-  "Philanthropy needs to accept 10+ year time horizons for systemic change",
-  "Shared learning infrastructure is the most requested resource across the portfolio",
-  "Digital rights must be integrated into all programme areas, not siloed",
-  "Rights-based framing significantly improves grantee advocacy effectiveness",
-  "Peer exchange is rated more valuable than expert-led sessions (92% vs 74%)",
-];
-
-const resources = [
-  {
-    title: "Opening Plenary Presentation",
-    meta: "PDF · 3.2 MB · Day 1",
-  },
-  {
-    title: "OAK Portfolio Overview 2024–26",
-    meta: "PDF · 1.8 MB · Day 2",
-  },
-  {
-    title: "Action Planning Workbook",
-    meta: "DOCX · 0.9 MB · Day 3",
-  },
-  {
-    title: "Partner Contact Directory",
-    meta: "XLSX · 0.4 MB · All Days",
-  },
-  {
-    title: "Photo Gallery (High Res)",
-    meta: "ZIP · 184 MB · All Days",
-  },
-];
-
-const gallery = [
-  {
-    title: "Opening plenary session",
-    src: "/programme/opening-plenary.jpg",
-  },
-  {
-    title: "Partner discussion",
-    src: "/programme/partner-discussion.jpg",
-  },
-  {
-    title: "Workshop session",
-    src: "/programme/workshop-session.jpg",
-  },
-  {
-    title: "Networking session",
-    src: "/programme/networking.jpg",
-  },
-  {
-    title: "Group discussion",
-    src: "/programme/group-discussion.jpg",
-  },
-  {
-    title: "Closing session",
-    src: "/programme/closing-session.jpg",
-  },
-];
-
-export default function ProgrammePage() {
-  const [activeTab, setActiveTab] = useState<"Schedule" | "Docs">("Docs");
-  const [notes, setNotes] = useState(sessionNotes);
-
-  const addNote = () => {
-    const newNote: SessionNote = {
-      initials: "YO",
-      name: "You",
-      organisation: "OAK Foundation",
-      time: "Just now",
-      note: "New session note added.",
-    };
-
-    setNotes((current) => [newNote, ...current]);
-  };
+  const [activeTab, setActiveTab] =
+    useState<"schedule" | "docs">("schedule");
 
   return (
-    <main className="min-h-screen w-full bg-[var(--oak-page)]">
-      <div className="mx-auto flex w-full max-w-[672px] flex-col gap-[13px] px-8 py-10">
-        {/* =====================================================
-            PAGE HEADER
-        ===================================================== */}
-        <header className="w-full">
-          <h1 className="font-chillax text-[24px] font-bold leading-8 text-[var(--oak-text)]">
-            Programme
-          </h1>
+    <div className="flex min-h-[1179px] bg-[#F4F5F7]">
+      <Sidebar />
 
-          <p className="pt-0.5 font-inter text-[14px] leading-5 text-[var(--oak-muted)]">
-            OAK Partner Convening 2026
-          </p>
-        </header>
+      <main className="min-h-[1179px] min-w-0 flex-1 bg-[#F4F5F7]">
+        <div className="mx-auto w-full max-w-[672px] px-[32px] py-[40px]">
+          {/* HEADER */}
+          <div className="h-[54px] w-[195.234375px]">
+            <h1 className="m-0 h-[32px] font-chillax text-[24px] font-bold leading-[32px] tracking-[0px] text-[#0E1726]">
+              Programme
+            </h1>
 
-        {/* =====================================================
-            TABS
-        ===================================================== */}
-        <div className="flex w-full items-center justify-between rounded-[7px] bg-[#E5E8EE] p-1">
-          <button
-            type="button"
-            onClick={() => setActiveTab("Schedule")}
-            className={[
-              "flex flex-1 items-center justify-center rounded-[12px] px-[14px] py-2",
-              "font-inter text-[12px] capitalize leading-4",
-              activeTab === "Schedule"
-                ? "bg-white text-[var(--oak-text)] shadow-[0_1px_4px_0_#00000014]"
-                : "text-[var(--oak-muted)]",
-            ].join(" ")}
-          >
-            Schedule
-          </button>
+            <p className="m-0 h-[22px] pt-[2px] font-inter text-[14px] font-normal leading-[20px] tracking-[0px] text-[#6B7590]">
+              OAK Partner Convening 2026
+            </p>
+          </div>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("Docs")}
-            className={[
-              "flex flex-1 items-center justify-center rounded-[12px] px-[14px] py-2",
-              "font-inter text-[12px] capitalize leading-4",
-              activeTab === "Docs"
-                ? "bg-white text-[var(--oak-text)] shadow-[0_1px_4px_0_#00000014]"
-                : "text-[var(--oak-muted)]",
-            ].join(" ")}
-          >
-            Docs
-          </button>
-        </div>
+          {/* SCHEDULE / DOCS */}
+          <div className="mt-[16px] flex h-[40px] w-full max-w-[602px] items-center justify-between rounded-[7px] bg-[#E5E8EE] p-[4px]">
+            <button
+              type="button"
+              onClick={() => setActiveTab("schedule")}
+              className={`flex h-[32px] w-[140px] shrink-0 items-center justify-center rounded-[12px] px-[44px] py-[8px] text-[12px] font-semibold leading-[16px] ${
+                activeTab === "schedule"
+                  ? "bg-white text-[#0E1726] shadow-[0_1px_4px_0_#00000014]"
+                  : "bg-transparent text-[#6B7590]"
+              }`}
+            >
+              Schedule
+            </button>
 
-        {/* =====================================================
-            SCHEDULE VIEW
-        ===================================================== */}
-        {activeTab === "Schedule" && (
-          <section className="rounded-[24px] border border-[#1C2E5A1A] bg-white p-5 shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-            <div className="flex items-center gap-2">
-              <CalendarDays
-                size={17}
-                strokeWidth={1.8}
-                className="text-[var(--oak-navy)]"
-              />
+            <button
+              type="button"
+              onClick={() => setActiveTab("docs")}
+              className={`flex h-[32px] w-[56px] shrink-0 items-center justify-center rounded-[12px] px-[14px] py-[8px] text-[12px] font-semibold leading-[16px] ${
+                activeTab === "docs"
+                  ? "bg-white text-[#0E1726] shadow-[0_1px_4px_0_#00000014]"
+                  : "bg-transparent text-[#6B7590]"
+              }`}
+            >
+              Docs
+            </button>
+          </div>
 
-              <h2 className="font-chillax text-[18px] font-semibold leading-7 text-[var(--oak-text)]">
-                Programme Schedule
-              </h2>
-            </div>
-
-            <div className="mt-4 flex flex-col gap-3">
-              {[
-                ["Day 1", "Opening Plenary", "09:00"],
-                ["Day 1", "Rights-Based Approaches", "14:00"],
-                ["Day 2", "Strategic Communications", "11:00"],
-                ["Day 2", "Fishbowl Discussion", "16:00"],
-                ["Day 3", "Action Planning", "10:00"],
-              ].map(([day, title, time]) => (
-                <div
-                  key={`${day}-${title}`}
-                  className="rounded-[16px] bg-[var(--oak-input)] p-4"
-                >
-                  <p className="font-inter text-[10px] font-bold uppercase tracking-[1px] text-[var(--oak-muted)]">
-                    {day} · {time}
-                  </p>
-
-                  <p className="pt-1 font-inter text-[14px] font-bold text-[var(--oak-text)]">
-                    {title}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* =====================================================
-            SESSION NOTES
-        ===================================================== */}
-        {activeTab === "Docs" && (
-          <>
-            <section className="w-full pt-[3px]">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <StickyNote
-                    size={17}
-                    strokeWidth={1.8}
-                    className="text-[var(--oak-navy)]"
+          {activeTab === "schedule" ? (
+            <>
+              {/* DAYS */}
+              <div className="h-[90px] w-full pt-[5px]">
+                <div className="grid h-[85px] w-full grid-cols-3 gap-[10px]">
+                  <DayButton
+                    active={selectedDay === "day1"}
+                    weekday="Mon"
+                    day="Day 1"
+                    date="9 Mar"
+                    onClick={() =>
+                      setSelectedDay("day1")
+                    }
                   />
 
-                  <h2 className="font-chillax text-[18px] font-semibold leading-7 text-[var(--oak-text)]">
-                    Session Notes
-                  </h2>
-                </div>
+                  <DayButton
+                    active={selectedDay === "day2"}
+                    weekday="Tue"
+                    day="Day 2"
+                    date="10 Mar"
+                    onClick={() =>
+                      setSelectedDay("day2")
+                    }
+                  />
 
-                <button
-                  type="button"
-                  onClick={addNote}
-                  className="flex items-center gap-1.5 rounded-[12px] bg-[var(--oak-navy)] px-[14px] py-2 font-chillax text-[12px] font-semibold leading-4 text-white shadow-[0_4px_20px_0_#1C2E5A4D]"
-                >
-                  <Plus size={14} strokeWidth={2} />
-                  Add Note
-                </button>
+                  <DayButton
+                    active={selectedDay === "day3"}
+                    weekday="Wed"
+                    day="Day 3"
+                    date="11 Mar"
+                    onClick={() =>
+                      setSelectedDay("day3")
+                    }
+                  />
+                </div>
               </div>
 
-              <div className="flex w-full flex-col gap-3 pt-3">
-                {notes.map((note, index) => (
-                  <article
-                    key={`${note.initials}-${index}`}
-                    className="w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-4 shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[12px] bg-[var(--oak-navy)]">
-                          <span className="font-inter text-[10px] font-bold leading-[15px] text-white">
-                            {note.initials}
+              {selectedDay === "day1" ? (
+                <>
+                  {/* FEATURED SESSION */}
+                  <div className="h-[183.5px] w-full pt-[20px]">
+                    <section className="relative h-[163.5px] w-full overflow-hidden rounded-[24px] bg-[linear-gradient(135deg,#0E1726_0%,#1A2A4A_100%)] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+                      <div className="pointer-events-none absolute right-[-32px] top-[-18px] h-[160px] w-[160px] rounded-full bg-[radial-gradient(circle,rgba(168,187,206,0.18)_0%,rgba(168,187,206,0)_70%)]" />
+
+                      <div className="absolute left-[20px] top-[20px] h-[124px] w-[568px]">
+                        <div className="flex h-[15px] items-center gap-[8px]">
+                          <div className="flex items-center gap-[4px]">
+                            <Star
+                              className="h-[11px] w-[11px] text-[#A8BBCE]"
+                              strokeWidth={1}
+                            />
+
+                            <span className="font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#A8BBCE]">
+                              Featured
+                            </span>
+                          </div>
+
+                          <span className="font-inter text-[16px] font-normal leading-[24px] text-white/20">
+                            ·
+                          </span>
+
+                          <span className="font-inter text-[10px] font-semibold leading-[15px] text-white/40">
+                            09:00 – 10:30
                           </span>
                         </div>
 
-                        <div>
-                          <p className="font-inter text-[12px] font-bold leading-4 text-[var(--oak-text)]">
-                            {note.name}
-                          </p>
+                        <h2 className="m-0 h-[40px] w-full pt-[12px] font-chillax text-[20px] font-bold leading-[27.5px] tracking-[0px] text-white">
+                          Opening Plenary: Pathways to
+                          Impact
+                        </h2>
 
-                          <p className="font-inter text-[10px] leading-[15px] text-[var(--oak-muted)]">
-                            {note.organisation}
-                          </p>
+                        <div className="flex h-[32px] w-full items-start gap-[6px] pt-[12px]">
+                          <div className="flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-white/10">
+                            <span className="font-inter text-[9px] font-bold leading-[12.86px] text-white">
+                              D
+                            </span>
+                          </div>
+
+                          <span className="font-inter text-[14px] font-normal leading-[20px] text-[#A8BBCEB2]">
+                            Dr. Helena Moreau · OAK
+                            Foundation
+                          </span>
+                        </div>
+
+                        <div className="mt-[8px] flex items-center gap-[4px]">
+                          <MapPin
+                            className="h-[11px] w-[11px] shrink-0 text-[#A8BBCE73]"
+                            strokeWidth={1.25}
+                          />
+
+                          <span className="font-inter text-[12px] font-normal leading-[16px] text-[#A8BBCE73]">
+                            Main Hall A
+                          </span>
                         </div>
                       </div>
+                    </section>
+                  </div>
 
-                      <span className="shrink-0 rounded-[8px] bg-[var(--oak-input)] px-2 py-1 font-inter text-[10px] leading-[15px] text-[var(--oak-muted)]">
-                        {note.time}
-                      </span>
-                    </div>
+                  {/* LEGEND */}
+                  <div className="flex h-[32.5px] w-full items-start gap-[12px] pt-[16px]">
+                    <LegendItem
+                      label="Plenary"
+                      colour="#1C2E5A"
+                    />
 
-                    <p className="pt-[10px] font-inter text-[14px] leading-[23px] text-[var(--oak-text)]">
-                      {note.note}
-                    </p>
-                  </article>
-                ))}
-              </div>
-            </section>
+                    <LegendItem
+                      label="Breakout"
+                      colour="#F59E0B"
+                    />
 
-            {/* =================================================
-                PHOTO GALLERY
-            ================================================= */}
-            <section className="w-full pt-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <ImageIcon
-                    size={17}
-                    strokeWidth={1.8}
-                    className="text-[var(--oak-navy)]"
+                    <LegendItem
+                      label="Workshop"
+                      colour="#8B5CF6"
+                    />
+
+                    <LegendItem
+                      label="Social"
+                      colour="#F97316"
+                    />
+                  </div>
+
+                  {/* 08:00 */}
+                  <TimelineDivider
+                    time="08:00"
+                    label="Registration & Welcome Coffee"
+                    compact
                   />
 
-                  <h2 className="font-chillax text-[18px] font-semibold leading-7 text-[var(--oak-text)]">
-                    Photo Gallery
-                  </h2>
-                </div>
+                  {/* 10:30 */}
+                  <TimelineDivider
+                    time="10:30"
+                    label="Coffee Break"
+                  />
 
-                <span className="rounded-[8px] bg-[var(--oak-input)] px-[10px] py-1 font-inter text-[12px] leading-4 text-[var(--oak-muted)]">
-                  6 photos
+                  {/* BREAKOUT */}
+                  <SessionCard
+                    start="10:50"
+                    end="12:00"
+                    title="Thematic Dialogue: Climate Justice & Grantmaking"
+                    person="Samuel Okafor · Africa Climate Alliance"
+                    location="Conference Room B2"
+                    type="Breakout"
+                  />
+
+                  {/* WORKSHOP */}
+                  <SessionCard
+                    start="10:50"
+                    end="12:00"
+                    title="Workshop: Measuring Long-term Change"
+                    person="Dr. Ingrid Holm · Nordic Evaluation Centre"
+                    location="Workshop Room C"
+                    type="Workshop"
+                  />
+
+                  {/* 12:00 */}
+                  <TimelineDivider
+                    time="12:00"
+                    label="Networking Lunch"
+                  />
+
+                  {/* PLENARY */}
+                  <SessionCard
+                    start="13:30"
+                    end="14:30"
+                    title="Partner Spotlight: Rights-Based Approaches"
+                    person="Fatima Zahra Benali · MENA Rights Group"
+                    location="Main Hall A"
+                    type="Plenary"
+                  />
+
+                  {/* BREAKOUT */}
+                  <SessionCard
+                    start="14:45"
+                    end="16:00"
+                    title="Digital Rights in Authoritarian Contexts"
+                    person="Li Wei · Digital Frontiers Institute"
+                    location="Conference Room B1"
+                    type="Breakout"
+                  />
+
+                  {/* SOCIAL */}
+                  <SessionCard
+                    start="18:00"
+                    end="20:00"
+                    title="Welcome Reception & Dinner"
+                    location="Rooftop Terrace"
+                    type="Social"
+                  />
+                </>
+              ) : (
+                <div className="mt-[20px] rounded-[24px] border border-[#1C2E5A1A] bg-white p-[24px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+                  <p className="m-0 font-inter text-[14px] font-normal leading-[20px] text-[#6B7590]">
+                    Programme details for this day will
+                    be added here.
+                  </p>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="mt-[20px] rounded-[24px] border border-[#1C2E5A1A] bg-white p-[24px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+              <p className="m-0 font-inter text-[14px] font-normal leading-[20px] text-[#6B7590]">
+                Daily documentation posts will appear
+                here.
+              </p>
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function DayButton({
+  active,
+  weekday,
+  day,
+  date,
+  onClick,
+}: {
+  active: boolean;
+  weekday: string;
+  day: string;
+  date: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`h-[85px] rounded-[24px] p-[14px] text-left ${
+        active
+          ? "bg-[#162E55] shadow-[0_4px_20px_0_#1C2E5A4D]"
+          : "border border-[#1C2E5A1A] bg-white shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
+      }`}
+    >
+      <p
+        className={`m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] ${
+          active
+            ? "text-white/60"
+            : "text-[#6B7590]"
+        }`}
+      >
+        {weekday}
+      </p>
+
+      <p
+        className={`m-0 h-[20px] pt-[2px] font-chillax text-[18px] font-bold leading-[18px] ${
+          active
+            ? "text-white"
+            : "text-[#0E1726]"
+        }`}
+      >
+        {day}
+      </p>
+
+      <p
+        className={`m-0 h-[20px] pt-[4px] font-inter text-[12px] font-normal leading-[16px] ${
+          active
+            ? "text-white/60"
+            : "text-[#6B7590]"
+        }`}
+      >
+        {date}
+      </p>
+    </button>
+  );
+}
+
+function LegendItem({
+  label,
+  colour,
+}: {
+  label: string;
+  colour: string;
+}) {
+  return (
+    <div className="flex h-[16.5px] items-center gap-[6px]">
+      <span
+        className="h-[8px] w-[8px] rounded-full"
+        style={{ backgroundColor: colour }}
+      />
+
+      <span className="font-inter text-[11px] font-normal leading-[16.5px] text-[#6B7590]">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function TimelineDivider({
+  time,
+  label,
+  compact = false,
+}: {
+  time: string;
+  label: string;
+  compact?: boolean;
+}) {
+  return (
+    <div
+      className={`flex w-full items-center gap-[12px] px-[4px] ${
+        compact
+          ? "h-[28px] py-[6px]"
+          : "h-[36px] pb-[6px] pt-[14px]"
+      }`}
+    >
+      <span className="w-[40px] shrink-0 font-mono text-[12px] font-normal leading-[16px] text-[#6B7590]">
+        {time}
+      </span>
+
+      <div className="h-px flex-1 bg-[#1C2E5A1A]" />
+
+      <span className="shrink-0 whitespace-nowrap font-inter text-[12px] font-normal leading-[16px] text-[#6B7590]">
+        {label}
+      </span>
+
+      <div className="h-px flex-1 bg-[#1C2E5A1A]" />
+    </div>
+  );
+}
+
+function SessionCard({
+  start,
+  end,
+  title,
+  person,
+  location,
+  type,
+}: SessionCardProps) {
+  const badgeStyles: Record<
+    SessionType,
+    string
+  > = {
+    Plenary:
+      "border-[#C5CFDF] bg-[#EEF1F9] text-[#1C2E5A]",
+    Breakout:
+      "border-[#FDE68A] bg-[#FEF3C7] text-[#92400E]",
+    Workshop:
+      "border-[#DDD6FE] bg-[#F5F3FF] text-[#7C3AED]",
+    Social:
+      "border-[#FDBA74] bg-[#FFF7ED] text-[#C2410C]",
+  };
+
+  const dotStyles: Record<
+    SessionType,
+    string
+  > = {
+    Plenary: "bg-[#1C2E5A]",
+    Breakout: "bg-[#F59E0B]",
+    Workshop: "bg-[#8B5CF6]",
+    Social: "bg-[#F97316]",
+  };
+
+  return (
+    <div className="h-[111px] w-full pt-[8px]">
+      <button
+        type="button"
+        className="h-[103px] w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-[16px] text-left shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
+      >
+        <div className="flex h-[69px] w-full gap-[12px]">
+          <div className="h-[33px] w-[56px] shrink-0 pt-[2px] text-right">
+            <p className="m-0 h-[16px] font-mono text-[12px] font-bold leading-[16px] text-[#0E1726]">
+              {start}
+            </p>
+
+            <p className="m-0 h-[15px] font-inter text-[10px] font-normal leading-[15px] text-[#6B7590]">
+              –{end}
+            </p>
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex h-[27px] w-full items-start justify-between gap-[8px]">
+              <p className="m-0 min-w-0 flex-1 truncate font-inter text-[14px] font-semibold leading-[19.25px] text-[#0E1726]">
+                {title}
+              </p>
+
+              <div
+                className={`flex h-[27px] shrink-0 items-center justify-center gap-[4px] rounded-full border px-[10px] py-[4px] ${badgeStyles[type]}`}
+              >
+                <span
+                  className={`h-[6px] w-[6px] rounded-full ${dotStyles[type]}`}
+                />
+
+                <span className="whitespace-nowrap font-inter text-[11px] font-semibold leading-[16.5px] tracking-[0.22px]">
+                  {type}
                 </span>
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-3 pt-3">
-                {gallery.map((photo) => (
-                  <button
-                    key={photo.title}
-                    type="button"
-                    className="group relative h-[224px] overflow-hidden rounded-2xl bg-[#E5E8EE]"
-                  >
-                    <img
-                      src={photo.src}
-                      alt={photo.title}
-                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                    />
+            {person ? (
+              <p className="m-0 h-[22px] w-full truncate pt-[6px] font-inter text-[12px] font-normal leading-[16px] text-[#6B7590]">
+                {person}
+              </p>
+            ) : (
+              <div className="h-[22px]" />
+            )}
 
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 pt-10">
-                      <p className="text-left font-inter text-[11px] font-bold text-white">
-                        {photo.title}
-                      </p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </section>
+            <div className="flex h-[20px] w-full items-center gap-[4px] pt-[4px]">
+              <MapPin
+                className="h-[10px] w-[10px] shrink-0 text-[#6B7590]"
+                strokeWidth={1.2}
+              />
 
-            {/* =================================================
-                KEY TAKEAWAYS
-            ================================================= */}
-            <section className="w-full pt-6">
-              <div className="flex items-center gap-2">
-                <Lightbulb
-                  size={17}
-                  strokeWidth={1.8}
-                  className="text-[var(--oak-navy)]"
-                />
+              <span className="truncate font-inter text-[12px] font-normal leading-[16px] text-[#6B7590]">
+                {location}
+              </span>
 
-                <h2 className="font-chillax text-[18px] font-semibold leading-7 text-[var(--oak-text)]">
-                  Key Takeaways
-                </h2>
-              </div>
-
-              <div className="mt-3 rounded-[24px] border border-[#1C2E5A1A] bg-white p-5 shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-                {takeaways.map((takeaway, index) => (
-                  <div
-                    key={takeaway}
-                    className={[
-                      "flex gap-3",
-                      index > 0 ? "pt-[14px]" : "",
-                    ].join(" ")}
-                  >
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--oak-navy)]">
-                      <span className="font-inter text-[9px] font-bold leading-[14px] text-white">
-                        {index + 1}
-                      </span>
-                    </div>
-
-                    <p className="font-inter text-[14px] leading-[23px] text-[var(--oak-text)]">
-                      {takeaway}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* =================================================
-                RESOURCES
-            ================================================= */}
-            <section className="w-full pt-6">
-              <div className="flex items-center gap-2">
-                <Paperclip
-                  size={17}
-                  strokeWidth={1.8}
-                  className="text-[var(--oak-navy)]"
-                />
-
-                <h2 className="font-chillax text-[18px] font-semibold leading-7 text-[var(--oak-text)]">
-                  Resources
-                </h2>
-              </div>
-
-              <div className="flex w-full flex-col gap-3 pt-3">
-                {resources.map((resource) => (
-                  <button
-                    key={resource.title}
-                    type="button"
-                    className="flex w-full items-center gap-[14px] rounded-[24px] border border-[#1C2E5A1A] bg-white p-4 text-left shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
-                  >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--oak-input)]">
-                      <FileText
-                        size={19}
-                        strokeWidth={1.8}
-                        className="text-[var(--oak-navy)]"
-                      />
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-inter text-[14px] font-medium leading-5 text-[var(--oak-text)]">
-                        {resource.title}
-                      </p>
-
-                      <p className="pt-0.5 font-inter text-[12px] leading-4 text-[var(--oak-muted)]">
-                        {resource.meta}
-                      </p>
-                    </div>
-
-                    <Download
-                      size={15}
-                      strokeWidth={2}
-                      className="shrink-0 text-[var(--oak-muted)]"
-                    />
-                  </button>
-                ))}
-              </div>
-            </section>
-          </>
-        )}
-      </div>
-    </main>
+              <ChevronDown
+                className="ml-auto h-[14px] w-[14px] shrink-0 text-[#6B7590]"
+                strokeWidth={1.2}
+              />
+            </div>
+          </div>
+        </div>
+      </button>
+    </div>
   );
 }

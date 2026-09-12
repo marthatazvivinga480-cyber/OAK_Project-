@@ -19,15 +19,9 @@ export default function Home() {
             </p>
           </header>
 
-          <section
-            aria-labelledby="registration-heading"
-            className="mt-6 rounded-2xl border border-[#e3e7ec] bg-white p-6 font-inter text-[#16243a] max-sm:p-4"
-          >
-            <h2 id="registration-heading" className="mb-6 text-xl font-semibold">
-              Register for the convening
-            </h2>
+          <div className="font-inter text-[#16243a]">
             <RegistrationForm />
-          </section>
+          </div>
         </div>
       </section>
     </main>
