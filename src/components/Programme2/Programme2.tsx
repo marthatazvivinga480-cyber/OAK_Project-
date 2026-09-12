@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import {
   CalendarDays,
   FileText,
@@ -10,7 +11,6 @@ import {
   Paperclip,
   Plus,
   Download,
-  ArrowUpRight,
   StickyNote,
 } from "lucide-react";
 
@@ -87,27 +87,27 @@ const resources = [
 const gallery = [
   {
     title: "Opening plenary session",
-    src: "/programme/opening-plenary.jpg",
+    src: "/photo gallery/Image (Opening plenary session).png",
   },
   {
-    title: "Partner discussion",
-    src: "/programme/partner-discussion.jpg",
+    title: "Roundtable discussion",
+    src: "/photo gallery/Image (Roundtable discussion).png",
   },
   {
-    title: "Workshop session",
-    src: "/programme/workshop-session.jpg",
+    title: "Workshop in progress",
+    src: "/photo gallery/Image (Workshop in progress).png",
   },
   {
-    title: "Networking session",
-    src: "/programme/networking.jpg",
+    title: "Welcome reception dinner",
+    src: "/photo gallery/Image (Welcome reception dinner).png",
   },
   {
-    title: "Group discussion",
-    src: "/programme/group-discussion.jpg",
+    title: "Keynote speaker",
+    src: "/photo gallery/Image (Keynote speaker).png",
   },
   {
-    title: "Closing session",
-    src: "/programme/closing-session.jpg",
+    title: "Breakout group discussion",
+    src: "/photo gallery/Image (Breakout group discussion).png",
   },
 ];
 
@@ -314,9 +314,11 @@ export default function ProgrammePage() {
                     type="button"
                     className="group relative h-[224px] overflow-hidden rounded-2xl bg-[#E5E8EE]"
                   >
-                    <img
+                    <Image
                       src={photo.src}
                       alt={photo.title}
+                      fill
+                      sizes="(max-width: 672px) calc((100vw - 76px) / 2), 298px"
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
 
