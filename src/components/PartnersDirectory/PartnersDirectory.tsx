@@ -191,7 +191,7 @@ export default function PartnersDirectory() {
                         </p>
 
                         <div className="mt-[6px] flex flex-wrap items-center gap-[6px]">
-                          {partner.tags.map((tag) => (
+                          {partner.tags.map((tag: string) => (
                             <span
                               key={tag}
                               className="flex h-[23px] items-center justify-center whitespace-nowrap rounded-full bg-[#EEF1F5] px-[10px] font-inter text-[10px] font-semibold leading-[15px] text-[#6B7590]"
