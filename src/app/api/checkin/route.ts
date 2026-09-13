@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Participant Not Found" }, { status: 404 });
   }
 
-  const adminId = scanner.type === "admin" ? scanner.id : null; // Only store UUID if it matches admin schema
+  const adminId = scanner.type === "admin" ? scanner.id : null;
 
   const { data: checkin, error: insertError } = await supabaseAdmin
     .from("checkins")
@@ -42,7 +42,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to record check-in" }, { status: 500 });
   }
 
-  // Optimize counting using promise.all
   const formatter = new Intl.DateTimeFormat("en-US", { timeZone: "Africa/Harare", year: "numeric", month: "2-digit", day: "2-digit" });
   const parts = formatter.formatToParts(new Date());
   const year = parts.find(p => p.type === "year")?.value;
