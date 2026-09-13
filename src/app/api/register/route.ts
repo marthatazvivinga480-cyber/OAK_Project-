@@ -34,12 +34,11 @@ export async function POST(request: Request) {
   }
 
   let assignedRole = role;
-  // Prevent unauthorized privilege escalation
   if (["Coordination Team", "OAK Staff"].includes(role)) {
-    const accessCode = body.staff_access_code; // Expecting a staff code if registering as staff
+    const accessCode = body.staff_access_code;
     const expectedCode = process.env.STAFF_ACCESS_CODE || "OAK-STAFF-2026";
     if (accessCode !== expectedCode) {
-      assignedRole = "Partner"; // Fallback to safe role
+      assignedRole = "Partner";
     }
   }
 
@@ -67,7 +66,7 @@ export async function POST(request: Request) {
       break;
     }
     
-    if (error.code !== "23505") { // Not a unique constraint violation
+    if (error.code !== "23505") {
       return NextResponse.json({ error: "Failed to register. Please try again." }, { status: 500 });
     }
     attempts++;

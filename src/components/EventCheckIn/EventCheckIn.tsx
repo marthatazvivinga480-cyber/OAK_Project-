@@ -43,7 +43,7 @@ export default function EventCheckIn({
   }
 
   return (
-    <main className="flex min-h-screen bg-[#F4F5F7]">
+    <main className="flex min-h-screen bg-[#F4F5F7] max-md:flex-col">
       <Sidebar />
 
       <section className="flex min-h-[1394px] min-w-0 flex-1 justify-center bg-[#F4F5F7]">

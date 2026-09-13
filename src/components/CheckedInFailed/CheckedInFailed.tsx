@@ -18,12 +18,8 @@ const reasons = [
 ];
 
 export default function CheckInFailed() {
-  function handleContactTeam() {
-    console.log("Contact coordination team");
-  }
-
   return (
-    <div className="flex min-h-[941px] bg-[#F4F5F7]">
+    <div className="flex min-h-[941px] bg-[#F4F5F7] max-md:flex-col">
       <Sidebar />
 
       <main className="min-h-[941px] min-w-0 flex-1 bg-[#F4F5F7]">
@@ -104,7 +100,6 @@ export default function CheckInFailed() {
 
           <button
             type="button"
-            onClick={handleContactTeam}
             className="mt-[12px] flex h-[54px] w-full items-center justify-center gap-[8px] rounded-[24px] border border-[#1C2E5A1A] bg-white py-[16px] font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
           >
             <Phone

@@ -65,7 +65,6 @@ export async function getCurrentParticipant(): Promise<Participant | null> {
 }
 
 export async function getAuthorizedStaff() {
-  // Returns either an Admin or a Coordination Team participant
   const admin = await getCurrentAdmin();
   if (admin) return { type: "admin", id: admin.id, role: "Coordination Team", is_master: admin.is_master };
   

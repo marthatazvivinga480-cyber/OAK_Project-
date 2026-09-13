@@ -60,7 +60,6 @@ export default function Programme() {
 
       <main className="min-h-[1179px] min-w-0 flex-1 bg-[#F4F5F7]">
         <div className="mx-auto w-full max-w-[672px] px-[32px] py-[40px]">
-          {/* HEADER */}
           <div className="h-[54px] w-[195.234375px]">
             <h1 className="m-0 h-[32px] font-chillax text-[24px] font-bold leading-[32px] tracking-[0px] text-[#0E1726]">
               Programme
@@ -71,7 +70,6 @@ export default function Programme() {
             </p>
           </div>
 
-          {/* SCHEDULE / DOCS */}
           <div className="mt-[16px] flex h-[40px] w-full max-w-[602px] items-center justify-between rounded-[7px] bg-[#E5E8EE] p-[4px]">
             <button
               type="button"
@@ -100,7 +98,6 @@ export default function Programme() {
 
           {activeTab === "schedule" ? (
             <>
-              {/* DAYS */}
               <div className="w-full pt-[15px]">
                 <div className="grid h-[85px] w-full grid-cols-3 gap-[10px]">
                   <DayButton
@@ -135,7 +132,6 @@ export default function Programme() {
                 </div>
               ) : currentSessions.length > 0 ? (
                 <>
-                  {/* LEGEND */}
                   <div className="flex h-[32.5px] w-full items-start gap-[12px] pt-[16px]">
                     <LegendItem
                       label="Plenary"

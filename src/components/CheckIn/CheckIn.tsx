@@ -60,7 +60,7 @@ export default function CheckIn() {
         setMessage("Check-in successful!");
         setCheckedInAttendee(data.participant);
         if (data.live_stats) setStats(data.live_stats);
-        setManualCode(""); // reset
+        setManualCode("");
       }
     } catch (err) {
       setStatus("error");

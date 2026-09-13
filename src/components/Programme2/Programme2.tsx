@@ -133,9 +133,6 @@ export default function ProgrammePage() {
   return (
     <main className="min-h-screen w-full bg-[var(--oak-page)]">
       <div className="mx-auto flex w-full max-w-[672px] flex-col gap-[13px] px-8 py-10">
-        {/* =====================================================
-            PAGE HEADER
-        ===================================================== */}
         <header className="w-full">
           <h1 className="font-chillax text-[24px] font-bold leading-8 text-[var(--oak-text)]">
             Programme
@@ -146,9 +143,6 @@ export default function ProgrammePage() {
           </p>
         </header>
 
-        {/* =====================================================
-            TABS
-        ===================================================== */}
         <div className="flex w-full items-center justify-between rounded-[7px] bg-[#E5E8EE] p-1">
           <button
             type="button"
@@ -179,9 +173,6 @@ export default function ProgrammePage() {
           </button>
         </div>
 
-        {/* =====================================================
-            SCHEDULE VIEW
-        ===================================================== */}
         {activeTab === "Schedule" && (
           <section className="rounded-[24px] border border-[#1C2E5A1A] bg-white p-5 shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
             <div className="flex items-center gap-2">
@@ -221,9 +212,6 @@ export default function ProgrammePage() {
           </section>
         )}
 
-        {/* =====================================================
-            SESSION NOTES
-        ===================================================== */}
         {activeTab === "Docs" && (
           <>
             <section className="w-full pt-[3px]">
@@ -288,9 +276,6 @@ export default function ProgrammePage() {
               </div>
             </section>
 
-            {/* =================================================
-                PHOTO GALLERY
-            ================================================= */}
             <section className="w-full pt-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -335,9 +320,6 @@ export default function ProgrammePage() {
               </div>
             </section>
 
-            {/* =================================================
-                KEY TAKEAWAYS
-            ================================================= */}
             <section className="w-full pt-6">
               <div className="flex items-center gap-2">
                 <Lightbulb
@@ -374,9 +356,6 @@ export default function ProgrammePage() {
               </div>
             </section>
 
-            {/* =================================================
-                RESOURCES
-            ================================================= */}
             <section className="w-full pt-6">
               <div className="flex items-center gap-2">
                 <Paperclip

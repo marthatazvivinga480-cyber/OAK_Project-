@@ -116,10 +116,6 @@ export default function RegistrationForm() {
         try {
           parsedBody = JSON.parse(rawBody);
         } catch {
-          // Server returned a non-JSON response (e.g. a crash before
-          // the route handler could run). Fall through to the
-          // generic error message below instead of surfacing the
-          // raw parse error to the user.
         }
       }
 
@@ -197,7 +193,6 @@ export default function RegistrationForm() {
 
   return (
     <div className="w-full pt-4">
-      {/* Stats row */}
       <div className="grid w-full grid-cols-3 gap-3">
         {STATS.map(({ icon: Icon, value, label }) => (
           <div
@@ -749,7 +744,6 @@ export default function RegistrationForm() {
         </form>
       </div>
 
-      {/* Footer note */}
       <p
         className="
           mt-4
