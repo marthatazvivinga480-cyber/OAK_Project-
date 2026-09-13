@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Globe, Grid2X2, ScanLine, Shield, UserRound } from "lucide-react";
+import { CalendarDays, Globe, Grid2X2, ScanLine, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const attendeeNavItems = [
@@ -28,9 +28,6 @@ export default function Sidebar() {
     ? [
         ...attendeeNavItems,
         { label: "My Account", href: "/account", icon: UserRound },
-        ...(adminInfo.is_master
-          ? [{ label: "Manage Admins", href: "/admin-manage", icon: Shield }]
-          : []),
       ]
     : attendeeNavItems;
 
