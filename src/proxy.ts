@@ -50,5 +50,5 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/qr-code", "/programme", "/partners", "/checkin", "/attendance", "/admin-manage", "/admin-change-password"],
+  matcher: ["/qr-code", "/programme", "/partners", "/checkin", "/attendance", "/admin-manage", "/admin-change-password", "/admin-login", "/account"],
 };

@@ -3,17 +3,36 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Globe, Grid2X2, ScanLine } from "lucide-react";
+import { CalendarDays, Globe, Grid2X2, ScanLine, Shield, UserRound } from "lucide-react";
+import { useEffect, useState } from "react";
+
+const attendeeNavItems = [
+  { label: "Check In", href: "/checkin", icon: ScanLine },
+  { label: "Programme", href: "/programme", icon: CalendarDays },
+  { label: "Partners", href: "/partners", icon: Globe },
+  { label: "Attendance", href: "/attendance", icon: Grid2X2 },
+];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [adminInfo, setAdminInfo] = useState<{ username: string; is_master: boolean } | null>(null);
 
-  const navItems = [
-    { label: "Check In", href: "/checkin", icon: ScanLine },
-    { label: "Programme", href: "/programme", icon: CalendarDays },
-    { label: "Partners", href: "/partners", icon: Globe },
-    { label: "Attendance", href: "/attendance", icon: Grid2X2 },
-  ];
+  useEffect(() => {
+    fetch("/api/admin/me")
+      .then((res) => (res.ok ? res.json() : null))
+      .then(setAdminInfo)
+      .catch(() => {});
+  }, []);
+
+  const navItems = adminInfo
+    ? [
+        ...attendeeNavItems,
+        { label: "My Account", href: "/account", icon: UserRound },
+        ...(adminInfo.is_master
+          ? [{ label: "Manage Admins", href: "/admin-manage", icon: Shield }]
+          : []),
+      ]
+    : attendeeNavItems;
 
   return (
     <aside className="flex min-h-dvh w-[255px] shrink-0 flex-col border-r border-[#1C2E5A1A] bg-white max-md:min-h-0 max-md:w-full max-md:flex-row max-md:items-center max-md:border-b max-md:border-r-0 max-md:px-4 max-md:py-2">
