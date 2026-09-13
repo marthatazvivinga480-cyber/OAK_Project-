@@ -9,6 +9,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Only the master account can manage admins" }, { status: 403 });
   }
 
+  
   const { username, password } = await request.json();
   if (!username || !password) {
     return NextResponse.json({ error: "Username and password required" }, { status: 400 });
@@ -46,4 +47,19 @@ export async function DELETE(request: Request) {
   const { error } = await supabaseAdmin.from("admins").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ deleted: id });
+}
+
+export async function GET() {
+  const requester = await getCurrentAdmin();
+  if (!requester || !requester.is_master) {
+    return NextResponse.json({ error: "Only the master account can view admins" }, { status: 403 });
+  }
+
+  const { data, error } = await supabaseAdmin
+    .from("admins")
+    .select("id, username, is_master")
+    .order("username");
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data);
 }

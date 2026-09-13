@@ -25,5 +25,11 @@ export async function POST(request: Request) {
   }
 
   await setAdminSessionCookie(admin.id);
-  return NextResponse.json({ is_master: admin.is_master });
+
+  const response = NextResponse.json({ is_master: admin.is_master });
+  response.cookies.set("oak_is_master", admin.is_master ? "true" : "false", {
+    path: "/",
+    maxAge: 60 * 60 * 8,
+  });
+  return response;
 }
