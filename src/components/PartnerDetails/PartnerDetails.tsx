@@ -34,8 +34,6 @@ export default function PartnerDetail({ id }: { id: string }) {
     fetch("/api/partners")
       .then((res) => res.json())
       .then((data: PartnerApiRecord[]) => {
-        // Same field-mapping logic as PartnersDirectory.tsx, kept
-        // consistent so a partner looks the same on both pages.
         const match = (data || []).find((p) => p.id === id);
         if (match) {
           setPartner({
