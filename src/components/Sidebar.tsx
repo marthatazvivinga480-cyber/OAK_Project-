@@ -71,21 +71,13 @@ export default function Sidebar() {
 
   const isAttendanceArea = pathname === "/attendance";
 
-  const isRegisterArea =
-    pathname === "/" ||
-    pathname === "/register" ||
-    pathname?.startsWith("/registration-preview") ||
-    pathname?.startsWith("/qr-code");
-
   const mobileNavigation = isAttendanceArea
     ? attendanceNavigation
     : isCheckInArea
       ? checkInNavigation
       : attendeeNavigation;
 
-  const desktopNavigation = isRegisterArea
-    ? navigationItems.filter((item) => item.href === "/register")
-    : navigationItems;
+  const desktopNavigation = navigationItems;
 
   function isActive(href: string) {
     if (href === "/register") {
@@ -155,9 +147,9 @@ export default function Sidebar() {
               className="
                 h-7
                 pt-3
-                font-chillax
+                font-inter
                 text-xs
-                font-semibold
+                font-bold
                 uppercase
                 leading-4
                 tracking-[1.2px]
@@ -209,7 +201,7 @@ export default function Sidebar() {
                       py-3
                       font-[var(--font-inter)]
                       text-[14px]
-                      font-semibold
+                      font-bold
                       leading-5
                       no-underline
                       ${
@@ -270,7 +262,7 @@ export default function Sidebar() {
                     truncate
                     font-inter
                     text-[12px]
-                    font-semibold
+                    font-bold
                     leading-4
                     text-[#0E1726]
                   "
@@ -300,26 +292,25 @@ export default function Sidebar() {
           MOBILE BOTTOM NAVIGATION
       ========================================================= */}
 
-      {!isRegisterArea && (
-        <nav
-          aria-label="Mobile navigation"
-          className="
-            fixed
-            inset-x-0
-            bottom-0
-            z-50
-            flex
-            min-h-[61px]
-            w-full
-            max-w-full
-            items-center
-            overflow-hidden
-            border-t
-            border-[#FFFFFF8C]
-            bg-[#FFFFFFC2]
-            px-[4px]
-            py-[6px]
-            backdrop-blur-[20px]
+      <nav
+        aria-label="Mobile navigation"
+        className="
+          fixed
+          inset-x-0
+          bottom-0
+          z-50
+          flex
+          min-h-[61px]
+          w-full
+          max-w-full
+          items-center
+          overflow-hidden
+          border-t
+          border-[#FFFFFF8C]
+          bg-[#FFFFFFC2]
+          px-[4px]
+          py-[6px]
+          backdrop-blur-[20px]
             md:hidden
           "
         >
@@ -391,13 +382,12 @@ export default function Sidebar() {
                     }
                   `}
                 >
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
-        </nav>
-      )}
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
     </>
   );
 }

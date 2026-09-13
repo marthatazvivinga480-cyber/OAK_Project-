@@ -76,7 +76,7 @@ export default function CheckInSuccess() {
                   <div className="absolute left-0 top-[1px] flex h-[27px] w-[74px] items-center justify-center gap-[4px] rounded-full border border-[#C5CFDF] bg-[#EEF1F9] px-[10px] py-[4px]">
                     <span className="h-[6px] w-[6px] shrink-0 rounded-full bg-[#1C2E5A]" />
 
-                    <span className="whitespace-nowrap font-inter text-[11px] font-semibold leading-[16.5px] tracking-[0.22px] text-[#1C2E5A]">
+                    <span className="whitespace-nowrap font-inter text-[11px] font-bold leading-[16.5px] tracking-[0.22px] text-[#1C2E5A]">
                       Partner
                     </span>
                   </div>
@@ -93,12 +93,12 @@ export default function CheckInSuccess() {
                     aria-hidden="true"
                   />
 
-                  <span className="font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
+                  <span className="font-inter text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
                     Next Session
                   </span>
                 </div>
 
-                <p className="m-0 h-[24px] pt-[4px] font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726]">
+                <p className="m-0 h-[24px] pt-[4px] font-inter text-[14px] font-bold leading-[20px] tracking-[0px] text-[#0E1726]">
                   Opening Plenary
                 </p>
               </div>
@@ -111,12 +111,12 @@ export default function CheckInSuccess() {
                     aria-hidden="true"
                   />
 
-                  <span className="font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
+                  <span className="font-inter text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
                     Venue
                   </span>
                 </div>
 
-                <p className="m-0 h-[24px] pt-[4px] font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726]">
+                <p className="m-0 h-[24px] pt-[4px] font-inter text-[14px] font-bold leading-[20px] tracking-[0px] text-[#0E1726]">
                   Main Hall A
                 </p>
               </div>
@@ -131,7 +131,7 @@ export default function CheckInSuccess() {
                 aria-hidden="true"
               />
 
-              <p className="m-0 font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
+              <p className="m-0 font-inter text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
                 Live Event Status
               </p>
             </div>
@@ -139,7 +139,7 @@ export default function CheckInSuccess() {
             <div className="mt-[8px] flex h-[20px] items-center gap-[8px]">
               <span className="h-[8px] w-[8px] shrink-0 rounded-full bg-[#00BC7D] shadow-[0_0_0_4px_#10B9812E]" />
 
-              <p className="m-0 font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726]">
+              <p className="m-0 font-inter text-[14px] font-bold leading-[20px] tracking-[0px] text-[#0E1726]">
                 Opening Plenary starting at 09:30
               </p>
             </div>

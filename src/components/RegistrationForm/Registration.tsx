@@ -162,7 +162,7 @@ export default function RegistrationForm() {
     w-full
     rounded-[14px]
     border
-    border-[#1C2E5A1A]
+    border-transparent
     bg-[#EEF1F5]
     px-4
     py-[14px]
@@ -173,11 +173,11 @@ export default function RegistrationForm() {
     text-[#0E1726]
     placeholder:text-[#6B7590]
     outline-none
-    focus:border-[#1C2E5A1A]
+    focus:border-transparent
     focus:outline-none
     focus:ring-0
     focus:ring-offset-0
-    focus-visible:border-[#1C2E5A1A]
+    focus-visible:border-transparent
     focus-visible:outline-none
     focus-visible:ring-0
     focus-visible:ring-offset-0
@@ -188,7 +188,7 @@ export default function RegistrationForm() {
     h-4
     font-[var(--font-inter)]
     text-xs
-    font-semibold
+    font-bold
     uppercase
     leading-4
     tracking-[0.3px]
@@ -302,7 +302,7 @@ export default function RegistrationForm() {
                 className={labelClass}
               >
                 First Name{" "}
-                <span className="text-[#E14C4C]">*</span>
+                <span className="text-[#FB2C36]">*</span>
               </label>
 
               <input
@@ -321,7 +321,7 @@ export default function RegistrationForm() {
                 className={labelClass}
               >
                 Last Name{" "}
-                <span className="text-[#E14C4C]">*</span>
+                <span className="text-[#FB2C36]">*</span>
               </label>
 
               <input
@@ -341,7 +341,7 @@ export default function RegistrationForm() {
               className={labelClass}
             >
               Organisation{" "}
-              <span className="text-[#E14C4C]">*</span>
+              <span className="text-[#FB2C36]">*</span>
             </label>
 
             <input
@@ -380,7 +380,7 @@ export default function RegistrationForm() {
               className={labelClass}
             >
               Role / Capacity{" "}
-              <span className="text-[#E14C4C]">*</span>
+              <span className="text-[#FB2C36]">*</span>
             </label>
 
             <input
@@ -406,7 +406,7 @@ export default function RegistrationForm() {
                 justify-between
                 rounded-[14px]
                 border
-                border-[#1C2E5A1A]
+                border-transparent
                 bg-[#EEF1F5]
                 px-4
                 font-[var(--font-inter)]
@@ -414,30 +414,24 @@ export default function RegistrationForm() {
                 font-normal
                 leading-[22.5px]
                 outline-none
-                focus:border-[#1C2E5A1A]
+                focus:border-transparent
                 focus:outline-none
                 focus:ring-0
                 focus:ring-offset-0
-                focus-visible:border-[#1C2E5A1A]
+                focus-visible:border-transparent
                 focus-visible:outline-none
                 focus-visible:ring-0
                 focus-visible:ring-offset-0
               "
             >
-              <span
-                className={
-                  selectedRole
-                    ? "text-[#0E1726]"
-                    : "text-[#6B7590]"
-                }
-              >
+              <span className="text-[#0E1726]">
                 {selectedRole || "Select your role"}
               </span>
 
               <ChevronDown
                 className={`
-                  h-4
-                  w-4
+                  h-[14px]
+                  w-[14px]
                   shrink-0
                   text-[#6B7590]
                   transition-transform
@@ -555,7 +549,7 @@ export default function RegistrationForm() {
               className={labelClass}
             >
               Email Address{" "}
-              <span className="text-[#E14C4C]">*</span>
+              <span className="text-[#FB2C36]">*</span>
             </label>
 
             <input
@@ -602,7 +596,7 @@ export default function RegistrationForm() {
                   h-[15px]
                   font-[var(--font-inter)]
                   text-[10px]
-                  font-semibold
+                  font-bold
                   uppercase
                   leading-[15px]
                   tracking-[1px]
@@ -665,11 +659,10 @@ export default function RegistrationForm() {
             </div>
           </div>
 
-          <div className="h-28 w-full py-4">
+          <div className="w-full py-4">
             <label
               className="
                 flex
-                h-20
                 w-full
                 cursor-pointer
                 items-start
@@ -734,7 +727,7 @@ export default function RegistrationForm() {
               justify-center
               rounded-2xl
               border-0
-              bg-[linear-gradient(#1C2E5A_0%,#2D4A82_100%)]
+              bg-[#162E55]
               font-chillax
               text-base
               font-semibold
