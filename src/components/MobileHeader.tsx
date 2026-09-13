@@ -6,10 +6,6 @@ import { usePathname } from "next/navigation";
 export default function MobileHeader() {
   const pathname = usePathname();
 
-  /*
-   * Do not show the attendee event header on admin pages.
-   * All public/event pages receive the header automatically.
-   */
   const isAdminPage = pathname?.startsWith("/admin");
 
   if (isAdminPage) {
@@ -33,17 +29,14 @@ export default function MobileHeader() {
         md:hidden
       "
     >
-      {/* OAK Foundation Logo */}
-      
-<Image
-  src="/logo-oak-foundation-white.png"
-  alt="OAK Foundation"
-  width={45}
-  height={28}
-  className="h-[28px] w-[45px] shrink-0 object-cover"
-/>
+      <Image
+        src="/logo-oak-foundation-white.png"
+        alt="OAK Foundation"
+        width={45}
+        height={28}
+        className="h-[28px] w-[45px] shrink-0 object-cover"
+      />
 
-      {/* Vertical Divider */}
       <div
         aria-hidden="true"
         className="
@@ -54,7 +47,6 @@ export default function MobileHeader() {
         "
       />
 
-      {/* Event Name */}
       <p
         className="
           m-0
