@@ -42,7 +42,7 @@ export default function CheckIn() {
   }
 
   return (
-    <div className="flex min-h-[1394px] bg-[#F4F5F7] max-md:flex-col">
+    <div className="flex min-h-[1394px] bg-[#F4F5F7] pb-[80px] md:pb-0">
       <Sidebar />
       <main className="min-h-[1394px] min-w-0 flex-1 bg-[#F4F5F7]">
         <div className="mx-auto w-full max-w-[672px] px-[32px] py-[40px] max-sm:px-[16px]">

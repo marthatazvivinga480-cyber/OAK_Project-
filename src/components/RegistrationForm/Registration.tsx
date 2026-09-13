@@ -4,7 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Check, ChevronDown } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  Users,
+  CalendarDays,
+  Building2,
+} from "lucide-react";
 import type { Role } from "@/lib/types";
 
 const ROLES: Role[] = [
@@ -14,6 +20,12 @@ const ROLES: Role[] = [
   "Presenter",
   "Observer",
 ];
+
+const STATS = [
+  { icon: Users, value: "110+", label: "Attendees" },
+  { icon: CalendarDays, value: "24", label: "Sessions" },
+  { icon: Building2, value: "38", label: "Partners" },
+] as const;
 
 export default function RegistrationForm() {
   const router = useRouter();
@@ -97,15 +109,34 @@ export default function RegistrationForm() {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) {
-        const body = await res.json();
+      const rawBody = await res.text();
 
+      let parsedBody: { role?: Role; registration_id?: string; error?: string } = {};
+      if (rawBody) {
+        try {
+          parsedBody = JSON.parse(rawBody);
+        } catch {
+          // Server returned a non-JSON response (e.g. a crash before
+          // the route handler could run). Fall through to the
+          // generic error message below instead of surfacing the
+          // raw parse error to the user.
+        }
+      }
+
+      if (!res.ok) {
         throw new Error(
-          body.error || "Registration failed"
+          parsedBody.error ||
+            "Registration failed. Please try again in a moment."
         );
       }
 
-      const { role, registration_id } = await res.json();
+      const { role, registration_id } = parsedBody;
+
+      if (!role || !registration_id) {
+        throw new Error(
+          "Registration failed. Please try again in a moment."
+        );
+      }
 
       if (role === "Partner") {
         router.push(`/qr-code?id=${registration_id}`);
@@ -166,8 +197,58 @@ export default function RegistrationForm() {
 
   return (
     <div className="w-full pt-4">
+      {/* Stats row */}
+      <div className="grid w-full grid-cols-3 gap-3">
+        {STATS.map(({ icon: Icon, value, label }) => (
+          <div
+            key={label}
+            className="
+              flex
+              flex-col
+              gap-[6px]
+              rounded-3xl
+              border
+              border-[#1C2E5A1A]
+              bg-white
+              p-4
+              shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]
+            "
+          >
+            <Icon
+              className="h-4 w-4 text-[#162E55]"
+              aria-hidden="true"
+            />
+
+            <span
+              className="
+                font-chillax
+                text-xl
+                font-bold
+                leading-5
+                text-[#0E1726]
+              "
+            >
+              {value}
+            </span>
+
+            <span
+              className="
+                font-[var(--font-inter)]
+                text-xs
+                font-normal
+                leading-4
+                text-[#6B7590]
+              "
+            >
+              {label}
+            </span>
+          </div>
+        ))}
+      </div>
+
       <div
         className="
+          mt-4
           w-full
           rounded-3xl
           border
@@ -653,7 +734,7 @@ export default function RegistrationForm() {
               justify-center
               rounded-2xl
               border-0
-              bg-[#162E55]
+              bg-[linear-gradient(#1C2E5A_0%,#2D4A82_100%)]
               font-chillax
               text-base
               font-semibold
@@ -670,10 +751,27 @@ export default function RegistrationForm() {
               disabled:opacity-60
             "
           >
-            {submitting ? "Registering…" : "Register"}
+            {submitting ? "Registering…" : "Register & Generate QR Code"}
           </button>
         </form>
       </div>
+
+      {/* Footer note */}
+      <p
+        className="
+          mt-4
+          w-full
+          text-center
+          font-[var(--font-inter)]
+          text-xs
+          font-normal
+          leading-4
+          text-[#6B7590]
+        "
+      >
+        Your data is secured and handled by OAK Foundation in accordance
+        with GDPR.
+      </p>
     </div>
   );
 }

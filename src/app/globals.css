@@ -154,3 +154,54 @@ textarea::placeholder {
   outline: 2px solid var(--oak-navy);
   outline-offset: 2px;
 }
+
+/* ============================================================
+   OAK EVENT RESPONSIVE SHELL
+   ============================================================ */
+
+/*
+ * The mobile header is supplied globally by MobileHeader.tsx.
+ * The mobile bottom navigation is supplied by Sidebar.tsx.
+ *
+ * These variables make the shared shell dimensions available
+ * without changing the existing page designs.
+ */
+
+:root {
+  --oak-mobile-header-height: 82px;
+  --oak-mobile-nav-height: 61px;
+  --oak-desktop-sidebar-width: 255px;
+}
+
+/*
+ * Prevent horizontal overflow caused by fixed responsive
+ * navigation elements.
+ */
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/*
+ * Keep interactive controls from being hidden behind the
+ * fixed mobile bottom navigation.
+ */
+
+@media (max-width: 767px) {
+  body {
+    padding-bottom: 61px;
+  }
+}
+
+/*
+ * Desktop pages keep the normal document scrolling behavior.
+ * The Sidebar itself is fixed independently.
+ */
+
+@media (min-width: 768px) {
+  body {
+    padding-bottom: 0;
+  }
+}

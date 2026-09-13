@@ -13,7 +13,7 @@ import Sidebar from "@/components/Sidebar";
 
 export default function PartnerDetail() {
   return (
-    <div className="flex min-h-[941px] bg-[#F4F5F7]">
+    <div className="flex min-h-[941px] bg-[#F4F5F7] pb-[80px] md:pb-0">
       <Sidebar />
 
       <main className="min-h-[941px] min-w-0 flex-1 bg-[#F4F5F7]">
@@ -110,7 +110,7 @@ export default function PartnerDetail() {
             href="https://opensocietyfoundations.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="transition-colors hover:bg-[#244675] active:bg-[#102440] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#162E55] mt-[16px] flex h-[52px] w-full items-center justify-between rounded-[16px] bg-[#162E55] px-[20px] py-[16px] shadow-[0_4px_16px_0_#00000026]"
+            className="mt-[16px] flex h-[52px] w-full items-center justify-between rounded-[16px] bg-[#162E55] px-[20px] py-[16px] shadow-[0_4px_16px_0_#00000026] transition-colors hover:bg-[#244675] active:bg-[#102440] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#162E55]"
           >
             <div className="flex h-[20px] items-center gap-[8px]">
               <Globe
@@ -133,7 +133,7 @@ export default function PartnerDetail() {
 
           <a
             href="mailto:m.schmidt@osf.org"
-            className="transition-colors hover:bg-[#EEF1F5] active:bg-[#E0E5ED] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#162E55] mt-[12px] flex h-[54px] w-full items-center justify-between rounded-[24px] border border-[#1C2E5A1A] bg-white px-[20px] py-[16px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
+            className="mt-[12px] flex h-[54px] w-full items-center justify-between rounded-[24px] border border-[#1C2E5A1A] bg-white px-[20px] py-[16px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D] transition-colors hover:bg-[#EEF1F5] active:bg-[#E0E5ED] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#162E55]"
           >
             <div className="flex h-[20px] items-center gap-[8px]">
               <Mail

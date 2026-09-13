@@ -47,11 +47,15 @@ export default function Programme() {
     day2: "Day 2",
     day3: "Day 3",
   };
+
   const currentDayLabel = dayMap[selectedDay];
-  const currentSessions = sessions.filter((s) => s.day === currentDayLabel);
+
+  const currentSessions = sessions.filter(
+    (s) => s.day === currentDayLabel
+  );
 
   return (
-    <div className="flex min-h-[1179px] bg-[#F4F5F7]">
+    <div className="flex min-h-[1179px] bg-[#F4F5F7] pb-[80px] md:pb-0">
       <Sidebar />
 
       <main className="min-h-[1179px] min-w-0 flex-1 bg-[#F4F5F7]">
@@ -104,9 +108,7 @@ export default function Programme() {
                     weekday="Mon"
                     day="Day 1"
                     date="9 Mar"
-                    onClick={() =>
-                      setSelectedDay("day1")
-                    }
+                    onClick={() => setSelectedDay("day1")}
                   />
 
                   <DayButton
@@ -114,9 +116,7 @@ export default function Programme() {
                     weekday="Tue"
                     day="Day 2"
                     date="10 Mar"
-                    onClick={() =>
-                      setSelectedDay("day2")
-                    }
+                    onClick={() => setSelectedDay("day2")}
                   />
 
                   <DayButton
@@ -124,34 +124,74 @@ export default function Programme() {
                     weekday="Wed"
                     day="Day 3"
                     date="11 Mar"
-                    onClick={() =>
-                      setSelectedDay("day3")
-                    }
+                    onClick={() => setSelectedDay("day3")}
                   />
                 </div>
               </div>
 
               {loading ? (
-                <div className="mt-[20px] text-center text-[#6B7590]">Loading schedule...</div>
+                <div className="mt-[20px] text-center text-[#6B7590]">
+                  Loading schedule...
+                </div>
               ) : currentSessions.length > 0 ? (
                 <>
                   {/* LEGEND */}
                   <div className="flex h-[32.5px] w-full items-start gap-[12px] pt-[16px]">
-                    <LegendItem label="Plenary" colour="#1C2E5A" />
-                    <LegendItem label="Breakout" colour="#F59E0B" />
-                    <LegendItem label="Workshop" colour="#8B5CF6" />
-                    <LegendItem label="Social" colour="#F97316" />
+                    <LegendItem
+                      label="Plenary"
+                      colour="#1C2E5A"
+                    />
+
+                    <LegendItem
+                      label="Breakout"
+                      colour="#F59E0B"
+                    />
+
+                    <LegendItem
+                      label="Workshop"
+                      colour="#8B5CF6"
+                    />
+
+                    <LegendItem
+                      label="Social"
+                      colour="#F97316"
+                    />
                   </div>
 
                   {currentSessions.map((s, idx) => {
                     const tTitle = s.title.toLowerCase();
+
                     let type: SessionType = "Plenary";
-                    if (tTitle.includes("breakout")) type = "Breakout";
-                    if (tTitle.includes("workshop")) type = "Workshop";
-                    if (tTitle.includes("social") || tTitle.includes("reception") || tTitle.includes("dinner")) type = "Social";
-                    
-                    if (tTitle.includes("break") || tTitle.includes("lunch") || tTitle.includes("registration")) {
-                       return <TimelineDivider key={idx} time={s.start_time} label={s.title} compact={tTitle.includes("registration")} />;
+
+                    if (tTitle.includes("breakout")) {
+                      type = "Breakout";
+                    }
+
+                    if (tTitle.includes("workshop")) {
+                      type = "Workshop";
+                    }
+
+                    if (
+                      tTitle.includes("social") ||
+                      tTitle.includes("reception") ||
+                      tTitle.includes("dinner")
+                    ) {
+                      type = "Social";
+                    }
+
+                    if (
+                      tTitle.includes("break") ||
+                      tTitle.includes("lunch") ||
+                      tTitle.includes("registration")
+                    ) {
+                      return (
+                        <TimelineDivider
+                          key={idx}
+                          time={s.start_time}
+                          label={s.title}
+                          compact={tTitle.includes("registration")}
+                        />
+                      );
                     }
 
                     return (
