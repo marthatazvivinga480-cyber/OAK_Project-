@@ -33,7 +33,9 @@ export async function POST(request: Request) {
   response.cookies.set("oak_role", signCookieValue(participant.role), {
     path: "/",
     maxAge: 60 * 60 * 24 * 14,
-    httpOnly: false, // Accessible by frontend if needed, though proxy uses httpOnly
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
   });
   return response;
 }
