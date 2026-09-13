@@ -34,19 +34,7 @@ export default function RootLayout({
           antialiased
         "
       >
-        {/* =====================================================
-            MOBILE EVENT HEADER
-
-            This is shared automatically by every page.
-            It is hidden on desktop by MobileHeader itself.
-        ===================================================== */}
-
         <MobileHeader />
-
-        {/* =====================================================
-            PAGE CONTENT
-        ===================================================== */}
-
         {children}
       </body>
     </html>
