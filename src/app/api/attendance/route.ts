@@ -28,30 +28,20 @@ export async function GET(request: Request) {
   if (roleFilter) {
     query = query.eq("role", roleFilter);
   }
-  // statusFilter needs a bit of a trick in Supabase. We can't easily filter by the child table existence in a simple select using postgrest syntax efficiently without inner join. 
-  // We'll use the inner join approach if statusFilter is checked_in, and we can't easily do pending without a subquery or a view. 
-  // For now we'll do the child table approach if they selected checked_in:
   if (statusFilter === "checked_in") {
     query = supabaseAdmin
       .from("participants")
       .select("*, checkins!inner(check_in_time)", { count: 'exact' });
-      // re-apply other filters
       if (nameFilter) query = query.or(`first_name.ilike.%${nameFilter}%,last_name.ilike.%${nameFilter}%`);
       if (orgFilter) query = query.ilike("organization", `%${orgFilter}%`);
       if (roleFilter) query = query.eq("role", roleFilter);
   }
 
-  // To prevent loading all 1000s of participants into memory, we will just fetch the data. 
-  // However, to get overall stats, we shouldn't rely on the full table pull. We will do separate counts.
-  
   const [participantsRes, statsRes] = await Promise.all([
-    query.limit(1000), // Protect against massive payload, could add proper pagination later
-    
-    // Fetch stats via counts
+    query.limit(1000),
     Promise.all([
       supabaseAdmin.from("participants").select("id", { count: "exact", head: true }),
       supabaseAdmin.from("checkins").select("id", { count: "exact", head: true }),
-      // Role breakdowns would ideally be an RPC call for group by, but we'll fetch roles only to count them
       supabaseAdmin.from("participants").select("role")
     ])
   ]);
@@ -80,7 +70,6 @@ export async function GET(request: Request) {
     }
   }
 
-  // manual filter for pending if needed, but bounded to 1000 items
   let rows = participantsRes.data;
   if (statusFilter === "pending") {
     rows = rows.filter((p: any) => !p.checkins || p.checkins.length === 0);
