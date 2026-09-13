@@ -31,7 +31,7 @@ export default function AdminLoginPage() {
     }
 
     const body = await res.json();
-    router.push(body.is_master ? "/admin-manage" : "/checkin");
+    router.push(body.is_master ? "/account" : "/checkin");
   }
 
   return (
