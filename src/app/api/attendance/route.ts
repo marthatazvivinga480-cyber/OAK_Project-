@@ -3,6 +3,16 @@ import { supabaseAdmin } from "@/lib/supabaseClient";
 import { getAuthorizedStaff } from "@/lib/session";
 import type { Role } from "@/lib/types";
 
+type AttendanceRow = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  organization: string;
+  role: Role;
+  registration_date?: string | null;
+  checkins?: Array<{ check_in_time?: string | null }> | null;
+};
+
 export async function GET(request: Request) {
   const viewer = await getAuthorizedStaff();
   if (!viewer) {
@@ -70,10 +80,10 @@ export async function GET(request: Request) {
     }
   }
 
-  let rows = participantsRes.data;
-  if (statusFilter === "pending") {
-    rows = rows.filter((p: any) => !p.checkins || p.checkins.length === 0);
-  }
+  const rows = (participantsRes.data ?? []) as AttendanceRow[];
+  const filteredRows = statusFilter === "pending"
+    ? rows.filter((p) => !p.checkins || p.checkins.length === 0)
+    : rows;
 
   return NextResponse.json({
     stats: {
@@ -83,13 +93,13 @@ export async function GET(request: Request) {
         totalRegistered === 0 ? 0 : Math.round((totalCheckedIn / totalRegistered) * 100),
       role_breakdown: roleBreakdown,
     },
-    participants: rows.map((p: any) => ({
+    participants: filteredRows.map((p) => ({
       id: p.id,
       full_name: `${p.first_name} ${p.last_name}`,
       organization: p.organization,
       role: p.role,
       registration_date: p.registration_date,
-      attendance_status: (p.checkins && p.checkins.length > 0) ? "checked_in" : "pending",
+      attendance_status: p.checkins && p.checkins.length > 0 ? "checked_in" : "pending",
       check_in_time: p.checkins && p.checkins.length > 0 ? p.checkins[0]?.check_in_time : null,
     })),
   });
