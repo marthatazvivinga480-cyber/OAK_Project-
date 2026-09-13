@@ -1,29 +1,27 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { PAGE_ACCESS, type Role } from "@/lib/types";
 
-const MASTER_ONLY_PATHS = ["/admin-manage"];
-const ADMIN_ONLY_PATHS = ["/checkin", "/attendance", "/admin-change-password"];
+const MASTER_ONLY_PATHS = ["/admin-manage", "/account/manage-admins"];
+const ADMIN_ONLY_PATHS = ["/checkin", "/attendance", "/admin-change-password", "/account"];
 
 export default function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isMaster = request.cookies.get("oak_is_master")?.value === "true";
   const hasAdminSession = request.cookies.has("oak_admin_id");
 
-  // Master bypasses every gate below — full access, no exceptions.
   if (isMaster) {
     return NextResponse.next();
   }
 
-  if (MASTER_ONLY_PATHS.includes(path)) {
+  if (MASTER_ONLY_PATHS.some((p) => path === p || path.startsWith(p + "/"))) {
     if (!hasAdminSession) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin-login";
       return NextResponse.redirect(url);
     }
-    // Logged in, but not master — send them somewhere they can actually use.
     const url = request.nextUrl.clone();
-    url.pathname = "/checkin";
+    url.pathname = "/account";
     return NextResponse.redirect(url);
   }
 
@@ -50,5 +48,16 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/qr-code", "/programme", "/partners", "/checkin", "/attendance", "/admin-manage", "/admin-change-password", "/admin-login", "/account"],
+  matcher: [
+    "/qr-code",
+    "/programme",
+    "/partners",
+    "/checkin",
+    "/attendance",
+    "/admin-manage",
+    "/admin-change-password",
+    "/admin-login",
+    "/account",
+    "/account/manage-admins",
+  ],
 };
