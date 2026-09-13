@@ -332,84 +332,6 @@ const page = () => {
 export default page
 </file>
 
-<file path="src/components/MobileHeader.tsx">
-"use client";
-
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-
-export default function MobileHeader() {
-  const pathname = usePathname();
-
-  /*
-   * Do not show the attendee event header on admin pages.
-   * All public/event pages receive the header automatically.
-   */
-  const isAdminPage = pathname?.startsWith("/admin");
-
-  if (isAdminPage) {
-    return null;
-  }
-
-  return (
-    <header
-      className="
-        flex
-        h-[82px]
-        w-full
-        flex-row
-        items-center
-        gap-[12px]
-        bg-[#162E55]
-        px-[16px]
-        pb-[16px]
-        pl-[58px]
-        pt-[38px]
-        md:hidden
-      "
-    >
-      {/* OAK Foundation Logo */}
-      
-<Image
-  src="/logo-oak-foundation-white.png"
-  alt="OAK Foundation"
-  width={45}
-  height={28}
-  className="h-[28px] w-[45px] shrink-0 object-cover"
-/>
-
-      {/* Vertical Divider */}
-      <div
-        aria-hidden="true"
-        className="
-          h-[20px]
-          w-px
-          shrink-0
-          bg-[#FFFFFF33]
-        "
-      />
-
-      {/* Event Name */}
-      <p
-        className="
-          m-0
-          whitespace-nowrap
-          font-[Avenir_Next_LT_Pro,Arial,sans-serif]
-          text-[12px]
-          font-normal
-          uppercase
-          leading-[16px]
-          tracking-[1.2px]
-          text-[#FFFFFFB2]
-        "
-      >
-        Partner Convening 2026
-      </p>
-    </header>
-  );
-}
-</file>
-
 <file path="src/components/SectionLabel.tsx">
 import type { ReactNode } from "react";
 
@@ -711,22 +633,6 @@ export default function PartnerDetailsPage() {
 }
 </file>
 
-<file path="src/app/partners/page.tsx">
-import PartnersDirectory from "@/components/PartnersDirectory/PartnersDirectory";
-
-export default function PartnerDirectoryPage() {
-  return <PartnersDirectory />;
-}
-</file>
-
-<file path="src/app/programme/page.tsx">
-import Programme from "@/components/Progrmme1/Programme1";
-
-export default function ProgrammePage() {
-  return <Programme />;
-}
-</file>
-
 <file path="src/app/programme2/page.tsx">
 import Programme2 from "@/components/Programme2/Programme2";
 
@@ -918,226 +824,6 @@ export default function RegisterPage() {
 export {};
 </file>
 
-<file path="src/app/layout.tsx">
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-
-import "./globals.css";
-
-import MobileHeader from "@/components/MobileHeader";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-export const metadata: Metadata = {
-  title: "OAK Zimbabwe Partner Gathering",
-  description:
-    "Registration platform for the OAK Zimbabwe Partner Gathering 2026.",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html
-      lang="en"
-      className={inter.variable}
-    >
-      <body
-        className="
-          min-h-screen
-          font-chillax
-          antialiased
-        "
-      >
-        {/* =====================================================
-            MOBILE EVENT HEADER
-
-            This is shared automatically by every page.
-            It is hidden on desktop by MobileHeader itself.
-        ===================================================== */}
-
-        <MobileHeader />
-
-        {/* =====================================================
-            PAGE CONTENT
-        ===================================================== */}
-
-        {children}
-      </body>
-    </html>
-  );
-}
-</file>
-
-<file path="src/components/PartnerDetails/PartnerDetails.tsx">
-"use client";
-
-import Link from "next/link";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ExternalLink,
-  Globe,
-  Mail,
-} from "lucide-react";
-
-import Sidebar from "@/components/Sidebar";
-
-export default function PartnerDetail() {
-  return (
-    <div className="flex min-h-[941px] bg-[#F4F5F7] pb-[80px] md:pb-0">
-      <Sidebar />
-
-      <main className="min-h-[941px] min-w-0 flex-1 bg-[#F4F5F7]">
-        <div className="mx-auto w-full max-w-[672px] px-[32px] pb-[40px] pt-[60px]">
-          <Link
-            href="/partners"
-            className="flex h-[20px] w-fit items-center gap-[8px] font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#1C2E5A]"
-          >
-            <ChevronLeft
-              className="h-[16px] w-[16px] shrink-0"
-              strokeWidth={1.5}
-              aria-hidden="true"
-            />
-
-            <span>Partner Directory</span>
-          </Link>
-
-          <section className="relative mt-[20px] h-[152.5px] w-full overflow-hidden rounded-[24px] bg-[#162E55] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute left-[496px] top-[40.5px] h-[144px] w-[144px] rounded-full bg-[#FFFFFF1A]"
-            />
-
-            <div className="absolute left-[24px] top-[24px] flex items-start gap-[16px]">
-              <div className="flex h-[64px] w-[64px] shrink-0 items-center justify-center rounded-[16px] bg-[#FFFFFF33]">
-                <span className="font-chillax text-[16px] font-bold leading-[20px] tracking-[0px] text-white">
-                  OSF
-                </span>
-              </div>
-
-              <div className="min-w-0">
-                <p className="m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-white/60">
-                  Foundation · Partner since 2018
-                </p>
-
-                <h1 className="m-0 mt-[4px] h-[28px] font-chillax text-[20px] font-bold leading-[27.5px] tracking-[0px] text-white">
-                  Open Society Foundations
-                </h1>
-              </div>
-            </div>
-
-            <div className="absolute left-[24px] top-[104px] flex items-center gap-[8px]">
-              <span className="flex h-[24.5px] items-center justify-center rounded-full bg-[#FFFFFF33] px-[10px] py-[4px] font-inter text-[11px] font-semibold leading-[16.5px] tracking-[0.22px] text-white">
-                Democracy
-              </span>
-
-              <span className="flex h-[24.5px] items-center justify-center rounded-full bg-[#FFFFFF33] px-[10px] py-[4px] font-inter text-[11px] font-semibold leading-[16.5px] tracking-[0.22px] text-white">
-                Human Rights
-              </span>
-
-              <span className="flex h-[24.5px] items-center justify-center rounded-full bg-[#FFFFFF33] px-[10px] py-[4px] font-inter text-[11px] font-semibold leading-[16.5px] tracking-[0.22px] text-white">
-                Justice
-              </span>
-            </div>
-          </section>
-
-          <section className="mt-[16px] h-[115px] w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-[20px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-            <p className="m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
-              About
-            </p>
-
-            <p className="m-0 h-[58px] w-full pt-[12px] font-inter text-[14px] font-normal leading-[22.75px] tracking-[0px] text-[#0E1726]">
-              Open Society Foundations builds vibrant and tolerant democracies.
-              OAK partnership covers digital rights and justice initiatives
-              across Eastern Europe and Central Asia.
-            </p>
-          </section>
-
-          <section className="mt-[16px] h-[113px] w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-[20px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-            <p className="m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
-              Contact at Convening
-            </p>
-
-            <div className="mt-[12px] flex h-[44px] items-center gap-[12px]">
-              <div className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-[16px] bg-[#162E55]">
-                <span className="font-chillax text-[14px] font-bold leading-[20px] text-white">
-                  MS
-                </span>
-              </div>
-
-              <div>
-                <p className="m-0 h-[20px] font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726]">
-                  Maria Schmidt
-                </p>
-
-                <p className="m-0 h-[16px] font-inter text-[12px] font-normal leading-[16px] tracking-[0px] text-[#6B7590]">
-                  m.schmidt@osf.org
-                </p>
-              </div>
-            </div>
-          </section>
-
-          <a
-            href="https://opensocietyfoundations.org"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-[16px] flex h-[52px] w-full items-center justify-between rounded-[16px] bg-[#162E55] px-[20px] py-[16px] shadow-[0_4px_16px_0_#00000026] transition-colors hover:bg-[#244675] active:bg-[#102440] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#162E55]"
-          >
-            <div className="flex h-[20px] items-center gap-[8px]">
-              <Globe
-                className="h-[14px] w-[14px] shrink-0 text-white"
-                strokeWidth={1.5}
-                aria-hidden="true"
-              />
-
-              <span className="font-chillax text-[14px] font-semibold leading-[20px] tracking-[0px] text-white">
-                Visit Website
-              </span>
-            </div>
-
-            <ExternalLink
-              className="h-[14px] w-[14px] shrink-0 text-white"
-              strokeWidth={1.5}
-              aria-hidden="true"
-            />
-          </a>
-
-          <a
-            href="mailto:m.schmidt@osf.org"
-            className="mt-[12px] flex h-[54px] w-full items-center justify-between rounded-[24px] border border-[#1C2E5A1A] bg-white px-[20px] py-[16px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D] transition-colors hover:bg-[#EEF1F5] active:bg-[#E0E5ED] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#162E55]"
-          >
-            <div className="flex h-[20px] items-center gap-[8px]">
-              <Mail
-                className="h-[15px] w-[15px] shrink-0 text-[#0E1726]"
-                strokeWidth={1.5}
-                aria-hidden="true"
-              />
-
-              <span className="font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726]">
-                Send Message
-              </span>
-            </div>
-
-            <ChevronRight
-              className="h-[14px] w-[14px] shrink-0 text-[#6B7590]"
-              strokeWidth={1.17}
-              aria-hidden="true"
-            />
-          </a>
-        </div>
-      </main>
-    </div>
-  );
-}
-</file>
-
 <file path="src/components/SuccesfullyCheckedIn/SuccessfullyChekedIn.tsx">
 "use client";
 
@@ -1317,6 +1003,84 @@ export default function CheckInSuccess() {
 }
 </file>
 
+<file path="src/components/MobileHeader.tsx">
+"use client";
+
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+
+export default function MobileHeader() {
+  const pathname = usePathname();
+
+  /*
+   * Do not show the attendee event header on admin pages.
+   * All public/event pages receive the header automatically.
+   */
+  const isAdminPage = pathname?.startsWith("/admin");
+
+  if (isAdminPage) {
+    return null;
+  }
+
+  return (
+    <header
+      className="
+        flex
+        h-[82px]
+        w-full
+        flex-row
+        items-center
+        gap-[12px]
+        bg-[#162E55]
+        px-[16px]
+        pb-[16px]
+        pl-[58px]
+        pt-[38px]
+        md:hidden
+      "
+    >
+      {/* OAK Foundation Logo */}
+      
+<Image
+  src="/logo-oak-foundation-white.png"
+  alt="OAK Foundation"
+  width={45}
+  height={28}
+  className="h-[28px] w-[45px] shrink-0 object-cover"
+/>
+
+      {/* Vertical Divider */}
+      <div
+        aria-hidden="true"
+        className="
+          h-[20px]
+          w-px
+          shrink-0
+          bg-[#FFFFFF33]
+        "
+      />
+
+      {/* Event Name */}
+      <p
+        className="
+          m-0
+          whitespace-nowrap
+          font-[Avenir_Next_LT_Pro,Arial,sans-serif]
+          text-[12px]
+          font-normal
+          uppercase
+          leading-[16px]
+          tracking-[1.2px]
+          text-[#FFFFFFB2]
+        "
+      >
+        Partner Convening 2026
+      </p>
+    </header>
+  );
+}
+</file>
+
 <file path="src/lib/Registration.tsx">
 export type RegistrationDetails = {
   registration_id: string;
@@ -1364,23 +1128,6 @@ export async function getRegistrationById(
     location: "Harare, Zimbabwe",
   };
 }
-</file>
-
-<file path="src/lib/supabaseClient.ts">
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error(
-    "Missing Supabase environment variables. Make sure SUPABASE_URL and " +
-      "SUPABASE_SERVICE_ROLE_KEY are set in your .env.local file, then " +
-      "restart the dev server."
-  );
-}
-
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 </file>
 
 <file path="src/lib/types.ts">
@@ -2017,559 +1764,237 @@ export async function POST(request: Request) {
 }
 </file>
 
-<file path="src/app/register/page.tsx">
-import RegistrationForm from "@/components/RegistrationForm/Registration";
-import Sidebar from "@/components/Sidebar";
+<file path="src/app/partners/page.tsx">
+import PartnersDirectory from "@/components/PartnersDirectory/PartnersDirectory";
 
-export default function Home() {
+export default function PartnerDirectoryPage() {
+  return <PartnersDirectory />;
+}
+</file>
+
+<file path="src/app/programme/page.tsx">
+import Programme from "@/components/Progrmme1/Programme1";
+
+export default function ProgrammePage() {
+  return <Programme />;
+}
+</file>
+
+<file path="src/app/layout.tsx">
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+
+import "./globals.css";
+
+import MobileHeader from "@/components/MobileHeader";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: "OAK Zimbabwe Partner Gathering",
+  description:
+    "Registration platform for the OAK Zimbabwe Partner Gathering 2026.",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <main className="flex min-h-screen bg-[#F7F8FA]">
-      <Sidebar />
+    <html
+      lang="en"
+      className={inter.variable}
+    >
+      <body
+        className="
+          min-h-screen
+          font-chillax
+          antialiased
+        "
+      >
+        {/* =====================================================
+            MOBILE EVENT HEADER
 
-      <section className="min-w-0 flex-1">
-        <div className="mx-auto w-full max-w-[672px] px-8 py-10 max-md:px-4">
-          <header className="relative flex h-[167px] w-full flex-col overflow-hidden rounded-3xl bg-[#162E55] p-6 text-white shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-16 -top-16 z-0 h-48 w-48 rounded-full"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle, rgba(168,187,206,0.4) 0%, rgba(168,187,206,0) 70%)",
-              }}
-            />
+            This is shared automatically by every page.
+            It is hidden on desktop by MobileHeader itself.
+        ===================================================== */}
 
-            <div className="relative z-10 flex flex-col">
-              <div className="pt-4">
-                <h1 className="font-chillax text-[30px] font-bold leading-[38px]">
-                  Partner
-                  <br />
-                  Convening 2026
-                </h1>
-              </div>
+        <MobileHeader />
 
-              <div className="pt-2">
-                <p className="font-inter text-sm leading-5 text-white/50">
-                  9–11 November 2026 · Harare, Zimbabwe
-                </p>
-              </div>
-            </div>
-          </header>
+        {/* =====================================================
+            PAGE CONTENT
+        ===================================================== */}
 
-          <div className="font-inter text-[#16243a]">
-            <RegistrationForm />
-          </div>
-        </div>
-      </section>
-    </main>
+        {children}
+      </body>
+    </html>
   );
 }
 </file>
 
-<file path="src/components/PartnersDirectory/PartnersDirectory.tsx">
+<file path="src/components/PartnerDetails/PartnerDetails.tsx">
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import {
+  ChevronLeft,
   ChevronRight,
   ExternalLink,
+  Globe,
+  Mail,
 } from "lucide-react";
 
 import Sidebar from "@/components/Sidebar";
 
-const REGIONS = [
-  "All Regions",
-  "Global",
-  "Sub-Saharan Africa",
-  "Northern Europe",
-  "Middle East & North Africa",
-];
-
-const SUB_PARTNERS = [
-  {
-    initials: "OSF",
-    name: "OSF",
-    region: "Global",
-  },
-  {
-    initials: "ACA",
-    name: "ACA",
-    region: "Sub-Saharan Africa",
-  },
-  {
-    initials: "NEC",
-    name: "NEC",
-    region: "Northern Europe",
-  },
-];
-
-export default function PartnersDirectory() {
-  const [search, setSearch] = useState("");
-  const [selectedRegion, setSelectedRegion] =
-    useState("All Regions");
-
-  const [partners, setPartners] =
-    useState<any[]>([]);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  useEffect(() => {
-    fetch("/api/partners")
-      .then((res) => res.json())
-      .then((data) => {
-        const mapped = (data || []).map(
-          (p: any) => ({
-            initials: p.name
-              ? p.name
-                  .substring(0, 3)
-                  .toUpperCase()
-              : "PRT",
-
-            name: p.name || "Unknown",
-
-            region: "Global",
-
-            tags: p.areas_of_work
-              ? p.areas_of_work.split(",")
-              : ["Partner"],
-
-            since: "2024",
-
-            website: p.website_url
-              ? p.website_url.replace(
-                  /^https?:\/\//,
-                  ""
-                )
-              : "",
-
-            slug: p.id,
-          })
-        );
-
-        setPartners(mapped);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
-  const filteredPartners = useMemo(() => {
-    const searchValue =
-      search.trim().toLowerCase();
-
-    return partners.filter((partner) => {
-      const matchesSearch =
-        !searchValue ||
-        partner.name
-          .toLowerCase()
-          .includes(searchValue) ||
-        partner.region
-          .toLowerCase()
-          .includes(searchValue) ||
-        partner.tags.some(
-          (tag: string) =>
-            tag
-              .toLowerCase()
-              .includes(searchValue)
-        );
-
-      const matchesRegion =
-        selectedRegion ===
-          "All Regions" ||
-        partner.region.includes(
-          selectedRegion
-        );
-
-      return (
-        matchesSearch &&
-        matchesRegion
-      );
-    });
-  }, [
-    search,
-    selectedRegion,
-    partners,
-  ]);
-
-  return (
-    <div className="flex min-h-[1735px] bg-[#F4F5F7] pb-[80px] md:pb-0">
-      <Sidebar />
-
-      <main className="min-h-[1735px] min-w-0 flex-1 bg-[#F4F5F7]">
-        <div className="mx-auto w-full max-w-[672px] px-[32px] py-[40px]">
-          <div className="h-[54px] w-full">
-            <h1 className="m-0 h-[32px] w-full font-chillax text-[24px] font-bold leading-[32px] tracking-[0px] text-[#0E1726]">
-              Partner Directory
-            </h1>
-
-            <p className="m-0 h-[22px] w-full pt-[2px] font-inter text-[14px] font-normal leading-[20px] tracking-[0px] text-[#6B7590]">
-              8 partner organisations
-            </p>
-          </div>
-
-          <section className="mt-[16px] min-h-[127px] w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-[16px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-            <input
-              type="text"
-              value={search}
-              onChange={(event) =>
-                setSearch(event.target.value)
-              }
-              placeholder="Search organisations, focus areas…"
-              className="h-[52.5px] w-full rounded-[14px] border border-[#1C2E5A1A] bg-[#EEF1F5] px-[16px] py-[14px] font-inter text-[15px] font-normal leading-[18px] tracking-[0px] text-[#0E1726] outline-none placeholder:text-[#6B7590] focus:border-[#162E55] focus:outline-none focus:ring-0"
-            />
-
-            <div className="w-full pt-[12px]">
-              <div className="flex w-full items-center gap-[8px] overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                {REGIONS.map((region) => {
-                  const active =
-                    selectedRegion ===
-                    region;
-
-                  return (
-                    <button
-                      key={region}
-                      type="button"
-                      style={{
-                        fontSize: 11,
-                        lineHeight: "16.5px",
-                        fontWeight: 600,
-                      }}
-                      onClick={() =>
-                        setSelectedRegion(
-                          region
-                        )
-                      }
-                      className={`flex h-[28.5px] shrink-0 items-center justify-center whitespace-nowrap rounded-[12px] px-[12px] py-[6px] font-inter text-[11px] font-semibold leading-[16.5px] tracking-[0px] active:scale-[0.98] active:bg-[#102440] active:text-white active:shadow-inner ${
-                        active
-                          ? "bg-[#162E55] text-white"
-                          : "bg-[#EEF1F5] text-[#6B7590]"
-                      }`}
-                    >
-                      {region}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-
-          <section className="mt-[16px] w-full">
-            <p className="m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
-              Sub-Partners
-            </p>
-
-            <div className="mt-[12px] grid w-full grid-cols-3 gap-[10px]">
-              {SUB_PARTNERS.map(
-                (partner) => (
-                  <button
-                    key={partner.name}
-                    type="button"
-                    className="flex h-[116px] min-w-0 flex-col items-center justify-center rounded-[24px] border border-[#1C2E5A1A] bg-white shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
-                  >
-                    <div className="flex h-[44px] w-[44px] items-center justify-center rounded-[14px] bg-[#162E55]">
-                      <span className="font-chillax text-[12px] font-bold leading-[16px] text-white">
-                        {partner.initials}
-                      </span>
-                    </div>
-
-                    <p className="m-0 mt-[8px] font-inter text-[12px] font-semibold leading-[16px] tracking-[0px] text-[#0E1726]">
-                      {partner.name}
-                    </p>
-
-                    <p className="m-0 mt-[3px] max-w-[150px] truncate font-inter text-[10px] font-normal leading-[15px] tracking-[0px] text-[#6B7590]">
-                      {partner.region}
-                    </p>
-                  </button>
-                )
-              )}
-            </div>
-          </section>
-
-          <section className="mt-[20px] w-full">
-            <p className="m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
-              All Partners
-            </p>
-
-            <div className="mt-[12px] flex w-full flex-col gap-[10px]">
-              {filteredPartners.map(
-                (partner) => (
-                  <article
-                    key={partner.name}
-                    className="h-[136px] w-full overflow-hidden rounded-[24px] border border-[#1C2E5A1A] bg-white px-[16px] py-[14px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
-                  >
-                    <div className="flex h-[76px] w-full items-start">
-                      <Link
-                        href={`/partners/${partner.slug}`}
-                        className="flex min-w-0 flex-1 items-start no-underline"
-                      >
-                        <div
-                          className={`flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-[14px] ${
-                            partner.mutedLogo
-                              ? "bg-[#5F6878]"
-                              : "bg-[#162E55]"
-                          }`}
-                        >
-                          <span className="font-chillax text-[12px] font-bold leading-[16px] text-white">
-                            {partner.initials}
-                          </span>
-                        </div>
-
-                        <div className="ml-[12px] min-w-0 flex-1">
-                          <p className="m-0 truncate font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726]">
-                            {partner.name}
-                          </p>
-
-                          <p className="m-0 mt-[1px] truncate font-inter text-[11px] font-normal leading-[16px] tracking-[0px] text-[#6B7590]">
-                            {partner.region}
-                          </p>
-
-                          <div className="mt-[6px] flex flex-wrap items-center gap-[6px]">
-                            {partner.tags.map(
-                              (tag) => (
-                                <span
-                                  key={tag}
-                                  className="flex h-[23px] items-center justify-center whitespace-nowrap rounded-full bg-[#EEF1F5] px-[10px] font-inter text-[10px] font-semibold leading-[15px] text-[#6B7590]"
-                                >
-                                  {tag}
-                                </span>
-                              )
-                            )}
-                          </div>
-                        </div>
-
-                        <ChevronRight
-                          className="ml-[8px] mt-[2px] h-[16px] w-[16px] shrink-0 text-[#6B7590]"
-                          strokeWidth={1.3}
-                          aria-hidden="true"
-                        />
-                      </Link>
-                    </div>
-
-                    <div className="flex h-[31px] w-full items-end justify-between border-t border-[#1C2E5A1A]">
-                      <p className="m-0 font-inter text-[11px] font-normal leading-[16px] tracking-[0px] text-[#6B7590]">
-                        Partner since{" "}
-                        {partner.since}
-                      </p>
-
-                      <a
-                        href={`https://${partner.website}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex max-w-[260px] items-center gap-[4px] truncate font-inter text-[11px] font-medium leading-[16px] tracking-[0px] text-[#1C2E5A] no-underline"
-                      >
-                        <span className="truncate">
-                          {partner.website}
-                        </span>
-
-                        <ExternalLink
-                          className="h-[11px] w-[11px] shrink-0"
-                          strokeWidth={1.4}
-                          aria-hidden="true"
-                        />
-                      </a>
-                    </div>
-                  </article>
-                )
-              )}
-
-              {filteredPartners.length ===
-                0 && (
-                <div className="rounded-[24px] border border-[#1C2E5A1A] bg-white p-[24px] text-center shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-                  <p className="m-0 font-inter text-[14px] font-normal leading-[20px] text-[#6B7590]">
-                    No partners match your
-                    search.
-                  </p>
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
-      </main>
-    </div>
-  );
-}
-</file>
-
-<file path="src/components/Attendence.tsx">
-"use client";
-
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import {
-  ScanLine,
-  UsersRound,
-} from "lucide-react";
-
-import Sidebar from "@/components/Sidebar";
-
-export default function Attendance() {
-  const [data, setData] =
-    useState<any>(null);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  useEffect(() => {
-    fetch("/api/attendance")
-      .then((res) => res.json())
-      .then((d) => {
-        setData(d);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
-  const stats =
-    data?.stats || {
-      total_registered: 0,
-      total_checked_in: 0,
-    };
-
-  const participants =
-    data?.participants || [];
-
+export default function PartnerDetail() {
   return (
     <div className="flex min-h-[941px] bg-[#F4F5F7] pb-[80px] md:pb-0">
       <Sidebar />
 
       <main className="min-h-[941px] min-w-0 flex-1 bg-[#F4F5F7]">
-        <div className="mx-auto w-full max-w-[672px] px-[32px] pt-[40px]">
-          <header className="h-[54px] w-full">
-            <h1 className="font-chillax text-[24px] font-bold text-[#0E1726]">
-              Attendance
-            </h1>
+        <div className="mx-auto w-full max-w-[672px] px-[32px] pb-[40px] pt-[60px]">
+          <Link
+            href="/partners"
+            className="flex h-[20px] w-fit items-center gap-[8px] font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#1C2E5A]"
+          >
+            <ChevronLeft
+              className="h-[16px] w-[16px] shrink-0"
+              strokeWidth={1.5}
+              aria-hidden="true"
+            />
 
-            <p className="font-inter text-[14px] text-[#6B7590]">
-              Check-in tracking · 9–11 March 2026
+            <span>Partner Directory</span>
+          </Link>
+
+          <section className="relative mt-[20px] h-[152.5px] w-full overflow-hidden rounded-[24px] bg-[#162E55] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute left-[496px] top-[40.5px] h-[144px] w-[144px] rounded-full bg-[#FFFFFF1A]"
+            />
+
+            <div className="absolute left-[24px] top-[24px] flex items-start gap-[16px]">
+              <div className="flex h-[64px] w-[64px] shrink-0 items-center justify-center rounded-[16px] bg-[#FFFFFF33]">
+                <span className="font-chillax text-[16px] font-bold leading-[20px] tracking-[0px] text-white">
+                  OSF
+                </span>
+              </div>
+
+              <div className="min-w-0">
+                <p className="m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-white/60">
+                  Foundation · Partner since 2018
+                </p>
+
+                <h1 className="m-0 mt-[4px] h-[28px] font-chillax text-[20px] font-bold leading-[27.5px] tracking-[0px] text-white">
+                  Open Society Foundations
+                </h1>
+              </div>
+            </div>
+
+            <div className="absolute left-[24px] top-[104px] flex items-center gap-[8px]">
+              <span className="flex h-[24.5px] items-center justify-center rounded-full bg-[#FFFFFF33] px-[10px] py-[4px] font-inter text-[11px] font-semibold leading-[16.5px] tracking-[0.22px] text-white">
+                Democracy
+              </span>
+
+              <span className="flex h-[24.5px] items-center justify-center rounded-full bg-[#FFFFFF33] px-[10px] py-[4px] font-inter text-[11px] font-semibold leading-[16.5px] tracking-[0.22px] text-white">
+                Human Rights
+              </span>
+
+              <span className="flex h-[24.5px] items-center justify-center rounded-full bg-[#FFFFFF33] px-[10px] py-[4px] font-inter text-[11px] font-semibold leading-[16.5px] tracking-[0.22px] text-white">
+                Justice
+              </span>
+            </div>
+          </section>
+
+          <section className="mt-[16px] h-[115px] w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-[20px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+            <p className="m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
+              About
             </p>
-          </header>
 
-          <div className="mt-[24px] grid grid-cols-3 gap-[12px]">
-            <OverviewCard
-              value={stats.total_registered.toString()}
-              label="Expected"
-              color="text-[#0E1726]"
-            />
+            <p className="m-0 h-[58px] w-full pt-[12px] font-inter text-[14px] font-normal leading-[22.75px] tracking-[0px] text-[#0E1726]">
+              Open Society Foundations builds vibrant and tolerant democracies.
+              OAK partnership covers digital rights and justice initiatives
+              across Eastern Europe and Central Asia.
+            </p>
+          </section>
 
-            <OverviewCard
-              value={stats.total_checked_in.toString()}
-              label="Checked In"
-              color="text-[#1C2E5A]"
-            />
+          <section className="mt-[16px] h-[113px] w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-[20px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+            <p className="m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
+              Contact at Convening
+            </p>
 
-            <OverviewCard
-              value={(
-                stats.total_registered -
-                stats.total_checked_in
-              ).toString()}
-              label="Pending"
-              color="text-[#6B7590]"
-            />
-          </div>
-
-          <div className="mt-6 w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-6 shadow-sm">
-            {loading ? (
-              <div className="py-20 text-center text-[#6B7590]">
-                Loading attendance data...
+            <div className="mt-[12px] flex h-[44px] items-center gap-[12px]">
+              <div className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-[16px] bg-[#162E55]">
+                <span className="font-chillax text-[14px] font-bold leading-[20px] text-white">
+                  MS
+                </span>
               </div>
-            ) : participants.length === 0 ? (
-              <div className="flex flex-col items-center py-10">
-                <UsersRound className="mb-4 h-12 w-12 text-[#A8BBCE]" />
 
-                <h2 className="font-chillax text-lg font-bold text-[#0E1726]">
-                  No check-ins yet
-                </h2>
+              <div>
+                <p className="m-0 h-[20px] font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726]">
+                  Maria Schmidt
+                </p>
 
-                <Link
-                  href="/checkin"
-                  className="mt-6 flex items-center gap-2 rounded-xl bg-[#162E55] px-6 py-3 text-white"
-                >
-                  <ScanLine className="h-5 w-5" />
-
-                  Go to Check-In
-                </Link>
+                <p className="m-0 h-[16px] font-inter text-[12px] font-normal leading-[16px] tracking-[0px] text-[#6B7590]">
+                  m.schmidt@osf.org
+                </p>
               </div>
-            ) : (
-              <div className="space-y-4">
-                {participants.map(
-                  (p: any) => (
-                    <div
-                      key={p.id}
-                      className="flex items-center justify-between rounded-xl bg-[#F4F5F7] p-4"
-                    >
-                      <div>
-                        <p className="font-semibold text-[#0E1726]">
-                          {p.full_name}
-                        </p>
+            </div>
+          </section>
 
-                        <p className="text-sm text-[#6B7590]">
-                          {p.organization} •{" "}
-                          {p.role}
-                        </p>
-                      </div>
+          <a
+            href="https://opensocietyfoundations.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-[16px] flex h-[52px] w-full items-center justify-between rounded-[16px] bg-[#162E55] px-[20px] py-[16px] shadow-[0_4px_16px_0_#00000026] transition-colors hover:bg-[#244675] active:bg-[#102440] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#162E55]"
+          >
+            <div className="flex h-[20px] items-center gap-[8px]">
+              <Globe
+                className="h-[14px] w-[14px] shrink-0 text-white"
+                strokeWidth={1.5}
+                aria-hidden="true"
+              />
 
-                      <div className="text-right">
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                            p.attendance_status ===
-                            "checked_in"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-gray-200 text-gray-600"
-                          }`}
-                        >
-                          {p.attendance_status ===
-                          "checked_in"
-                            ? "Present"
-                            : "Pending"}
-                        </span>
+              <span className="font-chillax text-[14px] font-semibold leading-[20px] tracking-[0px] text-white">
+                Visit Website
+              </span>
+            </div>
 
-                        {p.check_in_time && (
-                          <p className="mt-1 text-xs text-[#6B7590]">
-                            {new Date(
-                              p.check_in_time
-                            ).toLocaleTimeString(
-                              [],
-                              {
-                                hour: "2-digit",
-                                minute:
-                                  "2-digit",
-                              }
-                            )}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
-            )}
-          </div>
+            <ExternalLink
+              className="h-[14px] w-[14px] shrink-0 text-white"
+              strokeWidth={1.5}
+              aria-hidden="true"
+            />
+          </a>
+
+          <a
+            href="mailto:m.schmidt@osf.org"
+            className="mt-[12px] flex h-[54px] w-full items-center justify-between rounded-[24px] border border-[#1C2E5A1A] bg-white px-[20px] py-[16px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D] transition-colors hover:bg-[#EEF1F5] active:bg-[#E0E5ED] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#162E55]"
+          >
+            <div className="flex h-[20px] items-center gap-[8px]">
+              <Mail
+                className="h-[15px] w-[15px] shrink-0 text-[#0E1726]"
+                strokeWidth={1.5}
+                aria-hidden="true"
+              />
+
+              <span className="font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726]">
+                Send Message
+              </span>
+            </div>
+
+            <ChevronRight
+              className="h-[14px] w-[14px] shrink-0 text-[#6B7590]"
+              strokeWidth={1.17}
+              aria-hidden="true"
+            />
+          </a>
         </div>
       </main>
-    </div>
-  );
-}
-
-function OverviewCard({
-  value,
-  label,
-  color,
-}: {
-  value: string;
-  label: string;
-  color: string;
-}) {
-  return (
-    <div className="flex h-[73px] flex-col items-center justify-center rounded-[16px] bg-[#EEF1F5] p-[12px]">
-      <p
-        className={`font-chillax text-[24px] font-bold ${color}`}
-      >
-        {value}
-      </p>
-
-      <p className="mt-1 font-inter text-[10px] text-[#6B7590]">
-        {label}
-      </p>
     </div>
   );
 }
@@ -2604,6 +2029,23 @@ export function verifyCookieValue(signedValue: string): string | null {
     return null;
   }
 }
+</file>
+
+<file path="src/lib/supabaseClient.ts">
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error(
+    "Missing Supabase environment variables. Make sure SUPABASE_URL and " +
+      "SUPABASE_SERVICE_ROLE_KEY are set in your .env.local file, then " +
+      "restart the dev server."
+  );
+}
+
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 </file>
 
 <file path="supabase/schema.sql">
@@ -2744,6 +2186,55 @@ export default async function QRCodePage() {
   }
 
   return <QRCodeDisplay participant={participant} />;
+}
+</file>
+
+<file path="src/app/register/page.tsx">
+import RegistrationForm from "@/components/RegistrationForm/Registration";
+import Sidebar from "@/components/Sidebar";
+
+export default function Home() {
+  return (
+    <main className="flex min-h-screen bg-[#F7F8FA]">
+      <Sidebar />
+
+      <section className="min-w-0 flex-1">
+        <div className="mx-auto w-full max-w-[672px] px-8 py-10 max-md:px-4">
+          <header className="relative flex h-[167px] w-full flex-col overflow-hidden rounded-3xl bg-[#162E55] p-6 text-white shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+            
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-16 -top-16 z-0 h-48 w-48 rounded-full"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle, rgba(168,187,206,0.4) 0%, rgba(168,187,206,0) 70%)",
+              }}
+            />
+
+            <div className="relative z-10 flex flex-col">
+              <div className="pt-4">
+                <h1 className="font-chillax text-[30px] font-bold leading-[38px]">
+                  Partner
+                  <br />
+                  Convening 2026
+                </h1>
+              </div>
+
+              <div className="pt-2">
+                <p className="font-inter text-sm leading-5 text-white/50">
+                  9–11 November 2026 · Harare, Zimbabwe
+                </p>
+              </div>
+            </div>
+          </header>
+
+          <div className="font-inter text-[#16243a]">
+            <RegistrationForm />
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 }
 </file>
 
@@ -3683,9 +3174,727 @@ export default function QRCodeDisplay({ participant }: { participant: Participan
 }
 </file>
 
+<file path="src/components/Attendence.tsx">
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  ScanLine,
+  UsersRound,
+} from "lucide-react";
+
+import Sidebar from "@/components/Sidebar";
+
+export default function Attendance() {
+  const [data, setData] =
+    useState<any>(null);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  useEffect(() => {
+    fetch("/api/attendance")
+      .then((res) => res.json())
+      .then((d) => {
+        setData(d);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const stats =
+    data?.stats || {
+      total_registered: 0,
+      total_checked_in: 0,
+    };
+
+  const participants =
+    data?.participants || [];
+
+  return (
+    <div className="flex min-h-[941px] bg-[#F4F5F7] pb-[80px] md:pb-0">
+      <Sidebar />
+
+      <main className="min-h-[941px] min-w-0 flex-1 bg-[#F4F5F7]">
+        <div className="mx-auto w-full max-w-[672px] px-[32px] pt-[40px]">
+          <header className="h-[54px] w-full">
+            <h1 className="font-chillax text-[24px] font-bold text-[#0E1726]">
+              Attendance
+            </h1>
+
+            <p className="font-inter text-[14px] text-[#6B7590]">
+              Check-in tracking · 9–11 March 2026
+            </p>
+          </header>
+
+          <div className="mt-[24px] grid grid-cols-3 gap-[12px]">
+            <OverviewCard
+              value={stats.total_registered.toString()}
+              label="Expected"
+              color="text-[#0E1726]"
+            />
+
+            <OverviewCard
+              value={stats.total_checked_in.toString()}
+              label="Checked In"
+              color="text-[#1C2E5A]"
+            />
+
+            <OverviewCard
+              value={(
+                stats.total_registered -
+                stats.total_checked_in
+              ).toString()}
+              label="Pending"
+              color="text-[#6B7590]"
+            />
+          </div>
+
+          <div className="mt-6 w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-6 shadow-sm">
+            {loading ? (
+              <div className="py-20 text-center text-[#6B7590]">
+                Loading attendance data...
+              </div>
+            ) : participants.length === 0 ? (
+              <div className="flex flex-col items-center py-10">
+                <UsersRound className="mb-4 h-12 w-12 text-[#A8BBCE]" />
+
+                <h2 className="font-chillax text-lg font-bold text-[#0E1726]">
+                  No check-ins yet
+                </h2>
+
+                <Link
+                  href="/checkin"
+                  className="mt-6 flex items-center gap-2 rounded-xl bg-[#162E55] px-6 py-3 text-white"
+                >
+                  <ScanLine className="h-5 w-5" />
+
+                  Go to Check-In
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {participants.map(
+                  (p: any) => (
+                    <div
+                      key={p.id}
+                      className="flex items-center justify-between rounded-xl bg-[#F4F5F7] p-4"
+                    >
+                      <div>
+                        <p className="font-semibold text-[#0E1726]">
+                          {p.full_name}
+                        </p>
+
+                        <p className="text-sm text-[#6B7590]">
+                          {p.organization} •{" "}
+                          {p.role}
+                        </p>
+                      </div>
+
+                      <div className="text-right">
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                            p.attendance_status ===
+                            "checked_in"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-200 text-gray-600"
+                          }`}
+                        >
+                          {p.attendance_status ===
+                          "checked_in"
+                            ? "Present"
+                            : "Pending"}
+                        </span>
+
+                        {p.check_in_time && (
+                          <p className="mt-1 text-xs text-[#6B7590]">
+                            {new Date(
+                              p.check_in_time
+                            ).toLocaleTimeString(
+                              [],
+                              {
+                                hour: "2-digit",
+                                minute:
+                                  "2-digit",
+                              }
+                            )}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function OverviewCard({
+  value,
+  label,
+  color,
+}: {
+  value: string;
+  label: string;
+  color: string;
+}) {
+  return (
+    <div className="flex h-[73px] flex-col items-center justify-center rounded-[16px] bg-[#EEF1F5] p-[12px]">
+      <p
+        className={`font-chillax text-[24px] font-bold ${color}`}
+      >
+        {value}
+      </p>
+
+      <p className="mt-1 font-inter text-[10px] text-[#6B7590]">
+        {label}
+      </p>
+    </div>
+  );
+}
+</file>
+
 <file path=".gitattributes">
 *.zip filter=lfs diff=lfs merge=lfs -text
 public/photo[[:space:]]gallery/New[[:space:]]Compressed[[:space:]](zipped)[[:space:]]Folder[[:space:]](2).zip filter=lfs diff=lfs merge=lfs -text
+</file>
+
+<file path="src/components/PartnersDirectory/PartnersDirectory.tsx">
+"use client";
+
+import { useMemo, useState, useEffect } from "react";
+import Link from "next/link";
+import {
+  ChevronRight,
+  ExternalLink,
+} from "lucide-react";
+import Sidebar from "@/components/Sidebar";
+
+const REGIONS = [
+  "All Regions",
+  "Global",
+  "Sub-Saharan Africa",
+  "Northern Europe",
+  "Middle East & North Africa",
+];
+
+const SUB_PARTNERS = [
+  {
+    initials: "OSF",
+    name: "OSF",
+    region: "Global",
+  },
+  {
+    initials: "ACA",
+    name: "ACA",
+    region: "Sub-Saharan Africa",
+  },
+  {
+    initials: "NEC",
+    name: "NEC",
+    region: "Northern Europe",
+  },
+];
+
+type Partner = {
+  initials: string;
+  name: string;
+  region: string;
+  tags: string[];
+  since: string;
+  website: string;
+  slug: string;
+  mutedLogo?: boolean;
+};
+
+export default function PartnersDirectory() {
+  const [search, setSearch] = useState("");
+  const [selectedRegion, setSelectedRegion] =
+    useState("All Regions");
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/partners")
+      .then((res) => res.json())
+      .then((data) => {
+        const mapped: Partner[] = (data || []).map(
+          (p: any) => ({
+            initials: p.name
+              ? p.name.substring(0, 3).toUpperCase()
+              : "PRT",
+
+            name: p.name || "Unknown",
+
+            region: "Global",
+
+            tags: p.areas_of_work
+              ? p.areas_of_work
+                  .split(",")
+                  .map((tag: string) => tag.trim())
+                  .filter(Boolean)
+              : ["Partner"],
+
+            since: "2024",
+
+            website: p.website_url
+              ? p.website_url.replace(
+                  /^https?:\/\//,
+                  ""
+                )
+              : "",
+
+            slug: String(p.id),
+
+            mutedLogo: Boolean(p.muted_logo),
+          })
+        );
+
+        setPartners(mapped);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  const filteredPartners = useMemo(() => {
+    const searchValue =
+      search.trim().toLowerCase();
+
+    return partners.filter((partner) => {
+      const matchesSearch =
+        !searchValue ||
+        partner.name
+          .toLowerCase()
+          .includes(searchValue) ||
+        partner.region
+          .toLowerCase()
+          .includes(searchValue) ||
+        partner.tags.some((tag) =>
+          tag
+            .toLowerCase()
+            .includes(searchValue)
+        );
+
+      const matchesRegion =
+        selectedRegion === "All Regions" ||
+        partner.region.includes(selectedRegion);
+
+      return matchesSearch && matchesRegion;
+    });
+  }, [search, selectedRegion, partners]);
+
+  return (
+    <div className="flex min-h-[1735px] bg-[#F4F5F7] pb-[80px] md:pb-0">
+      <Sidebar />
+
+      <main className="min-h-[1735px] min-w-0 flex-1 bg-[#F4F5F7]">
+        <div className="mx-auto w-full max-w-[672px] px-[32px] py-[40px]">
+          
+          <div className="h-[54px] w-full">
+            <h1 className="m-0 h-[32px] w-full font-chillax text-[24px] font-bold leading-[32px] tracking-[0px] text-[#0E1726]">
+              Partner Directory
+            </h1>
+
+            <p className="m-0 h-[22px] w-full pt-[2px] font-inter text-[14px] font-normal leading-[20px] tracking-[0px] text-[#6B7590]">
+              {loading
+                ? "Loading partners..."
+                : `${partners.length} partner organisations`}
+            </p>
+          </div>
+
+          <section className="mt-[16px] min-h-[127px] w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-[16px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+            <input
+              type="text"
+              value={search}
+              onChange={(event) =>
+                setSearch(event.target.value)
+              }
+              placeholder="Search organisations, focus areas…"
+              className="h-[52.5px] w-full rounded-[14px] border border-[#1C2E5A1A] bg-[#EEF1F5] px-[16px] py-[14px] font-inter text-[15px] font-normal leading-[18px] tracking-[0px] text-[#0E1726] outline-none placeholder:text-[#6B7590] focus:border-[#162E55] focus:outline-none focus:ring-0"
+            />
+
+            <div className="w-full pt-[12px]">
+              <div className="flex w-full items-center gap-[8px] overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {REGIONS.map((region) => {
+                  const active =
+                    selectedRegion === region;
+
+                  return (
+                    <button
+                      key={region}
+                      type="button"
+                      onClick={() =>
+                        setSelectedRegion(region)
+                      }
+                      className={`flex h-[28.5px] shrink-0 items-center justify-center whitespace-nowrap rounded-[12px] px-[12px] py-[6px] font-inter text-[11px] font-semibold leading-[16.5px] tracking-[0px] active:scale-[0.98] active:bg-[#102440] active:text-white active:shadow-inner ${
+                        active
+                          ? "bg-[#162E55] text-white"
+                          : "bg-[#EEF1F5] text-[#6B7590]"
+                      }`}
+                    >
+                      {region}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          <section className="mt-[16px] w-full">
+            <p className="m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
+              Sub-Partners
+            </p>
+
+            <div className="mt-[12px] grid w-full grid-cols-3 gap-[10px]">
+              {SUB_PARTNERS.map((partner) => (
+                <button
+                  key={partner.name}
+                  type="button"
+                  className="flex h-[116px] min-w-0 flex-col items-center justify-center rounded-[24px] border border-[#1C2E5A1A] bg-white shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
+                >
+                  <div className="flex h-[44px] w-[44px] items-center justify-center rounded-[14px] bg-[#162E55]">
+                    <span className="font-chillax text-[12px] font-bold leading-[16px] text-white">
+                      {partner.initials}
+                    </span>
+                  </div>
+
+                  <p className="m-0 mt-[8px] font-inter text-[12px] font-semibold leading-[16px] tracking-[0px] text-[#0E1726]">
+                    {partner.name}
+                  </p>
+
+                  <p className="m-0 mt-[3px] max-w-[150px] truncate font-inter text-[10px] font-normal leading-[15px] tracking-[0px] text-[#6B7590]">
+                    {partner.region}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-[20px] w-full">
+            <p className="m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
+              All Partners
+            </p>
+
+            <div className="mt-[12px] flex w-full flex-col gap-[10px]">
+              {loading ? (
+                <div className="rounded-[24px] border border-[#1C2E5A1A] bg-white p-[24px] text-center shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+                  <p className="m-0 font-inter text-[14px] font-normal leading-[20px] text-[#6B7590]">
+                    Loading partners...
+                  </p>
+                </div>
+              ) : (
+                filteredPartners.map((partner) => (
+                  <article
+                    key={partner.slug}
+                    className="h-[136px] w-full overflow-hidden rounded-[24px] border border-[#1C2E5A1A] bg-white px-[16px] py-[14px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
+                  >
+                    <div className="flex h-[76px] w-full items-start">
+                      <Link
+                        href={`/partners/${partner.slug}`}
+                        className="flex min-w-0 flex-1 items-start no-underline"
+                      >
+                        <div
+                          className={`flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-[14px] ${
+                            partner.mutedLogo
+                              ? "bg-[#5F6878]"
+                              : "bg-[#162E55]"
+                          }`}
+                        >
+                          <span className="font-chillax text-[12px] font-bold leading-[16px] text-white">
+                            {partner.initials}
+                          </span>
+                        </div>
+
+                        <div className="ml-[12px] min-w-0 flex-1">
+                          <p className="m-0 truncate font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726]">
+                            {partner.name}
+                          </p>
+
+                          <p className="m-0 mt-[1px] truncate font-inter text-[11px] font-normal leading-[16px] tracking-[0px] text-[#6B7590]">
+                            {partner.region}
+                          </p>
+
+                          <div className="mt-[6px] flex flex-wrap items-center gap-[6px]">
+                            {partner.tags.map(
+                              (tag) => (
+                                <span
+                                  key={tag}
+                                  className="flex h-[23px] items-center justify-center whitespace-nowrap rounded-full bg-[#EEF1F5] px-[10px] font-inter text-[10px] font-semibold leading-[15px] text-[#6B7590]"
+                                >
+                                  {tag}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        </div>
+
+                        <ChevronRight
+                          className="ml-[8px] mt-[2px] h-[16px] w-[16px] shrink-0 text-[#6B7590]"
+                          strokeWidth={1.3}
+                          aria-hidden="true"
+                        />
+                      </Link>
+                    </div>
+
+                    <div className="flex h-[31px] w-full items-end justify-between border-t border-[#1C2E5A1A]">
+                      <p className="m-0 font-inter text-[11px] font-normal leading-[16px] tracking-[0px] text-[#6B7590]">
+                        Partner since{" "}
+                        {partner.since}
+                      </p>
+
+                      {partner.website && (
+                        <a
+                          href={`https://${partner.website}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex max-w-[260px] items-center gap-[4px] truncate font-inter text-[11px] font-medium leading-[16px] tracking-[0px] text-[#1C2E5A] no-underline"
+                        >
+                          <span className="truncate">
+                            {partner.website}
+                          </span>
+
+                          <ExternalLink
+                            className="h-[11px] w-[11px] shrink-0"
+                            strokeWidth={1.4}
+                            aria-hidden="true"
+                          />
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                ))
+              )}
+
+              {!loading &&
+                filteredPartners.length === 0 && (
+                  <div className="rounded-[24px] border border-[#1C2E5A1A] bg-white p-[24px] text-center shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+                    <p className="m-0 font-inter text-[14px] font-normal leading-[20px] text-[#6B7590]">
+                      No partners match your
+                      search.
+                    </p>
+                  </div>
+                )}
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  );
+}
+</file>
+
+<file path="src/lib/session.ts">
+import { cookies } from "next/headers";
+import { supabaseAdmin } from "@/lib/supabaseClient";
+import type { Participant } from "@/lib/types";
+import { signCookieValue, verifyCookieValue } from "./cookieSecurity";
+
+const ADMIN_COOKIE = "oak_admin_id";
+const SESSION_COOKIE = "oak_registration_id";
+
+export async function setAdminSessionCookie(adminId: string) {
+  const cookieStore = await cookies();
+  cookieStore.set(ADMIN_COOKIE, signCookieValue(adminId), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 8,
+  });
+}
+
+export async function getCurrentAdmin() {
+  const cookieStore = await cookies();
+  const signedAdminId = cookieStore.get(ADMIN_COOKIE)?.value;
+  if (!signedAdminId) return null;
+
+  const adminId = verifyCookieValue(signedAdminId);
+  if (!adminId) return null;
+
+  const { data, error } = await supabaseAdmin
+    .from("admins")
+    .select("id, username, is_master")
+    .eq("id", adminId)
+    .single();
+
+  if (error || !data) return null;
+  return data;
+}
+
+export async function setSessionCookie(registrationId: string) {
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE, signCookieValue(registrationId), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 14,
+  });
+}
+
+export async function getCurrentParticipant(): Promise<Participant | null> {
+  const cookieStore = await cookies();
+  const signedRegistrationId = cookieStore.get(SESSION_COOKIE)?.value;
+  if (!signedRegistrationId) return null;
+
+  const registrationId = verifyCookieValue(signedRegistrationId);
+  if (!registrationId) return null;
+
+  const { data, error } = await supabaseAdmin
+    .from("participants")
+    .select("*")
+    .eq("registration_id", registrationId)
+    .single();
+
+  if (error || !data) return null;
+  return data as Participant;
+}
+
+export async function getAuthorizedStaff() {
+  // Returns either an Admin or a Coordination Team participant
+  const admin = await getCurrentAdmin();
+  if (admin) return { type: "admin", id: admin.id, role: "Coordination Team", is_master: admin.is_master };
+  
+  const participant = await getCurrentParticipant();
+  if (participant && participant.role === "Coordination Team") {
+    return { type: "participant", id: participant.id, role: "Coordination Team" };
+  }
+  
+  return null;
+}
+
+export async function clearSessionCookies() {
+  const cookieStore = await cookies();
+  cookieStore.delete(ADMIN_COOKIE);
+  cookieStore.delete(SESSION_COOKIE);
+  cookieStore.delete("oak_role");
+}
+</file>
+
+<file path="src/proxy.ts">
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { PAGE_ACCESS, type Role } from "@/lib/types";
+import { verifyCookieValue } from "@/lib/cookieSecurity";
+
+const ADMIN_ONLY_PATHS = ["/checkin", "/attendance", "/admin-manage", "/admin-change-password"];
+
+export default function proxy(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+
+  const isAdminPath = ADMIN_ONLY_PATHS.some(p => path === p || path.startsWith(`${p}/`));
+
+  if (isAdminPath) {
+    const signedAdminId = request.cookies.get("oak_admin_id")?.value;
+    const signedRegistrationId = request.cookies.get("oak_registration_id")?.value;
+    const signedRole = request.cookies.get("oak_role")?.value;
+    
+    let hasAccess = false;
+    
+    if (signedAdminId && verifyCookieValue(signedAdminId)) {
+      hasAccess = true;
+    } else if (signedRegistrationId && verifyCookieValue(signedRegistrationId) && signedRole) {
+      const role = verifyCookieValue(signedRole);
+      if (role === "Coordination Team") {
+        hasAccess = true;
+      }
+    }
+
+    if (!hasAccess) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin-login";
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
+  // Determine if path is protected by PAGE_ACCESS
+  let requiredRoles: Role[] | undefined;
+  for (const [key, roles] of Object.entries(PAGE_ACCESS)) {
+    if (path === key || path.startsWith(`${key}/`)) {
+      requiredRoles = roles;
+      break;
+    }
+  }
+
+  if (!requiredRoles) {
+    return NextResponse.next();
+  }
+
+  const signedRole = request.cookies.get("oak_role")?.value;
+  let role: Role | undefined;
+  if (signedRole) {
+    role = verifyCookieValue(signedRole) as Role | undefined;
+  }
+
+  if (!role || !requiredRoles.includes(role)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    url.searchParams.set("denied", path);
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: [
+    "/qr-code/:path*",
+    "/programme/:path*",
+    "/partners/:path*",
+    "/checkin/:path*",
+    "/attendance/:path*",
+    "/admin-manage/:path*",
+    "/admin-change-password/:path*",
+  ],
+};
+</file>
+
+<file path="README.md">
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# OAK_Project-
 </file>
 
 <file path="src/app/page.tsx">
@@ -5385,428 +5594,11 @@ export default function Sidebar() {
 }
 </file>
 
-<file path="src/lib/session.ts">
-import { cookies } from "next/headers";
-import { supabaseAdmin } from "@/lib/supabaseClient";
-import type { Participant } from "@/lib/types";
-import { signCookieValue, verifyCookieValue } from "./cookieSecurity";
-
-const ADMIN_COOKIE = "oak_admin_id";
-const SESSION_COOKIE = "oak_registration_id";
-
-export async function setAdminSessionCookie(adminId: string) {
-  const cookieStore = await cookies();
-  cookieStore.set(ADMIN_COOKIE, signCookieValue(adminId), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 8,
-  });
-}
-
-export async function getCurrentAdmin() {
-  const cookieStore = await cookies();
-  const signedAdminId = cookieStore.get(ADMIN_COOKIE)?.value;
-  if (!signedAdminId) return null;
-
-  const adminId = verifyCookieValue(signedAdminId);
-  if (!adminId) return null;
-
-  const { data, error } = await supabaseAdmin
-    .from("admins")
-    .select("id, username, is_master")
-    .eq("id", adminId)
-    .single();
-
-  if (error || !data) return null;
-  return data;
-}
-
-export async function setSessionCookie(registrationId: string) {
-  const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE, signCookieValue(registrationId), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 14,
-  });
-}
-
-export async function getCurrentParticipant(): Promise<Participant | null> {
-  const cookieStore = await cookies();
-  const signedRegistrationId = cookieStore.get(SESSION_COOKIE)?.value;
-  if (!signedRegistrationId) return null;
-
-  const registrationId = verifyCookieValue(signedRegistrationId);
-  if (!registrationId) return null;
-
-  const { data, error } = await supabaseAdmin
-    .from("participants")
-    .select("*")
-    .eq("registration_id", registrationId)
-    .single();
-
-  if (error || !data) return null;
-  return data as Participant;
-}
-
-export async function getAuthorizedStaff() {
-  // Returns either an Admin or a Coordination Team participant
-  const admin = await getCurrentAdmin();
-  if (admin) return { type: "admin", id: admin.id, role: "Coordination Team", is_master: admin.is_master };
-  
-  const participant = await getCurrentParticipant();
-  if (participant && participant.role === "Coordination Team") {
-    return { type: "participant", id: participant.id, role: "Coordination Team" };
-  }
-  
-  return null;
-}
-
-export async function clearSessionCookies() {
-  const cookieStore = await cookies();
-  cookieStore.delete(ADMIN_COOKIE);
-  cookieStore.delete(SESSION_COOKIE);
-  cookieStore.delete("oak_role");
-}
-</file>
-
-<file path="src/proxy.ts">
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { PAGE_ACCESS, type Role } from "@/lib/types";
-import { verifyCookieValue } from "@/lib/cookieSecurity";
-
-const ADMIN_ONLY_PATHS = ["/checkin", "/attendance", "/admin-manage", "/admin-change-password"];
-
-export default function proxy(request: NextRequest) {
-  const path = request.nextUrl.pathname;
-
-  const isAdminPath = ADMIN_ONLY_PATHS.some(p => path === p || path.startsWith(`${p}/`));
-
-  if (isAdminPath) {
-    const signedAdminId = request.cookies.get("oak_admin_id")?.value;
-    const signedRegistrationId = request.cookies.get("oak_registration_id")?.value;
-    const signedRole = request.cookies.get("oak_role")?.value;
-    
-    let hasAccess = false;
-    
-    if (signedAdminId && verifyCookieValue(signedAdminId)) {
-      hasAccess = true;
-    } else if (signedRegistrationId && verifyCookieValue(signedRegistrationId) && signedRole) {
-      const role = verifyCookieValue(signedRole);
-      if (role === "Coordination Team") {
-        hasAccess = true;
-      }
-    }
-
-    if (!hasAccess) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/admin-login";
-      return NextResponse.redirect(url);
-    }
-    return NextResponse.next();
-  }
-
-  // Determine if path is protected by PAGE_ACCESS
-  let requiredRoles: Role[] | undefined;
-  for (const [key, roles] of Object.entries(PAGE_ACCESS)) {
-    if (path === key || path.startsWith(`${key}/`)) {
-      requiredRoles = roles;
-      break;
-    }
-  }
-
-  if (!requiredRoles) {
-    return NextResponse.next();
-  }
-
-  const signedRole = request.cookies.get("oak_role")?.value;
-  let role: Role | undefined;
-  if (signedRole) {
-    role = verifyCookieValue(signedRole) as Role | undefined;
-  }
-
-  if (!role || !requiredRoles.includes(role)) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/";
-    url.searchParams.set("denied", path);
-    return NextResponse.redirect(url);
-  }
-
-  return NextResponse.next();
-}
-
-export const config = {
-  matcher: [
-    "/qr-code/:path*",
-    "/programme/:path*",
-    "/partners/:path*",
-    "/checkin/:path*",
-    "/attendance/:path*",
-    "/admin-manage/:path*",
-    "/admin-change-password/:path*",
-  ],
-};
-</file>
-
-<file path="README.md">
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# OAK_Project-
-</file>
-
 <file path="src/app/checkin/page.tsx">
 import CheckIn from "@/components/CheckIn/CheckIn";
 
 export default function CheckInPage() {
   return <CheckIn />;
-}
-</file>
-
-<file path="src/app/globals.css">
-@import "tailwindcss";
-
-:root {
-  --oak-navy: #162e55;
-  --oak-shadow: #1c2e5a;
-  --oak-page: #f4f5f7;
-  --oak-input: #eef1f5;
-  --oak-text: #0e1726;
-  --oak-muted: #6b7590;
-  --oak-border: #1c2e5a1a;
-  --oak-white: #ffffff;
-  --oak-success: #10b981;
-  --oak-error: #ef4444;
-}
-
-@layer utilities {
-  .bg-primary {
-    background-color: var(--oak-navy);
-  }
-
-  .bg-primary-hover {
-    background-color: var(--oak-shadow);
-  }
-
-  .bg-success {
-    background-color: var(--oak-success);
-  }
-
-  .bg-error {
-    background-color: var(--oak-error);
-  }
-
-  .bg-surface {
-    background-color: var(--oak-white);
-  }
-
-  .bg-input-bg {
-    background-color: var(--oak-input);
-  }
-
-  .text-text-heading {
-    color: var(--oak-text);
-  }
-
-  .text-text-body {
-    color: var(--oak-text);
-  }
-
-  .text-text-muted {
-    color: var(--oak-muted);
-  }
-
-  .border-border {
-    border-color: var(--oak-border);
-  }
-
-  .text-error {
-    color: var(--oak-error);
-  }
-}
-
-@font-face {
-  font-family: "Chillax";
-  src: url("/chillax/Chillax-Regular.otf") format("opentype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Chillax";
-  src: url("/chillax/Chillax-Medium.otf") format("opentype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Chillax";
-  src: url("/chillax/Chillax-Semibold.otf") format("opentype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Chillax";
-  src: url("/chillax/Chillax-Bold.otf") format("opentype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-}
-
-html {
-  background: var(--oak-page);
-}
-
-body {
-  min-height: 100vh;
-
-  font-family: var(--font-inter), Arial, sans-serif;
-
-  background: var(--oak-page);
-  color: var(--oak-text);
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-button:disabled {
-  cursor: not-allowed;
-}
-
-input,
-select,
-textarea {
-  color: var(--oak-text);
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: var(--oak-muted);
-  opacity: 1;
-}
-
-.font-chillax {
-  font-family: "Chillax", sans-serif;
-}
-
-.font-inter {
-  font-family: var(--font-inter), Arial, sans-serif;
-}
-
-:focus-visible {
-  outline: 2px solid var(--oak-navy);
-  outline-offset: 2px;
-}
-
-/* ============================================================
-   OAK EVENT RESPONSIVE SHELL
-   ============================================================ */
-
-/*
- * The mobile header is supplied globally by MobileHeader.tsx.
- * The mobile bottom navigation is supplied by Sidebar.tsx.
- *
- * These variables make the shared shell dimensions available
- * without changing the existing page designs.
- */
-
-:root {
-  --oak-mobile-header-height: 82px;
-  --oak-mobile-nav-height: 61px;
-  --oak-desktop-sidebar-width: 255px;
-}
-
-/*
- * Prevent horizontal overflow caused by fixed responsive
- * navigation elements.
- */
-
-html,
-body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/*
- * Keep interactive controls from being hidden behind the
- * fixed mobile bottom navigation.
- */
-
-@media (max-width: 767px) {
-  body {
-    padding-bottom: 61px;
-  }
-}
-
-/*
- * Desktop pages keep the normal document scrolling behavior.
- * The Sidebar itself is fixed independently.
- */
-
-@media (min-width: 768px) {
-  body {
-    padding-bottom: 0;
-  }
 }
 </file>
 
@@ -6077,6 +5869,216 @@ export async function POST(request: Request) {
       total_checked_in: checkedInRes.count ?? 0 
     },
   });
+}
+</file>
+
+<file path="src/app/globals.css">
+@import "tailwindcss";
+
+:root {
+  --oak-navy: #162e55;
+  --oak-shadow: #1c2e5a;
+  --oak-page: #f4f5f7;
+  --oak-input: #eef1f5;
+  --oak-text: #0e1726;
+  --oak-muted: #6b7590;
+  --oak-border: #1c2e5a1a;
+  --oak-white: #ffffff;
+  --oak-success: #10b981;
+  --oak-error: #ef4444;
+}
+
+@layer utilities {
+  .bg-primary {
+    background-color: var(--oak-navy);
+  }
+
+  .bg-primary-hover {
+    background-color: var(--oak-shadow);
+  }
+
+  .bg-success {
+    background-color: var(--oak-success);
+  }
+
+  .bg-error {
+    background-color: var(--oak-error);
+  }
+
+  .bg-surface {
+    background-color: var(--oak-white);
+  }
+
+  .bg-input-bg {
+    background-color: var(--oak-input);
+  }
+
+  .text-text-heading {
+    color: var(--oak-text);
+  }
+
+  .text-text-body {
+    color: var(--oak-text);
+  }
+
+  .text-text-muted {
+    color: var(--oak-muted);
+  }
+
+  .border-border {
+    border-color: var(--oak-border);
+  }
+
+  .text-error {
+    color: var(--oak-error);
+  }
+}
+
+@font-face {
+  font-family: "Chillax";
+  src: url("/chillax/Chillax-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Chillax";
+  src: url("/chillax/Chillax-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Chillax";
+  src: url("/chillax/Chillax-Semibold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Chillax";
+  src: url("/chillax/Chillax-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+html {
+  background: var(--oak-page);
+}
+
+body {
+  min-height: 100vh;
+
+  font-family: var(--font-inter), Arial, sans-serif;
+
+  background: var(--oak-page);
+  color: var(--oak-text);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+input,
+select,
+textarea {
+  color: var(--oak-text);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--oak-muted);
+  opacity: 1;
+}
+
+.font-chillax {
+  font-family: "Chillax", sans-serif;
+}
+
+.font-inter {
+  font-family: var(--font-inter), Arial, sans-serif;
+}
+
+:focus-visible {
+  outline: 2px solid var(--oak-navy);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   OAK EVENT RESPONSIVE SHELL
+   ============================================================ */
+
+/*
+ * The mobile header is supplied globally by MobileHeader.tsx.
+ * The mobile bottom navigation is supplied by Sidebar.tsx.
+ *
+ * These variables make the shared shell dimensions available
+ * without changing the existing page designs.
+ */
+
+:root {
+  --oak-mobile-header-height: 82px;
+  --oak-mobile-nav-height: 61px;
+  --oak-desktop-sidebar-width: 255px;
+}
+
+/*
+ * Prevent horizontal overflow caused by fixed responsive
+ * navigation elements.
+ */
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/*
+ * Keep interactive controls from being hidden behind the
+ * fixed mobile bottom navigation.
+ */
+
+@media (max-width: 767px) {
+  body {
+    padding-bottom: 61px;
+  }
+}
+
+/*
+ * Desktop pages keep the normal document scrolling behavior.
+ * The Sidebar itself is fixed independently.
+ */
+
+@media (min-width: 768px) {
+  body {
+    padding-bottom: 0;
+  }
 }
 </file>
 
