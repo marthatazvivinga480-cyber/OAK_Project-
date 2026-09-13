@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CalendarDays, Globe, Grid2X2, ScanLine } from "lucide-react";
-import MobileHeader from "@/components/MobileHeader";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -17,26 +16,22 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="flex min-h-dvh w-[255px] shrink-0 flex-col border-r border-[#1C2E5A1A] bg-white max-md:min-h-0 max-md:w-full max-md:border-b max-md:border-r-0">
-      {/* Branded mobile header — replaces Sidebar's own logo block below md */}
-      <MobileHeader />
-
-      {/* Desktop-only logo block; hidden on mobile since MobileHeader covers it */}
-      <div className="h-[130px] w-full border-b border-[#1C2E5A1A] p-6 max-md:hidden">
+    <aside className="flex min-h-dvh w-[255px] shrink-0 flex-col border-r border-[#1C2E5A1A] bg-white max-md:min-h-0 max-md:w-full max-md:flex-row max-md:items-center max-md:border-b max-md:border-r-0 max-md:px-4 max-md:py-2">
+      <div className="h-[130px] w-full border-b border-[#1C2E5A1A] p-6 max-md:h-auto max-md:w-auto max-md:border-b-0 max-md:border-r max-md:border-[#1C2E5A1A] max-md:p-0 max-md:pr-4">
         <Image
           src="/Logo-Oak-Foundation.svg (1) 1 (2).svg"
           alt="OAK Foundation"
           width={85}
           height={53}
-          className="h-[53px] w-[85px] object-contain"
+          className="h-[53px] w-[85px] object-contain max-md:h-[36px] max-md:w-[58px]"
           priority
         />
-        <p className="h-7 pt-3 font-chillax text-xs font-semibold uppercase leading-4 tracking-[1.2px] text-[#6B7590]">
+        <p className="h-7 pt-3 font-chillax text-xs font-semibold uppercase leading-4 tracking-[1.2px] text-[#6B7590] max-md:hidden">
           Partner Convening 2026
         </p>
       </div>
 
-      <nav className="flex-1 p-4 max-md:flex max-md:flex-1 max-md:items-center max-md:gap-1 max-md:overflow-x-auto max-md:p-3">
+      <nav className="flex-1 p-4 max-md:flex max-md:flex-1 max-md:items-center max-md:gap-1 max-md:overflow-x-auto max-md:p-0 max-md:pl-4">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
