@@ -67,7 +67,7 @@ export interface Partner {
 
 export const PAGE_ACCESS: Record<string, Role[]> = {
   "/qr-code": ["Partner"],
-  "/programme": ["OAK Staff", "Presenter", "Observer", "Coordination Team"],
+  "/programme": ["OAK Staff", "Partner", "Presenter", "Observer", "Coordination Team"],
   "/partners": ["OAK Staff", "Partner", "Presenter", "Observer", "Coordination Team"],
   "/checkin": ["Coordination Team"],
   "/attendance": ["Coordination Team"],
