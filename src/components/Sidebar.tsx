@@ -8,9 +8,8 @@ import {
   Globe,
   Grid2X2,
   ScanLine,
-  UserRound,
+  UserPlus,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 
 type NavigationItem = {
   label: string;
@@ -19,36 +18,44 @@ type NavigationItem = {
 };
 
 const navigationItems: NavigationItem[] = [
-  { label: "Register", href: "/register", icon: UserRound },
-  { label: "Check In", href: "/checkin", icon: ScanLine },
-  { label: "Programme", href: "/programme", icon: CalendarDays },
-  { label: "Partners", href: "/partners", icon: Globe },
-  { label: "Attendance", href: "/attendance", icon: Grid2X2 },
+  {
+    label: "Register",
+    href: "/register",
+    icon: UserPlus,
+  },
+  {
+    label: "Check In",
+    href: "/checkin",
+    icon: ScanLine,
+  },
+  {
+    label: "Programme",
+    href: "/programme",
+    icon: CalendarDays,
+  },
+  {
+    label: "Partners",
+    href: "/partners",
+    icon: Globe,
+  },
+  {
+    label: "Attendance",
+    href: "/attendance",
+    icon: Grid2X2,
+  },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
 
-  const [adminInfo, setAdminInfo] = useState<{
-    username: string;
-    is_master: boolean;
-  } | null>(null);
-
-  useEffect(() => {
-    fetch("/api/admin/me")
-      .then((res) => (res.ok ? res.json() : null))
-      .then(setAdminInfo)
-      .catch(() => {});
-  }, []);
-
-  const attendeeNavigation = navigationItems.filter(
+  const attendeeNavigation: NavigationItem[] = navigationItems.filter(
     (item) =>
       item.href === "/register" ||
       item.href === "/programme" ||
       item.href === "/partners"
   );
 
-  const checkInNavigation = navigationItems.filter(
+  const checkInNavigation: NavigationItem[] = navigationItems.filter(
     (item) =>
       item.href === "/checkin" ||
       item.href === "/programme" ||
@@ -56,10 +63,13 @@ export default function Sidebar() {
       item.href === "/attendance"
   );
 
-  const attendanceNavigation = navigationItems;
+  const attendanceNavigation: NavigationItem[] = navigationItems.filter(
+    (item) => item.href !== "/register"
+  );
 
   const isCheckInArea =
-    pathname === "/checkin" || pathname?.startsWith("/checkin/");
+    pathname === "/checkin" ||
+    pathname?.startsWith("/checkin/");
 
   const isAttendanceArea = pathname === "/attendance";
 
@@ -69,9 +79,29 @@ export default function Sidebar() {
       ? checkInNavigation
       : attendeeNavigation;
 
-  const desktopNavigation = adminInfo
-    ? navigationItems
-    : navigationItems;
+  const isRegisterOnlyArea = pathname === "/register";
+
+  const isAttendeeArea =
+    pathname === "/" ||
+    pathname === "/register" ||
+    pathname?.startsWith("/registration-preview") ||
+    pathname?.startsWith("/qr-code") ||
+    pathname === "/programme" ||
+    pathname === "/programme2" ||
+    pathname === "/partners" ||
+    pathname?.startsWith("/partners/");
+
+  const staffNavigation: NavigationItem[] = navigationItems.filter(
+    (item) => item.href !== "/register"
+  );
+
+  const desktopNavigation = isRegisterOnlyArea
+    ? navigationItems.filter((item) => item.href === "/register")
+    : isCheckInArea || isAttendanceArea
+      ? staffNavigation
+      : isAttendeeArea
+        ? attendeeNavigation
+        : navigationItems;
 
   function isActive(href: string) {
     if (href === "/register") {
@@ -83,12 +113,18 @@ export default function Sidebar() {
       );
     }
 
-    return pathname === href || pathname?.startsWith(`${href}/`);
+    return (
+      pathname === href ||
+      pathname?.startsWith(`${href}/`)
+    );
   }
 
   return (
     <>
-      {/* Desktop sidebar */}
+      {/* =========================================================
+          DESKTOP SIDEBAR
+      ========================================================= */}
+
       <div className="hidden w-[255px] min-w-[255px] shrink-0 overflow-hidden md:block">
         <aside
           className="
@@ -101,13 +137,15 @@ export default function Sidebar() {
             w-[255px]
             max-w-[255px]
             flex-col
-            overflow-hidden
+            overflow-x-hidden
+            overflow-y-auto
             border-r
             border-[#1C2E5A1A]
             bg-white
           "
         >
-          {/* Sidebar header */}
+          {/* SIDEBAR HEADER */}
+
           <div
             className="
               h-[130px]
@@ -146,10 +184,16 @@ export default function Sidebar() {
             </p>
           </div>
 
-          {/* Desktop navigation */}
+          {/* SIDEBAR NAVIGATION */}
+
           <nav
             aria-label="Desktop navigation"
-            className="flex-1 overflow-hidden p-4"
+            className="
+              flex-1
+              overflow-x-hidden
+              overflow-y-auto
+              p-4
+            "
           >
             {desktopNavigation.map((item) => {
               const Icon = item.icon;
@@ -158,7 +202,13 @@ export default function Sidebar() {
               return (
                 <div
                   key={item.href}
-                  className="h-12 w-[223px] max-w-full pt-1 first:pt-0"
+                  className="
+                    h-12
+                    w-[223px]
+                    max-w-full
+                    pt-1
+                    first:pt-0
+                  "
                 >
                   <Link
                     href={item.href}
@@ -175,7 +225,7 @@ export default function Sidebar() {
                       py-3
                       font-[var(--font-inter)]
                       text-[14px]
-                      font-semibold
+                      font-bold
                       leading-5
                       no-underline
                       ${
@@ -198,7 +248,8 @@ export default function Sidebar() {
             })}
           </nav>
 
-          {/* Sidebar footer */}
+          {/* SIDEBAR FOOTER */}
+
           <footer
             className="
               h-[73px]
@@ -235,7 +286,7 @@ export default function Sidebar() {
                     truncate
                     font-inter
                     text-[12px]
-                    font-semibold
+                    font-bold
                     leading-4
                     text-[#0E1726]
                   "
@@ -261,7 +312,10 @@ export default function Sidebar() {
         </aside>
       </div>
 
-      {/* Mobile bottom navigation */}
+      {/* =========================================================
+          MOBILE BOTTOM NAVIGATION
+      ========================================================= */}
+
       <nav
         aria-label="Mobile navigation"
         className="
@@ -281,28 +335,33 @@ export default function Sidebar() {
           px-[4px]
           py-[6px]
           backdrop-blur-[20px]
-          md:hidden
-        "
-      >
-        {mobileNavigation.map((item) => {
-          const Icon = item.icon;
-          const active = isActive(item.href);
+            md:hidden
+          "
+        >
+          {mobileNavigation.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={active ? "page" : undefined}
-              className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1"
-            >
-              <span
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
                 className={`
                   flex
-                  h-[19px]
-                  w-[19px]
-                  shrink-0
+                  h-[46px]
+                  min-w-0
+                  flex-1
+                  flex-col
                   items-center
                   justify-center
+                  gap-[2px]
+                  overflow-hidden
+                  rounded-[12px]
+                  px-[2px]
+                  py-[6px]
+                  text-center
+                  no-underline
                   ${
                     active
                       ? "text-[#162E55]"
@@ -310,28 +369,43 @@ export default function Sidebar() {
                   }
                 `}
               >
-                <Icon
-                  className="h-[19px] w-[19px]"
-                  strokeWidth={1.6}
-                  aria-hidden="true"
-                />
-              </span>
+                <span
+                  className={`
+                    flex
+                    h-[19px]
+                    w-[19px]
+                    shrink-0
+                    items-center
+                    justify-center
+                    ${
+                      active
+                        ? "text-[#162E55]"
+                        : "text-[#6B7590]"
+                    }
+                  `}
+                >
+                  <Icon
+                    className="h-[19px] w-[19px]"
+                    strokeWidth={1.6}
+                    aria-hidden="true"
+                  />
+                </span>
 
-              <span
-                className={`
-                  whitespace-nowrap
-                  font-inter
-                  text-[9px]
-                  font-bold
-                  leading-[14px]
-                  tracking-[0.22px]
-                  ${
-                    active
-                      ? "text-[#162E55]"
-                      : "text-[#6B7590]"
-                  }
-                `}
-              >
+                <span
+                  className={`
+                    whitespace-nowrap
+                    font-inter
+                    text-[9px]
+                    font-bold
+                    leading-[14px]
+                    tracking-[0.22px]
+                    ${
+                      active
+                        ? "text-[#162E55]"
+                        : "text-[#6B7590]"
+                    }
+                  `}
+                >
                 {item.label}
               </span>
             </Link>
