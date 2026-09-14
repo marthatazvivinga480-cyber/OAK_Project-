@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   CalendarDays,
@@ -9,49 +9,26 @@ import {
   Image as ImageIcon,
   Lightbulb,
   Paperclip,
-  Plus,
   Download,
   StickyNote,
 } from "lucide-react";
 
 type SessionNote = {
-  initials: string;
-  name: string;
-  organisation: string;
-  time: string;
-  note: string;
+  id: string;
+  note_text: string;
+  updated_at: string;
 };
 
-const sessionNotes: SessionNote[] = [
-  {
-    initials: "MS",
-    name: "Maria Schmidt",
-    organisation: "Open Society Foundations",
-    time: "Day 1 · 14:32",
-    note: "The rights-based approaches session surfaced strong demand for a shared learn...",
-  },
-  {
-    initials: "JO",
-    name: "James Odhiambo",
-    organisation: "OAK Foundation",
-    time: "Day 1 · 16:50",
-    note: "Digital Rights breakout: participants want a working group to share tools for operating in restricted digital environments. Interested orgs: Digital Frontiers, Access Now, EFF.",
-  },
-  {
-    initials: "AD",
-    name: "Awa Diallo",
-    organisation: "Geneva Secretariat",
-    time: "Day 2 · 11:15",
-    note: "Strategic communications workshop highly rated. Rashida's adaptive messaging framework is directly applicable across 60% of the portfolio. Requesting follow-up toolkit.",
-  },
-  {
-    initials: "PAD",
-    name: "Prof. Amara Diallo",
-    organisation: "Sciences Po Paris",
-    time: "Day 2 · 16:00",
-    note: "Fishbowl revealed consensus: philanthropy needs to accept longer time horizons (10+ years) and better share learning. Key ask: OAK to publish failure cases alongside success stories.",
-  },
-];
+type SessionRecord = {
+  id: string;
+  day: string;
+  start_time: string;
+  end_time?: string | null;
+  title: string;
+  speaker?: string | null;
+  venue?: string | null;
+  description?: string | null;
+};
 
 const takeaways = [
   "Philanthropy needs to accept 10+ year time horizons for systemic change",
@@ -115,20 +92,34 @@ const gallery = [
 
 export default function ProgrammePage() {
   const [activeTab, setActiveTab] = useState<"Schedule" | "Docs">("Docs");
-  const [notes, setNotes] = useState(sessionNotes);
+  const [sessions, setSessions] = useState<SessionRecord[]>([]);
+  const [notes, setNotes] = useState<SessionNote[]>([]);
   const [downloadMessage, setDownloadMessage] = useState("");
 
-  const addNote = () => {
-    const newNote: SessionNote = {
-      initials: "YO",
-      name: "You",
-      organisation: "OAK Foundation",
-      time: "Just now",
-      note: "New session note added.",
-    };
+  useEffect(() => {
+    fetch("/api/sessions")
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to load sessions");
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      })
+      .then((data) => setSessions(data))
+      .catch(() => setSessions([]));
+  }, []);
 
-    setNotes((current) => [newNote, ...current]);
-  };
+  useEffect(() => {
+    fetch("/api/notes")
+      .then(async (res) => {
+        if (!res.ok) {
+          if (res.status === 401) return [];
+          throw new Error("Failed to load notes");
+        }
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      })
+      .then((data) => setNotes(data))
+      .catch(() => setNotes([]));
+  }, []);
 
   return (
     <main className="min-h-screen w-full bg-[var(--oak-page)]">
@@ -228,51 +219,46 @@ export default function ProgrammePage() {
                   </h2>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={addNote}
-                  className="flex items-center gap-1.5 rounded-[12px] bg-[var(--oak-navy)] px-[14px] py-2 font-chillax text-[12px] font-semibold leading-4 text-white shadow-[0_4px_20px_0_#1C2E5A4D]"
-                >
-                  <Plus size={14} strokeWidth={2} />
-                  Add Note
-                </button>
+              <div className="flex items-center gap-2 rounded-[12px] bg-[var(--oak-input)] px-[12px] py-2 font-inter text-[12px] text-[var(--oak-muted)]">
+                {notes.length > 0 ? `${notes.length} saved note${notes.length > 1 ? "s" : ""}` : "No session notes yet"}
+              </div>
               </div>
 
               <div className="flex w-full flex-col gap-3 pt-3">
-                {notes.map((note, index) => (
+                {notes.length > 0 ? notes.map((note) => (
                   <article
-                    key={`${note.initials}-${index}`}
+                    key={note.id}
                     className="w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-4 shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-2.5">
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[12px] bg-[var(--oak-navy)]">
                           <span className="font-inter text-[10px] font-bold leading-[15px] text-white">
-                            {note.initials}
+                            {"SN"}
                           </span>
                         </div>
 
                         <div>
                           <p className="font-inter text-[12px] font-bold leading-4 text-[var(--oak-text)]">
-                            {note.name}
+                            Session note
                           </p>
 
                           <p className="font-inter text-[10px] leading-[15px] text-[var(--oak-muted)]">
-                            {note.organisation}
+                            {new Date(note.updated_at).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}
                           </p>
                         </div>
                       </div>
-
-                      <span className="shrink-0 rounded-[8px] bg-[var(--oak-input)] px-2 py-1 font-inter text-[10px] leading-[15px] text-[var(--oak-muted)]">
-                        {note.time}
-                      </span>
                     </div>
 
                     <p className="pt-[10px] font-inter text-[14px] leading-[23px] text-[var(--oak-text)]">
-                      {note.note}
+                      {note.note_text}
                     </p>
                   </article>
-                ))}
+                )) : (
+                  <div className="rounded-[24px] border border-[#1C2E5A1A] bg-white p-5 text-[14px] leading-[23px] text-[var(--oak-muted)]">
+                    Sign in to save notes for a session. Notes are stored in the live backend and appear here after access is granted.
+                  </div>
+                )}
               </div>
             </section>
 

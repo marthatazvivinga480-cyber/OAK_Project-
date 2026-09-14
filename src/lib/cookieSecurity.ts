@@ -1,6 +1,6 @@
 import crypto from "crypto";
 
-const FALLBACK_SESSION_SECRET = "dev-only-secret-change-me";
+const FALLBACK_SESSION_SECRET = "oak-partner-convening-dev-session-secret";
 
 function getSessionSecret(): string {
   const configuredSecret = process.env.SESSION_SECRET;
@@ -10,7 +10,7 @@ function getSessionSecret(): string {
   }
 
   if (process.env.NODE_ENV === "production") {
-    console.warn("SESSION_SECRET is missing in production; using a temporary fallback value.");
+    throw new Error("SESSION_SECRET is required in production. Set it in the environment before starting the app.");
   }
 
   return FALLBACK_SESSION_SECRET;
