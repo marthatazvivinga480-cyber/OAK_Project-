@@ -48,7 +48,7 @@ export async function POST(request: Request) {
 
   while (attempts < 3) {
     registration_id = generateRegistrationId();
-    const qr_code_id = assignedRole === "Partner" ? registration_id : null;
+    const qr_code_id = registration_id;
 
     const { data: insertData, error } = await supabaseAdmin
       .from("participants")
@@ -67,7 +67,14 @@ export async function POST(request: Request) {
     }
     
     if (error.code !== "23505") {
-      return NextResponse.json({ error: "Failed to register. Please try again." }, { status: 500 });
+      console.error("Supabase registration insert error:", error);
+      const isConnectionError =
+        error.message?.includes("fetch failed") ||
+        error.details?.includes("ENOTFOUND");
+      const errorMessage = isConnectionError
+        ? "Unable to connect to the database. Please verify your Supabase project status and URL in .env.local."
+        : (error.message || "Failed to register. Please try again.");
+      return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
     attempts++;
   }

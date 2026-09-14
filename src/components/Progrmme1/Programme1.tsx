@@ -130,7 +130,7 @@ export default function Programme() {
                     active={selectedDay === "day1"}
                     weekday="Mon"
                     day="Day 1"
-                    date="9 Mar"
+                    date="9 Nov"
                     onClick={() => setSelectedDay("day1")}
                   />
 
@@ -138,7 +138,7 @@ export default function Programme() {
                     active={selectedDay === "day2"}
                     weekday="Tue"
                     day="Day 2"
-                    date="10 Mar"
+                    date="10 Nov"
                     onClick={() => setSelectedDay("day2")}
                   />
 
@@ -146,7 +146,7 @@ export default function Programme() {
                     active={selectedDay === "day3"}
                     weekday="Wed"
                     day="Day 3"
-                    date="11 Mar"
+                    date="11 Nov"
                     onClick={() => setSelectedDay("day3")}
                   />
                 </div>

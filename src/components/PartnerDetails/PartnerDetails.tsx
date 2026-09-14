@@ -31,11 +31,13 @@ export default function PartnerDetail({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/partners")
-      .then((res) => res.json())
-      .then((data: PartnerApiRecord[]) => {
-        const match = (data || []).find((p) => p.id === id);
-        if (match) {
+    fetch(`/api/partners?id=${encodeURIComponent(id)}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Partner not found");
+        return res.json();
+      })
+      .then((match: PartnerApiRecord) => {
+        if (match && match.id) {
           setPartner({
             id: match.id,
             name: match.name || "Unknown",

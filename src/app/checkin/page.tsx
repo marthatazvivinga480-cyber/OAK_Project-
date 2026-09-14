@@ -1,4 +1,4 @@
-import CheckIn from "@/components/CheckIn/CheckIn";
+import CheckIn from "@/components/Checkin/CheckIn";
 
 export default function CheckInPage() {
   return <CheckIn />;

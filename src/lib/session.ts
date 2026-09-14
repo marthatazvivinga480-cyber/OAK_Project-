@@ -81,4 +81,5 @@ export async function clearSessionCookies() {
   cookieStore.delete(ADMIN_COOKIE);
   cookieStore.delete(SESSION_COOKIE);
   cookieStore.delete("oak_role");
+  cookieStore.delete("oak_is_master");
 }

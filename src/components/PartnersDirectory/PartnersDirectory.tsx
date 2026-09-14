@@ -45,6 +45,14 @@ type Partner = {
   mutedLogo?: boolean;
 };
 
+interface ApiPartnerRecord {
+  id?: string;
+  name?: string | null;
+  areas_of_work?: string | null;
+  website_url?: string | null;
+  muted_logo?: boolean | null;
+}
+
 export default function PartnersDirectory() {
   const [search, setSearch] = useState("");
   const [selectedRegion, setSelectedRegion] =
@@ -55,9 +63,9 @@ export default function PartnersDirectory() {
   useEffect(() => {
     fetch("/api/partners")
       .then((res) => res.json())
-      .then((data) => {
+      .then((data: ApiPartnerRecord[]) => {
         const mapped: Partner[] = (data || []).map(
-          (p: any) => ({
+          (p: ApiPartnerRecord) => ({
             initials: p.name
               ? p.name.substring(0, 3).toUpperCase()
               : "PRT",

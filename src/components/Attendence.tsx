@@ -9,17 +9,35 @@ import {
 
 import Sidebar from "@/components/Sidebar";
 
-export default function Attendance() {
-  const [data, setData] =
-    useState<any>(null);
+interface AttendanceParticipant {
+  id: string;
+  full_name: string;
+  organization: string;
+  role: string;
+  registration_date?: string | null;
+  attendance_status: string;
+  check_in_time?: string | null;
+}
 
-  const [loading, setLoading] =
-    useState(true);
+interface AttendanceData {
+  stats: {
+    total_registered: number;
+    total_checked_in: number;
+    attendance_percentage?: number;
+    role_breakdown?: Record<string, number>;
+  };
+  participants: AttendanceParticipant[];
+}
+
+export default function Attendance() {
+  const [data, setData] = useState<AttendanceData | null>(null);
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/attendance")
       .then((res) => res.json())
-      .then((d) => {
+      .then((d: AttendanceData) => {
         setData(d);
         setLoading(false);
       })
@@ -47,7 +65,7 @@ export default function Attendance() {
             </h1>
 
             <p className="font-inter text-[14px] text-[#6B7590]">
-              Check-in tracking · 9–11 March 2026
+              Check-in tracking · 9–11 November 2026
             </p>
           </header>
 
@@ -99,7 +117,7 @@ export default function Attendance() {
             ) : (
               <div className="space-y-4">
                 {participants.map(
-                  (p: any) => (
+                  (p: AttendanceParticipant) => (
                     <div
                       key={p.id}
                       className="flex items-center justify-between rounded-xl bg-[#F4F5F7] p-4"

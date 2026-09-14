@@ -488,83 +488,6 @@ export default function SectionLabel({ children, className = "" }: LabelProps) {
 }
 </file>
 
-<file path="src/lib/types.ts">
-export type Role =
-  | "Partner"
-  | "OAK Staff"
-  | "Coordination Team"
-  | "Presenter"
-  | "Observer";
-
-export interface Participant {
-  id: string;
-  registration_id: string;
-  first_name: string;
-  last_name: string;
-  organization: string;
-  sub_partner_program_area: string | null;
-  role: Role;
-  email: string;
-  phone: string | null;
-  dietary_requirements: string | null;
-  accessibility_requirements: string | null;
-  travel_requirements: string | null;
-  accommodation_requirements: string | null;
-  registration_status: string;
-  registration_date: string;
-  qr_code_id: string | null;
-  created_at: string;
-}
-
-export interface CheckIn {
-  id: string;
-  participant_id: string;
-  check_in_date: string;
-  check_in_time: string;
-  attendance_status: string;
-  checked_in_by: string | null;
-}
-
-export interface EventSession {
-  id: string;
-  day: string;
-  start_time: string;
-  end_time: string | null;
-  title: string;
-  speaker: string | null;
-  venue: string | null;
-  description: string | null;
-}
-
-export interface SessionNote {
-  id: string;
-  session_id: string;
-  participant_id: string;
-  note_text: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Partner {
-  id: string;
-  name: string;
-  logo_url: string | null;
-  website_url: string | null;
-  description: string | null;
-  areas_of_work: string | null;
-  contact_name: string | null;
-  contact_email: string | null;
-}
-
-export const PAGE_ACCESS: Record<string, Role[]> = {
-  "/qr-code": ["Partner"],
-  "/programme": ["OAK Staff", "Presenter", "Observer", "Coordination Team"],
-  "/partners": ["OAK Staff", "Partner", "Presenter", "Observer", "Coordination Team"],
-  "/checkin": ["Coordination Team"],
-  "/attendance": ["Coordination Team"],
-};
-</file>
-
 <file path=".gitignore">
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
@@ -1272,6 +1195,83 @@ if (!supabaseUrl || !supabaseServiceKey) {
 }
 
 export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+</file>
+
+<file path="src/lib/types.ts">
+export type Role =
+  | "Partner"
+  | "OAK Staff"
+  | "Coordination Team"
+  | "Presenter"
+  | "Observer";
+
+export interface Participant {
+  id: string;
+  registration_id: string;
+  first_name: string;
+  last_name: string;
+  organization: string;
+  sub_partner_program_area: string | null;
+  role: Role;
+  email: string;
+  phone: string | null;
+  dietary_requirements: string | null;
+  accessibility_requirements: string | null;
+  travel_requirements: string | null;
+  accommodation_requirements: string | null;
+  registration_status: string;
+  registration_date: string;
+  qr_code_id: string | null;
+  created_at: string;
+}
+
+export interface CheckIn {
+  id: string;
+  participant_id: string;
+  check_in_date: string;
+  check_in_time: string;
+  attendance_status: string;
+  checked_in_by: string | null;
+}
+
+export interface EventSession {
+  id: string;
+  day: string;
+  start_time: string;
+  end_time: string | null;
+  title: string;
+  speaker: string | null;
+  venue: string | null;
+  description: string | null;
+}
+
+export interface SessionNote {
+  id: string;
+  session_id: string;
+  participant_id: string;
+  note_text: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Partner {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  website_url: string | null;
+  description: string | null;
+  areas_of_work: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+}
+
+export const PAGE_ACCESS: Record<string, Role[]> = {
+  "/qr-code": ["Partner"],
+  "/programme": ["OAK Staff", "Partner", "Presenter", "Observer", "Coordination Team"],
+  "/partners": ["OAK Staff", "Partner", "Presenter", "Observer", "Coordination Team"],
+  "/checkin": ["Coordination Team"],
+  "/attendance": ["Coordination Team"],
+};
 </file>
 
 <file path="eslint.config.mjs">
@@ -2867,51 +2867,6 @@ function OverviewCard({
 }
 </file>
 
-<file path="src/lib/cookieSecurity.ts">
-import crypto from "crypto";
-
-const FALLBACK_SESSION_SECRET = "dev-only-secret-change-me";
-
-function getSessionSecret(): string {
-  const configuredSecret = process.env.SESSION_SECRET;
-
-  if (configuredSecret && configuredSecret.trim().length > 0) {
-    return configuredSecret;
-  }
-
-  if (process.env.NODE_ENV === "production") {
-    console.warn("SESSION_SECRET is missing in production; using a temporary fallback value.");
-  }
-
-  return FALLBACK_SESSION_SECRET;
-}
-
-export function signCookieValue(value: string): string {
-  const hmac = crypto.createHmac("sha256", getSessionSecret());
-  hmac.update(value);
-  return `${value}.${hmac.digest("hex")}`;
-}
-
-export function verifyCookieValue(signedValue: string): string | null {
-  if (!signedValue || typeof signedValue !== "string") return null;
-  const parts = signedValue.split(".");
-  if (parts.length !== 2) return null;
-
-  const [value, signature] = parts;
-  const expectedHmac = crypto.createHmac("sha256", getSessionSecret()).update(value).digest("hex");
-
-  try {
-    const isValid = crypto.timingSafeEqual(
-      Buffer.from(signature, "hex"),
-      Buffer.from(expectedHmac, "hex")
-    );
-    return isValid ? value : null;
-  } catch {
-    return null;
-  }
-}
-</file>
-
 <file path=".gitattributes">
 *.zip filter=lfs diff=lfs merge=lfs -text
 public/photo[[:space:]]gallery/New[[:space:]]Compressed[[:space:]](zipped)[[:space:]]Folder[[:space:]](2).zip filter=lfs diff=lfs merge=lfs -text
@@ -3747,11 +3702,508 @@ export default function PartnersDirectory() {
 }
 </file>
 
+<file path="src/components/QRCodeDisplay/QRCodeDisplay.tsx">
+"use client";
+
+import Link from "next/link";
+import { CheckCircle2, Download, RotateCcw } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
+import { useRef } from "react";
+import type { Participant } from "@/lib/types";
+import Sidebar from "@/components/Sidebar";
+
+export default function QRCodeDisplay({ participant }: { participant: Participant }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const firstName = participant.first_name;
+  const attendee = {
+    qrCodeId: participant.qr_code_id ?? "",
+    userName: `${participant.first_name} ${participant.last_name}`,
+    organisation: participant.organization,
+    role: participant.role,
+    email: participant.email,
+    eventDates: "9–11 November 2026",
+    location: "Harare, Zimbabwe",
+  };
+
+  function handleDownload() {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = `${participant.registration_id}.png`;
+    link.click();
+  }
+
+  const detailRows: Array<[string, string]> = [
+    ["Name", attendee.userName],
+    ["Organisation", attendee.organisation],
+    ["Role", attendee.role],
+    ["Email", attendee.email],
+    ["Event Dates", attendee.eventDates],
+    ["Location", attendee.location],
+  ];
+
+  return (
+    <main className="flex min-h-screen bg-[#F4F5F7]">
+      <Sidebar />
+
+      <section className="flex w-full justify-center px-8 py-10 max-md:px-4 max-md:py-6">
+        <div className="w-full max-w-[608px]">
+          {/* Hero */}
+          <header className="relative flex min-h-[151px] w-full items-center overflow-hidden rounded-3xl bg-[#162E55] px-6 py-6 text-white shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(168,187,206,0.25)_0%,rgba(168,187,206,0)_70%)]"
+            />
+
+            <div className="relative z-10 flex items-center gap-4">
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/[0.15]">
+                <CheckCircle2 className="h-6 w-6" strokeWidth={1.7} />
+              </span>
+
+              <div>
+                <p className="font-inter text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-white/60">
+                  Registration Complete
+                </p>
+
+                <h2 className="mt-1 font-chillax text-2xl font-bold leading-[30px]">
+                  You&apos;re Registered,
+                  <br />
+                  {firstName}!
+                </h2>
+
+                <p className="mt-1 font-inter text-sm font-normal leading-5 text-white/60">
+                  {attendee.organisation}
+                </p>
+              </div>
+            </div>
+          </header>
+
+          {/* Entry pass */}
+          <section className="mt-4 flex w-full flex-col items-center rounded-3xl border border-[#1C2E5A1A] bg-white p-6 text-center shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+            <p className="font-inter text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
+              Your Entry Pass
+            </p>
+
+            <div className="mt-5 inline-block rounded-3xl bg-[#EEF1F5] p-4">
+              <QRCodeCanvas
+                ref={canvasRef}
+                value={attendee.qrCodeId}
+                size={198}
+                level="H"
+                marginSize={0}
+              />
+            </div>
+
+            <p className="mt-3 font-[Consolas,monospace] text-[12px] leading-4 tracking-[2.16px] text-[#6B7590]">
+              {attendee.qrCodeId}
+            </p>
+
+            <p className="mt-1 font-inter text-[12px] font-normal leading-4 text-[#6B7590]">
+              Present at event entrance for check-in
+            </p>
+          </section>
+
+          {/* Registration details */}
+          <section className="mt-4 w-full rounded-3xl border border-[#1C2E5A1A] bg-white p-5 shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+            <p className="font-inter text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
+              Registration Details
+            </p>
+
+            <dl className="mt-3">
+              {detailRows.map(([label, value], index) => (
+                <div
+                  key={label}
+                  className={`flex items-center justify-between py-2 ${
+                    index < detailRows.length - 1
+                      ? "border-b border-[#1C2E5A1A]"
+                      : ""
+                  }`}
+                >
+                  <dt className="font-inter text-sm font-normal leading-5 text-[#6B7590]">
+                    {label}
+                  </dt>
+
+                  <dd className="m-0 truncate text-right font-inter text-sm font-medium leading-5 text-[#0E1726]">
+                    {value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+
+          {/* Actions */}
+          <div className="mt-4 flex w-full flex-col">
+            <button
+              type="button"
+              onClick={handleDownload}
+              className="flex h-14 w-full items-center justify-center gap-[10px] rounded-2xl bg-[#162E55] py-4 text-white shadow-[0_4px_20px_0_#1C2E5A4D] outline-none focus:outline-none focus:ring-0"
+            >
+              <Download className="h-[18px] w-[18px]" aria-hidden="true" />
+
+              <span className="font-chillax text-base font-semibold leading-6 text-white">
+                Download QR Code
+              </span>
+            </button>
+
+            <Link
+              href="/register"
+              className="flex h-[54px] w-full items-center justify-center gap-[6px] pb-3 pt-[22px] text-center no-underline"
+            >
+              <RotateCcw
+                className="h-[13px] w-[13px] text-[#6B7590]"
+                aria-hidden="true"
+              />
+
+              <span className="font-inter text-sm font-normal leading-5 text-[#6B7590]">
+                Register another attendee
+              </span>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+</file>
+
+<file path="src/lib/cookieSecurity.ts">
+import crypto from "crypto";
+
+const FALLBACK_SESSION_SECRET = "oak-partner-convening-dev-session-secret";
+
+function getSessionSecret(): string {
+  const configuredSecret = process.env.SESSION_SECRET;
+
+  if (configuredSecret && configuredSecret.trim().length > 0) {
+    return configuredSecret;
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET is required in production. Set it in the environment before starting the app.");
+  }
+
+  return FALLBACK_SESSION_SECRET;
+}
+
+export function signCookieValue(value: string): string {
+  const hmac = crypto.createHmac("sha256", getSessionSecret());
+  hmac.update(value);
+  return `${value}.${hmac.digest("hex")}`;
+}
+
+export function verifyCookieValue(signedValue: string): string | null {
+  if (!signedValue || typeof signedValue !== "string") return null;
+  const parts = signedValue.split(".");
+  if (parts.length !== 2) return null;
+
+  const [value, signature] = parts;
+  const expectedHmac = crypto.createHmac("sha256", getSessionSecret()).update(value).digest("hex");
+
+  try {
+    const isValid = crypto.timingSafeEqual(
+      Buffer.from(signature, "hex"),
+      Buffer.from(expectedHmac, "hex")
+    );
+    return isValid ? value : null;
+  } catch {
+    return null;
+  }
+}
+</file>
+
+<file path="src/lib/session.ts">
+import { cookies } from "next/headers";
+import { supabaseAdmin } from "@/lib/supabaseClient";
+import type { Participant } from "@/lib/types";
+import { signCookieValue, verifyCookieValue } from "./cookieSecurity";
+
+const ADMIN_COOKIE = "oak_admin_id";
+const SESSION_COOKIE = "oak_registration_id";
+
+export async function setAdminSessionCookie(adminId: string) {
+  const cookieStore = await cookies();
+  cookieStore.set(ADMIN_COOKIE, signCookieValue(adminId), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 8,
+  });
+}
+
+export async function getCurrentAdmin() {
+  const cookieStore = await cookies();
+  const signedAdminId = cookieStore.get(ADMIN_COOKIE)?.value;
+  if (!signedAdminId) return null;
+
+  const adminId = verifyCookieValue(signedAdminId);
+  if (!adminId) return null;
+
+  const { data, error } = await supabaseAdmin
+    .from("admins")
+    .select("id, username, is_master")
+    .eq("id", adminId)
+    .single();
+
+  if (error || !data) return null;
+  return data;
+}
+
+export async function setSessionCookie(registrationId: string) {
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE, signCookieValue(registrationId), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 14,
+  });
+}
+
+export async function getCurrentParticipant(): Promise<Participant | null> {
+  const cookieStore = await cookies();
+  const signedRegistrationId = cookieStore.get(SESSION_COOKIE)?.value;
+  if (!signedRegistrationId) return null;
+
+  const registrationId = verifyCookieValue(signedRegistrationId);
+  if (!registrationId) return null;
+
+  const { data, error } = await supabaseAdmin
+    .from("participants")
+    .select("*")
+    .eq("registration_id", registrationId)
+    .single();
+
+  if (error || !data) return null;
+  return data as Participant;
+}
+
+export async function getAuthorizedStaff() {
+  const admin = await getCurrentAdmin();
+  if (admin) return { type: "admin", id: admin.id, role: "Coordination Team", is_master: admin.is_master };
+  
+  const participant = await getCurrentParticipant();
+  if (participant && participant.role === "Coordination Team") {
+    return { type: "participant", id: participant.id, role: "Coordination Team" };
+  }
+  
+  return null;
+}
+
+export async function clearSessionCookies() {
+  const cookieStore = await cookies();
+  cookieStore.delete(ADMIN_COOKIE);
+  cookieStore.delete(SESSION_COOKIE);
+  cookieStore.delete("oak_role");
+}
+</file>
+
+<file path="src/app/page.tsx">
+import RegistrationForm from "@/components/RegistrationForm/Registration";
+import Sidebar from "@/components/Sidebar";
+
+export default function Home() {
+  return (
+    <main
+      className="
+        flex
+        min-h-screen
+        bg-[#F7F8FA]
+        pb-[80px]
+        md:pb-0
+      "
+    >
+      <Sidebar />
+
+      <section className="min-w-0 flex-1">
+        <div
+          className="
+            mx-auto
+            w-full
+            max-w-[672px]
+            px-8
+            py-10
+            max-md:px-4
+          "
+        >
+          <header
+            className="
+              rounded-3xl
+              bg-[#162E55]
+              p-6
+              text-white
+            "
+          >
+            <h1
+              className="
+                font-chillax
+                text-[30px]
+                font-bold
+                leading-[37.5px]
+              "
+            >
+              Partner
+              <br />
+              Convening 2026
+            </h1>
+
+            <p
+              className="
+                mt-2
+                font-inter
+                text-sm
+                text-white/75
+              "
+            >
+              9–11 November 2026 · Harare, Zimbabwe
+            </p>
+          </header>
+
+          <div className="font-inter text-[#16243a]">
+            <RegistrationForm />
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+</file>
+
+<file path="src/components/CheckedInFailed/CheckedInFailed.tsx">
+"use client";
+
+import Link from "next/link";
+import {
+  CircleX,
+  Phone,
+  RefreshCcw,
+  TriangleAlert,
+} from "lucide-react";
+
+import Sidebar from "@/components/Sidebar";
+
+const reasons = [
+  "QR code belongs to a different event",
+  "Registration was not completed",
+  "Code has been altered or corrupted",
+  "Attendee registered under a different email",
+];
+
+export default function CheckInFailed() {
+  return (
+    <div className="flex min-h-[941px] bg-[#F4F5F7] max-md:flex-col">
+      <Sidebar />
+
+      <main className="min-h-[941px] min-w-0 flex-1 bg-[#F4F5F7]">
+        <div className="mx-auto w-full max-w-[672px] px-[32px] pt-[40px]">
+          <div className="relative h-[105px] w-full overflow-hidden rounded-[24px] bg-[linear-gradient(135deg,#DC2626_0%,#EF4444_100%)] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+            <div className="pointer-events-none absolute left-[496px] top-[-32px] h-[144px] w-[144px] rounded-full bg-[#FFFFFF1A]" />
+
+            <div className="absolute left-[20px] top-[20px] flex h-[65px] w-[568px] items-center gap-[16px]">
+              <div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-[16px] bg-[#FFFFFF33]">
+                <CircleX
+                  className="h-[30px] w-[30px] text-white"
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                />
+              </div>
+
+              <div className="w-[202px]">
+                <p className="m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-white/60">
+                  Check-In Failed
+                </p>
+
+                <p className="m-0 h-[30px] pt-[2px] font-chillax text-[20px] font-bold leading-[28px] tracking-[0px] text-white">
+                  QR Not Recognised
+                </p>
+
+                <p className="m-0 h-[20px] whitespace-nowrap font-inter text-[14px] font-normal leading-[20px] tracking-[0px] text-white/60">
+                  Code is invalid or unregistered
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-[16px] h-[184px] w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-[20px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+            <div className="flex h-[20px] items-center gap-[8px]">
+              <TriangleAlert
+                className="h-[15px] w-[15px] shrink-0 text-[#EF4444]"
+                strokeWidth={1.5}
+                aria-hidden="true"
+              />
+
+              <p className="m-0 font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726]">
+                Possible reasons
+              </p>
+            </div>
+
+            <div className="mt-[8px]">
+              {reasons.map((reason, index) => (
+                <div
+                  key={reason}
+                  className={`flex h-[20px] items-center gap-[10px] ${
+                    index === 0 ? "" : "mt-[10px]"
+                  }`}
+                >
+                  <div className="flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-full bg-[#FFE2E2]">
+                    <span className="h-[6px] w-[6px] rounded-full bg-[#EF4444]" />
+                  </div>
+
+                  <p className="m-0 font-inter text-[14px] font-normal leading-[20px] tracking-[0px] text-[#6B7590]">
+                    {reason}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Link
+            href="/checkin"
+            className="mt-[16px] flex min-h-[56px] w-full items-center justify-center gap-[8px] rounded-[16px] bg-[#162E55] px-4 py-[16px] text-center font-chillax text-[16px] font-semibold leading-[24px] tracking-[0px] text-white shadow-[0_4px_20px_0_#1C2E5A4D] transition-colors hover:bg-[#1C3D6E] active:bg-[#102440] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#162E55]"
+          >
+            <RefreshCcw
+              className="h-[17px] w-[17px] shrink-0 text-white"
+              strokeWidth={1.5}
+              aria-hidden="true"
+            />
+
+            <span>Try Again</span>
+          </Link>
+
+          <button
+            type="button"
+            className="mt-[12px] flex h-[54px] w-full items-center justify-center gap-[8px] rounded-[24px] border border-[#1C2E5A1A] bg-white py-[16px] font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
+          >
+            <Phone
+              className="h-[15px] w-[15px] shrink-0 text-[#0E1726]"
+              strokeWidth={1.5}
+              aria-hidden="true"
+            />
+
+            <span>Contact Coordination Team</span>
+          </button>
+        </div>
+      </main>
+    </div>
+  );
+}
+</file>
+
+<file path="src/app/checkin/page.tsx">
+import CheckIn from "@/components/CheckIn/CheckIn";
+
+export default function CheckInPage() {
+  return <CheckIn />;
+}
+</file>
+
 <file path="src/components/Programme2/Programme2.tsx">
 "use client";
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Sidebar from "@/components/Sidebar";
 import {
   CalendarDays,
   FileText,
@@ -3880,8 +4332,11 @@ export default function ProgrammePage() {
   };
 
   return (
-    <main className="min-h-screen w-full bg-[var(--oak-page)]">
-      <div className="mx-auto flex w-full max-w-[672px] flex-col gap-[13px] px-8 py-10">
+    <div className="flex min-h-screen bg-[var(--oak-page)] max-md:flex-col">
+      <Sidebar />
+
+      <main className="min-h-screen min-w-0 flex-1 bg-[var(--oak-page)]">
+        <div className="mx-auto flex w-full max-w-[672px] flex-col gap-[13px] px-8 py-10">
         <header className="w-full">
           <h1 className="font-chillax text-[24px] font-bold leading-8 text-[var(--oak-text)]">
             Programme
@@ -4179,893 +4634,7 @@ export default function ProgrammePage() {
           </>
         )}
       </div>
-    </main>
-  );
-}
-</file>
-
-<file path="src/components/QRCodeDisplay/QRCodeDisplay.tsx">
-"use client";
-
-import Link from "next/link";
-import { CheckCircle2, Download, RotateCcw } from "lucide-react";
-import { QRCodeCanvas } from "qrcode.react";
-import { useRef } from "react";
-import type { Participant } from "@/lib/types";
-import Sidebar from "@/components/Sidebar";
-
-export default function QRCodeDisplay({ participant }: { participant: Participant }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const firstName = participant.first_name;
-  const attendee = {
-    qrCodeId: participant.qr_code_id ?? "",
-    userName: `${participant.first_name} ${participant.last_name}`,
-    organisation: participant.organization,
-    role: participant.role,
-    email: participant.email,
-    eventDates: "9–11 November 2026",
-    location: "Harare, Zimbabwe",
-  };
-
-  function handleDownload() {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const link = document.createElement("a");
-    link.href = canvas.toDataURL("image/png");
-    link.download = `${participant.registration_id}.png`;
-    link.click();
-  }
-
-  const detailRows: Array<[string, string]> = [
-    ["Name", attendee.userName],
-    ["Organisation", attendee.organisation],
-    ["Role", attendee.role],
-    ["Email", attendee.email],
-    ["Event Dates", attendee.eventDates],
-    ["Location", attendee.location],
-  ];
-
-  return (
-    <main className="flex min-h-screen bg-[#F4F5F7]">
-      <Sidebar />
-
-      <section className="flex w-full justify-center px-8 py-10 max-md:px-4 max-md:py-6">
-        <div className="w-full max-w-[608px]">
-          {/* Hero */}
-          <header className="relative flex min-h-[151px] w-full items-center overflow-hidden rounded-3xl bg-[#162E55] px-6 py-6 text-white shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(168,187,206,0.25)_0%,rgba(168,187,206,0)_70%)]"
-            />
-
-            <div className="relative z-10 flex items-center gap-4">
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/[0.15]">
-                <CheckCircle2 className="h-6 w-6" strokeWidth={1.7} />
-              </span>
-
-              <div>
-                <p className="font-inter text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-white/60">
-                  Registration Complete
-                </p>
-
-                <h2 className="mt-1 font-chillax text-2xl font-bold leading-[30px]">
-                  You&apos;re Registered,
-                  <br />
-                  {firstName}!
-                </h2>
-
-                <p className="mt-1 font-inter text-sm font-normal leading-5 text-white/60">
-                  {attendee.organisation}
-                </p>
-              </div>
-            </div>
-          </header>
-
-          {/* Entry pass */}
-          <section className="mt-4 flex w-full flex-col items-center rounded-3xl border border-[#1C2E5A1A] bg-white p-6 text-center shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-            <p className="font-inter text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
-              Your Entry Pass
-            </p>
-
-            <div className="mt-5 inline-block rounded-3xl bg-[#EEF1F5] p-4">
-              <QRCodeCanvas
-                ref={canvasRef}
-                value={attendee.qrCodeId}
-                size={198}
-                level="H"
-                marginSize={0}
-              />
-            </div>
-
-            <p className="mt-3 font-[Consolas,monospace] text-[12px] leading-4 tracking-[2.16px] text-[#6B7590]">
-              {attendee.qrCodeId}
-            </p>
-
-            <p className="mt-1 font-inter text-[12px] font-normal leading-4 text-[#6B7590]">
-              Present at event entrance for check-in
-            </p>
-          </section>
-
-          {/* Registration details */}
-          <section className="mt-4 w-full rounded-3xl border border-[#1C2E5A1A] bg-white p-5 shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-            <p className="font-inter text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[#6B7590]">
-              Registration Details
-            </p>
-
-            <dl className="mt-3">
-              {detailRows.map(([label, value], index) => (
-                <div
-                  key={label}
-                  className={`flex items-center justify-between py-2 ${
-                    index < detailRows.length - 1
-                      ? "border-b border-[#1C2E5A1A]"
-                      : ""
-                  }`}
-                >
-                  <dt className="font-inter text-sm font-normal leading-5 text-[#6B7590]">
-                    {label}
-                  </dt>
-
-                  <dd className="m-0 truncate text-right font-inter text-sm font-medium leading-5 text-[#0E1726]">
-                    {value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-
-          {/* Actions */}
-          <div className="mt-4 flex w-full flex-col">
-            <button
-              type="button"
-              onClick={handleDownload}
-              className="flex h-14 w-full items-center justify-center gap-[10px] rounded-2xl bg-[#162E55] py-4 text-white shadow-[0_4px_20px_0_#1C2E5A4D] outline-none focus:outline-none focus:ring-0"
-            >
-              <Download className="h-[18px] w-[18px]" aria-hidden="true" />
-
-              <span className="font-chillax text-base font-semibold leading-6 text-white">
-                Download QR Code
-              </span>
-            </button>
-
-            <Link
-              href="/register"
-              className="flex h-[54px] w-full items-center justify-center gap-[6px] pb-3 pt-[22px] text-center no-underline"
-            >
-              <RotateCcw
-                className="h-[13px] w-[13px] text-[#6B7590]"
-                aria-hidden="true"
-              />
-
-              <span className="font-inter text-sm font-normal leading-5 text-[#6B7590]">
-                Register another attendee
-              </span>
-            </Link>
-          </div>
-        </div>
-      </section>
-    </main>
-  );
-}
-</file>
-
-<file path="src/lib/session.ts">
-import { cookies } from "next/headers";
-import { supabaseAdmin } from "@/lib/supabaseClient";
-import type { Participant } from "@/lib/types";
-import { signCookieValue, verifyCookieValue } from "./cookieSecurity";
-
-const ADMIN_COOKIE = "oak_admin_id";
-const SESSION_COOKIE = "oak_registration_id";
-
-export async function setAdminSessionCookie(adminId: string) {
-  const cookieStore = await cookies();
-  cookieStore.set(ADMIN_COOKIE, signCookieValue(adminId), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 8,
-  });
-}
-
-export async function getCurrentAdmin() {
-  const cookieStore = await cookies();
-  const signedAdminId = cookieStore.get(ADMIN_COOKIE)?.value;
-  if (!signedAdminId) return null;
-
-  const adminId = verifyCookieValue(signedAdminId);
-  if (!adminId) return null;
-
-  const { data, error } = await supabaseAdmin
-    .from("admins")
-    .select("id, username, is_master")
-    .eq("id", adminId)
-    .single();
-
-  if (error || !data) return null;
-  return data;
-}
-
-export async function setSessionCookie(registrationId: string) {
-  const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE, signCookieValue(registrationId), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 14,
-  });
-}
-
-export async function getCurrentParticipant(): Promise<Participant | null> {
-  const cookieStore = await cookies();
-  const signedRegistrationId = cookieStore.get(SESSION_COOKIE)?.value;
-  if (!signedRegistrationId) return null;
-
-  const registrationId = verifyCookieValue(signedRegistrationId);
-  if (!registrationId) return null;
-
-  const { data, error } = await supabaseAdmin
-    .from("participants")
-    .select("*")
-    .eq("registration_id", registrationId)
-    .single();
-
-  if (error || !data) return null;
-  return data as Participant;
-}
-
-export async function getAuthorizedStaff() {
-  const admin = await getCurrentAdmin();
-  if (admin) return { type: "admin", id: admin.id, role: "Coordination Team", is_master: admin.is_master };
-  
-  const participant = await getCurrentParticipant();
-  if (participant && participant.role === "Coordination Team") {
-    return { type: "participant", id: participant.id, role: "Coordination Team" };
-  }
-  
-  return null;
-}
-
-export async function clearSessionCookies() {
-  const cookieStore = await cookies();
-  cookieStore.delete(ADMIN_COOKIE);
-  cookieStore.delete(SESSION_COOKIE);
-  cookieStore.delete("oak_role");
-}
-</file>
-
-<file path="src/app/page.tsx">
-import RegistrationForm from "@/components/RegistrationForm/Registration";
-import Sidebar from "@/components/Sidebar";
-
-export default function Home() {
-  return (
-    <main
-      className="
-        flex
-        min-h-screen
-        bg-[#F7F8FA]
-        pb-[80px]
-        md:pb-0
-      "
-    >
-      <Sidebar />
-
-      <section className="min-w-0 flex-1">
-        <div
-          className="
-            mx-auto
-            w-full
-            max-w-[672px]
-            px-8
-            py-10
-            max-md:px-4
-          "
-        >
-          <header
-            className="
-              rounded-3xl
-              bg-[#162E55]
-              p-6
-              text-white
-            "
-          >
-            <h1
-              className="
-                font-chillax
-                text-[30px]
-                font-bold
-                leading-[37.5px]
-              "
-            >
-              Partner
-              <br />
-              Convening 2026
-            </h1>
-
-            <p
-              className="
-                mt-2
-                font-inter
-                text-sm
-                text-white/75
-              "
-            >
-              9–11 November 2026 · Harare, Zimbabwe
-            </p>
-          </header>
-
-          <div className="font-inter text-[#16243a]">
-            <RegistrationForm />
-          </div>
-        </div>
-      </section>
-    </main>
-  );
-}
-</file>
-
-<file path="src/components/CheckedInFailed/CheckedInFailed.tsx">
-"use client";
-
-import Link from "next/link";
-import {
-  CircleX,
-  Phone,
-  RefreshCcw,
-  TriangleAlert,
-} from "lucide-react";
-
-import Sidebar from "@/components/Sidebar";
-
-const reasons = [
-  "QR code belongs to a different event",
-  "Registration was not completed",
-  "Code has been altered or corrupted",
-  "Attendee registered under a different email",
-];
-
-export default function CheckInFailed() {
-  return (
-    <div className="flex min-h-[941px] bg-[#F4F5F7] max-md:flex-col">
-      <Sidebar />
-
-      <main className="min-h-[941px] min-w-0 flex-1 bg-[#F4F5F7]">
-        <div className="mx-auto w-full max-w-[672px] px-[32px] pt-[40px]">
-          <div className="relative h-[105px] w-full overflow-hidden rounded-[24px] bg-[linear-gradient(135deg,#DC2626_0%,#EF4444_100%)] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-            <div className="pointer-events-none absolute left-[496px] top-[-32px] h-[144px] w-[144px] rounded-full bg-[#FFFFFF1A]" />
-
-            <div className="absolute left-[20px] top-[20px] flex h-[65px] w-[568px] items-center gap-[16px]">
-              <div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-[16px] bg-[#FFFFFF33]">
-                <CircleX
-                  className="h-[30px] w-[30px] text-white"
-                  strokeWidth={2.5}
-                  aria-hidden="true"
-                />
-              </div>
-
-              <div className="w-[202px]">
-                <p className="m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] text-white/60">
-                  Check-In Failed
-                </p>
-
-                <p className="m-0 h-[30px] pt-[2px] font-chillax text-[20px] font-bold leading-[28px] tracking-[0px] text-white">
-                  QR Not Recognised
-                </p>
-
-                <p className="m-0 h-[20px] whitespace-nowrap font-inter text-[14px] font-normal leading-[20px] tracking-[0px] text-white/60">
-                  Code is invalid or unregistered
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-[16px] h-[184px] w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-[20px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-            <div className="flex h-[20px] items-center gap-[8px]">
-              <TriangleAlert
-                className="h-[15px] w-[15px] shrink-0 text-[#EF4444]"
-                strokeWidth={1.5}
-                aria-hidden="true"
-              />
-
-              <p className="m-0 font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726]">
-                Possible reasons
-              </p>
-            </div>
-
-            <div className="mt-[8px]">
-              {reasons.map((reason, index) => (
-                <div
-                  key={reason}
-                  className={`flex h-[20px] items-center gap-[10px] ${
-                    index === 0 ? "" : "mt-[10px]"
-                  }`}
-                >
-                  <div className="flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-full bg-[#FFE2E2]">
-                    <span className="h-[6px] w-[6px] rounded-full bg-[#EF4444]" />
-                  </div>
-
-                  <p className="m-0 font-inter text-[14px] font-normal leading-[20px] tracking-[0px] text-[#6B7590]">
-                    {reason}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <Link
-            href="/checkin"
-            className="mt-[16px] flex min-h-[56px] w-full items-center justify-center gap-[8px] rounded-[16px] bg-[#162E55] px-4 py-[16px] text-center font-chillax text-[16px] font-semibold leading-[24px] tracking-[0px] text-white shadow-[0_4px_20px_0_#1C2E5A4D] transition-colors hover:bg-[#1C3D6E] active:bg-[#102440] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#162E55]"
-          >
-            <RefreshCcw
-              className="h-[17px] w-[17px] shrink-0 text-white"
-              strokeWidth={1.5}
-              aria-hidden="true"
-            />
-
-            <span>Try Again</span>
-          </Link>
-
-          <button
-            type="button"
-            className="mt-[12px] flex h-[54px] w-full items-center justify-center gap-[8px] rounded-[24px] border border-[#1C2E5A1A] bg-white py-[16px] font-inter text-[14px] font-semibold leading-[20px] tracking-[0px] text-[#0E1726] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
-          >
-            <Phone
-              className="h-[15px] w-[15px] shrink-0 text-[#0E1726]"
-              strokeWidth={1.5}
-              aria-hidden="true"
-            />
-
-            <span>Contact Coordination Team</span>
-          </button>
-        </div>
       </main>
-    </div>
-  );
-}
-</file>
-
-<file path="src/app/checkin/page.tsx">
-import CheckIn from "@/components/CheckIn/CheckIn";
-
-export default function CheckInPage() {
-  return <CheckIn />;
-}
-</file>
-
-<file path="src/components/Progrmme1/Programme1.tsx">
-"use client";
-
-import { useState, useEffect } from "react";
-import {
-  ChevronDown,
-  MapPin,
-  Star,
-} from "lucide-react";
-
-import Sidebar from "@/components/Sidebar";
-
-type DayKey = "day1" | "day2" | "day3";
-
-type SessionType =
-  | "Plenary"
-  | "Breakout"
-  | "Workshop"
-  | "Social";
-
-type SessionCardProps = {
-  start: string;
-  end: string;
-  title: string;
-  person?: string;
-  location: string;
-  type: SessionType;
-};
-
-export default function Programme() {
-  const [selectedDay, setSelectedDay] = useState<DayKey>("day1");
-  const [activeTab, setActiveTab] = useState<"schedule" | "docs">("schedule");
-  const [sessions, setSessions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/sessions")
-      .then((res) => res.json())
-      .then((data) => {
-        setSessions(data || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
-  const dayMap: Record<DayKey, string> = {
-    day1: "Day 1",
-    day2: "Day 2",
-    day3: "Day 3",
-  };
-
-  const currentDayLabel = dayMap[selectedDay];
-
-  const currentSessions = sessions.filter(
-    (s) => s.day === currentDayLabel
-  );
-
-  return (
-    <div className="flex min-h-[1179px] bg-[#F4F5F7] pb-[80px] md:pb-0">
-      <Sidebar />
-
-      <main className="min-h-[1179px] min-w-0 flex-1 bg-[#F4F5F7]">
-        <div className="mx-auto w-full max-w-[672px] px-[32px] py-[40px]">
-          <div className="h-[54px] w-[195.234375px]">
-            <h1 className="m-0 h-[32px] font-chillax text-[24px] font-bold leading-[32px] tracking-[0px] text-[#0E1726]">
-              Programme
-            </h1>
-
-            <p className="m-0 h-[22px] pt-[2px] font-inter text-[14px] font-normal leading-[20px] tracking-[0px] text-[#6B7590]">
-              OAK Partner Convening 2026
-            </p>
-          </div>
-
-          <div className="mt-[16px] flex h-[40px] w-full max-w-[602px] items-center justify-between rounded-[7px] bg-[#E5E8EE] p-[4px]">
-            <button
-              type="button"
-              onClick={() => setActiveTab("schedule")}
-              className={`flex h-[32px] w-[140px] shrink-0 items-center justify-center rounded-[12px] px-[44px] py-[8px] text-[12px] font-semibold leading-[16px] ${
-                activeTab === "schedule"
-                  ? "bg-white text-[#0E1726] shadow-[0_1px_4px_0_#00000014]"
-                  : "bg-transparent text-[#6B7590]"
-              }`}
-            >
-              Schedule
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab("docs")}
-              className={`flex h-[32px] w-[56px] shrink-0 items-center justify-center rounded-[12px] px-[14px] py-[8px] text-[12px] font-semibold leading-[16px] ${
-                activeTab === "docs"
-                  ? "bg-white text-[#0E1726] shadow-[0_1px_4px_0_#00000014]"
-                  : "bg-transparent text-[#6B7590]"
-              }`}
-            >
-              Docs
-            </button>
-          </div>
-
-          {activeTab === "schedule" ? (
-            <>
-              <div className="w-full pt-[15px]">
-                <div className="grid h-[85px] w-full grid-cols-3 gap-[10px]">
-                  <DayButton
-                    active={selectedDay === "day1"}
-                    weekday="Mon"
-                    day="Day 1"
-                    date="9 Mar"
-                    onClick={() => setSelectedDay("day1")}
-                  />
-
-                  <DayButton
-                    active={selectedDay === "day2"}
-                    weekday="Tue"
-                    day="Day 2"
-                    date="10 Mar"
-                    onClick={() => setSelectedDay("day2")}
-                  />
-
-                  <DayButton
-                    active={selectedDay === "day3"}
-                    weekday="Wed"
-                    day="Day 3"
-                    date="11 Mar"
-                    onClick={() => setSelectedDay("day3")}
-                  />
-                </div>
-              </div>
-
-              {loading ? (
-                <div className="mt-[20px] text-center text-[#6B7590]">
-                  Loading schedule...
-                </div>
-              ) : currentSessions.length > 0 ? (
-                <>
-                  <div className="flex h-[32.5px] w-full items-start gap-[12px] pt-[16px]">
-                    <LegendItem
-                      label="Plenary"
-                      colour="#1C2E5A"
-                    />
-
-                    <LegendItem
-                      label="Breakout"
-                      colour="#F59E0B"
-                    />
-
-                    <LegendItem
-                      label="Workshop"
-                      colour="#8B5CF6"
-                    />
-
-                    <LegendItem
-                      label="Social"
-                      colour="#F97316"
-                    />
-                  </div>
-
-                  {currentSessions.map((s, idx) => {
-                    const tTitle = s.title.toLowerCase();
-
-                    let type: SessionType = "Plenary";
-
-                    if (tTitle.includes("breakout")) {
-                      type = "Breakout";
-                    }
-
-                    if (tTitle.includes("workshop")) {
-                      type = "Workshop";
-                    }
-
-                    if (
-                      tTitle.includes("social") ||
-                      tTitle.includes("reception") ||
-                      tTitle.includes("dinner")
-                    ) {
-                      type = "Social";
-                    }
-
-                    if (
-                      tTitle.includes("break") ||
-                      tTitle.includes("lunch") ||
-                      tTitle.includes("registration")
-                    ) {
-                      return (
-                        <TimelineDivider
-                          key={idx}
-                          time={s.start_time}
-                          label={s.title}
-                          compact={tTitle.includes("registration")}
-                        />
-                      );
-                    }
-
-                    return (
-                      <SessionCard
-                        key={idx}
-                        start={s.start_time}
-                        end={s.end_time || ""}
-                        title={s.title}
-                        person={s.speaker || undefined}
-                        location={s.venue || "TBD"}
-                        type={type}
-                      />
-                    );
-                  })}
-                </>
-              ) : (
-                <div className="mt-[20px] rounded-[24px] border border-[#1C2E5A1A] bg-white p-[24px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-                  <p className="m-0 font-inter text-[14px] font-normal leading-[20px] text-[#6B7590]">
-                    Programme details for this day will be added here.
-                  </p>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="mt-[20px] rounded-[24px] border border-[#1C2E5A1A] bg-white p-[24px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
-              <p className="m-0 font-inter text-[14px] font-normal leading-[20px] text-[#6B7590]">
-                Daily documentation posts will appear
-                here.
-              </p>
-            </div>
-          )}
-        </div>
-      </main>
-    </div>
-  );
-}
-
-function DayButton({
-  active,
-  weekday,
-  day,
-  date,
-  onClick,
-}: {
-  active: boolean;
-  weekday: string;
-  day: string;
-  date: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`h-[85px] rounded-[24px] p-[14px] text-left ${
-        active
-          ? "bg-[#162E55] shadow-[0_4px_20px_0_#1C2E5A4D]"
-          : "border border-[#1C2E5A1A] bg-white shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
-      }`}
-    >
-      <p
-        className={`m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] ${
-          active
-            ? "text-white/60"
-            : "text-[#6B7590]"
-        }`}
-      >
-        {weekday}
-      </p>
-
-      <p
-        className={`m-0 h-[20px] pt-[2px] font-chillax text-[18px] font-bold leading-[18px] ${
-          active
-            ? "text-white"
-            : "text-[#0E1726]"
-        }`}
-      >
-        {day}
-      </p>
-
-      <p
-        className={`m-0 h-[20px] pt-[4px] font-inter text-[12px] font-normal leading-[16px] ${
-          active
-            ? "text-white/60"
-            : "text-[#6B7590]"
-        }`}
-      >
-        {date}
-      </p>
-    </button>
-  );
-}
-
-function LegendItem({
-  label,
-  colour,
-}: {
-  label: string;
-  colour: string;
-}) {
-  return (
-    <div className="flex h-[16.5px] items-center gap-[6px]">
-      <span
-        className="h-[8px] w-[8px] rounded-full"
-        style={{ backgroundColor: colour }}
-      />
-
-      <span className="font-inter text-[11px] font-normal leading-[16.5px] text-[#6B7590]">
-        {label}
-      </span>
-    </div>
-  );
-}
-
-function TimelineDivider({
-  time,
-  label,
-  compact = false,
-}: {
-  time: string;
-  label: string;
-  compact?: boolean;
-}) {
-  return (
-    <div
-      className={`flex w-full items-center gap-[12px] px-[4px] ${
-        compact
-          ? "h-[28px] py-[6px]"
-          : "h-[36px] pb-[6px] pt-[14px]"
-      }`}
-    >
-      <span className="w-[40px] shrink-0 font-mono text-[12px] font-normal leading-[16px] text-[#6B7590]">
-        {time}
-      </span>
-
-      <div className="h-px flex-1 bg-[#1C2E5A1A]" />
-
-      <span className="shrink-0 whitespace-nowrap font-inter text-[12px] font-normal leading-[16px] text-[#6B7590]">
-        {label}
-      </span>
-
-      <div className="h-px flex-1 bg-[#1C2E5A1A]" />
-    </div>
-  );
-}
-
-function SessionCard({
-  start,
-  end,
-  title,
-  person,
-  location,
-  type,
-}: SessionCardProps) {
-  const badgeStyles: Record<
-    SessionType,
-    string
-  > = {
-    Plenary:
-      "border-[#C5CFDF] bg-[#EEF1F9] text-[#1C2E5A]",
-    Breakout:
-      "border-[#FDE68A] bg-[#FEF3C7] text-[#92400E]",
-    Workshop:
-      "border-[#DDD6FE] bg-[#F5F3FF] text-[#7C3AED]",
-    Social:
-      "border-[#FDBA74] bg-[#FFF7ED] text-[#C2410C]",
-  };
-
-  const dotStyles: Record<
-    SessionType,
-    string
-  > = {
-    Plenary: "bg-[#1C2E5A]",
-    Breakout: "bg-[#F59E0B]",
-    Workshop: "bg-[#8B5CF6]",
-    Social: "bg-[#F97316]",
-  };
-
-  return (
-    <div className="h-[111px] w-full pt-[8px]">
-      <button
-        type="button"
-        className="h-[103px] w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-[16px] text-left shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
-      >
-        <div className="flex h-[69px] w-full gap-[12px]">
-          <div className="h-[33px] w-[56px] shrink-0 pt-[2px] text-right">
-            <p className="m-0 h-[16px] font-mono text-[12px] font-bold leading-[16px] text-[#0E1726]">
-              {start}
-            </p>
-
-            <p className="m-0 h-[15px] font-inter text-[10px] font-normal leading-[15px] text-[#6B7590]">
-              –{end}
-            </p>
-          </div>
-
-          <div className="min-w-0 flex-1">
-            <div className="flex h-[27px] w-full items-start justify-between gap-[8px]">
-              <p className="m-0 min-w-0 flex-1 truncate font-inter text-[14px] font-semibold leading-[19.25px] text-[#0E1726]">
-                {title}
-              </p>
-
-              <div
-                className={`flex h-[27px] shrink-0 items-center justify-center gap-[4px] rounded-full border px-[10px] py-[4px] ${badgeStyles[type]}`}
-              >
-                <span
-                  className={`h-[6px] w-[6px] rounded-full ${dotStyles[type]}`}
-                />
-
-                <span className="whitespace-nowrap font-inter text-[11px] font-semibold leading-[16.5px] tracking-[0.22px]">
-                  {type}
-                </span>
-              </div>
-            </div>
-
-            {person ? (
-              <p className="m-0 h-[22px] w-full truncate pt-[6px] font-inter text-[12px] font-normal leading-[16px] text-[#6B7590]">
-                {person}
-              </p>
-            ) : (
-              <div className="h-[22px]" />
-            )}
-
-            <div className="flex h-[20px] w-full items-center gap-[4px] pt-[4px]">
-              <MapPin
-                className="h-[10px] w-[10px] shrink-0 text-[#6B7590]"
-                strokeWidth={1.2}
-              />
-
-              <span className="truncate font-inter text-[12px] font-normal leading-[16px] text-[#6B7590]">
-                {location}
-              </span>
-
-              <ChevronDown
-                className="ml-auto h-[14px] w-[14px] shrink-0 text-[#6B7590]"
-                strokeWidth={1.2}
-              />
-            </div>
-          </div>
-        </div>
-      </button>
     </div>
   );
 }
@@ -6074,6 +5643,335 @@ export default function RegistrationForm() {
 }
 </file>
 
+<file path="src/components/Progrmme1/Programme1.tsx">
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  ChevronDown,
+  MapPin,
+} from "lucide-react";
+
+import Sidebar from "@/components/Sidebar";
+
+type DayKey = "day1" | "day2" | "day3";
+
+type SessionType =
+  | "Plenary"
+  | "Breakout"
+  | "Workshop"
+  | "Social";
+
+type SessionCardProps = {
+  start: string;
+  end: string;
+  title: string;
+  person?: string;
+  location: string;
+  type: SessionType;
+};
+
+type SessionRecord = {
+  id: string;
+  day: string;
+  start_time: string;
+  end_time?: string | null;
+  title: string;
+  speaker?: string | null;
+  venue?: string | null;
+  description?: string | null;
+};
+
+export default function Programme() {
+  const [selectedDay, setSelectedDay] = useState<DayKey>("day1");
+  const [activeTab, setActiveTab] = useState<"schedule" | "docs">("schedule");
+  const [sessions, setSessions] = useState<SessionRecord[]>([]);
+  const [notes, setNotes] = useState<{ id: string; note_text: string; updated_at: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notesLoading, setNotesLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/sessions")
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to load sessions");
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      })
+      .then((data) => setSessions(data))
+      .catch(() => setSessions([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/notes")
+      .then(async (res) => {
+        if (!res.ok) {
+          if (res.status === 401) return [];
+          throw new Error("Failed to load notes");
+        }
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      })
+      .then((data) => setNotes(data))
+      .catch(() => setNotes([]))
+      .finally(() => setNotesLoading(false));
+  }, []);
+
+  const dayMap: Record<DayKey, string> = {
+    day1: "Day 1",
+    day2: "Day 2",
+    day3: "Day 3",
+  };
+
+  const currentDayLabel = dayMap[selectedDay];
+  const currentSessions = sessions.filter((session) => session.day === currentDayLabel);
+
+  return (
+    <div className="flex min-h-[1179px] bg-[#F4F5F7] pb-[80px] md:pb-0">
+      <Sidebar />
+
+      <main className="min-h-[1179px] min-w-0 flex-1 bg-[#F4F5F7]">
+        <div className="mx-auto w-full max-w-[672px] px-[32px] py-[40px]">
+          <div className="h-[54px] w-[195.234375px]">
+            <h1 className="m-0 h-[32px] font-chillax text-[24px] font-bold leading-[32px] tracking-[0px] text-[#0E1726]">
+              Programme
+            </h1>
+
+            <p className="m-0 h-[22px] pt-[2px] font-inter text-[14px] font-normal leading-[20px] tracking-[0px] text-[#6B7590]">
+              OAK Partner Convening 2026
+            </p>
+          </div>
+
+          <div className="mt-[16px] flex h-[40px] w-full max-w-[602px] items-center justify-between rounded-[7px] bg-[#E5E8EE] p-[4px]">
+            <button
+              type="button"
+              onClick={() => setActiveTab("schedule")}
+              className={`flex h-[32px] w-[140px] shrink-0 items-center justify-center rounded-[12px] px-[44px] py-[8px] text-[12px] font-semibold leading-[16px] ${
+                activeTab === "schedule"
+                  ? "bg-white text-[#0E1726] shadow-[0_1px_4px_0_#00000014]"
+                  : "bg-transparent text-[#6B7590]"
+              }`}
+            >
+              Schedule
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("docs")}
+              className={`flex h-[32px] w-[56px] shrink-0 items-center justify-center rounded-[12px] px-[14px] py-[8px] text-[12px] font-semibold leading-[16px] ${
+                activeTab === "docs"
+                  ? "bg-white text-[#0E1726] shadow-[0_1px_4px_0_#00000014]"
+                  : "bg-transparent text-[#6B7590]"
+              }`}
+            >
+              Docs
+            </button>
+          </div>
+
+          {activeTab === "schedule" ? (
+            <>
+              <div className="w-full pt-[15px]">
+                <div className="grid h-[85px] w-full grid-cols-3 gap-[10px]">
+                  <DayButton
+                    active={selectedDay === "day1"}
+                    weekday="Mon"
+                    day="Day 1"
+                    date="9 Mar"
+                    onClick={() => setSelectedDay("day1")}
+                  />
+
+                  <DayButton
+                    active={selectedDay === "day2"}
+                    weekday="Tue"
+                    day="Day 2"
+                    date="10 Mar"
+                    onClick={() => setSelectedDay("day2")}
+                  />
+
+                  <DayButton
+                    active={selectedDay === "day3"}
+                    weekday="Wed"
+                    day="Day 3"
+                    date="11 Mar"
+                    onClick={() => setSelectedDay("day3")}
+                  />
+                </div>
+              </div>
+
+              {loading ? (
+                <div className="mt-[20px] text-center text-[#6B7590]">Loading schedule...</div>
+              ) : currentSessions.length > 0 ? (
+                <>
+                  <div className="flex h-[32.5px] w-full items-start gap-[12px] pt-[16px]">
+                    <LegendItem label="Plenary" colour="#1C2E5A" />
+                    <LegendItem label="Breakout" colour="#F59E0B" />
+                    <LegendItem label="Workshop" colour="#8B5CF6" />
+                    <LegendItem label="Social" colour="#F97316" />
+                  </div>
+
+                  {currentSessions.map((session, index) => {
+                    const title = session.title.toLowerCase();
+                    let type: SessionType = "Plenary";
+
+                    if (title.includes("breakout")) type = "Breakout";
+                    if (title.includes("workshop")) type = "Workshop";
+                    if (title.includes("social") || title.includes("reception") || title.includes("dinner")) type = "Social";
+
+                    if (title.includes("break") || title.includes("lunch") || title.includes("registration")) {
+                      return (
+                        <TimelineDivider
+                          key={`${session.id}-${index}`}
+                          time={session.start_time}
+                          label={session.title}
+                          compact={title.includes("registration")}
+                        />
+                      );
+                    }
+
+                    return (
+                      <SessionCard
+                        key={`${session.id}-${index}`}
+                        start={session.start_time}
+                        end={session.end_time || ""}
+                        title={session.title}
+                        person={session.speaker || undefined}
+                        location={session.venue || "TBD"}
+                        type={type}
+                      />
+                    );
+                  })}
+                </>
+              ) : (
+                <div className="mt-[20px] rounded-[24px] border border-[#1C2E5A1A] bg-white p-[24px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+                  <p className="m-0 font-inter text-[14px] font-normal leading-[20px] text-[#6B7590]">
+                    No sessions are available for this day yet.
+                  </p>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="mt-[20px] rounded-[24px] border border-[#1C2E5A1A] bg-white p-[24px] shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+              <p className="m-0 font-inter text-[14px] font-normal leading-[20px] text-[#6B7590]">
+                {notesLoading ? "Loading notes..." : notes.length > 0 ? "Session notes are loaded from the live backend." : "No session notes have been submitted yet."}
+              </p>
+
+              {notes.length > 0 && (
+                <div className="mt-4 flex flex-col gap-3">
+                  {notes.map((note) => (
+                    <div key={note.id} className="rounded-[20px] border border-[#1C2E5A1A] bg-[#F9FAFB] p-4">
+                      <p className="font-inter text-[10px] uppercase tracking-[0.8px] text-[#6B7590]">
+                        {new Date(note.updated_at).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}
+                      </p>
+                      <p className="mt-2 font-inter text-[14px] leading-[22px] text-[#0E1726]">
+                        {note.note_text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function DayButton({ active, weekday, day, date, onClick }: { active: boolean; weekday: string; day: string; date: string; onClick: () => void; }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`h-[85px] rounded-[24px] p-[14px] text-left ${
+        active ? "bg-[#162E55] shadow-[0_4px_20px_0_#1C2E5A4D]" : "border border-[#1C2E5A1A] bg-white shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]"
+      }`}
+    >
+      <p className={`m-0 h-[15px] font-inter text-[10px] font-semibold uppercase leading-[15px] tracking-[1px] ${active ? "text-white/60" : "text-[#6B7590]"}`}>
+        {weekday}
+      </p>
+      <p className={`m-0 h-[20px] pt-[2px] font-chillax text-[18px] font-bold leading-[18px] ${active ? "text-white" : "text-[#0E1726]"}`}>
+        {day}
+      </p>
+      <p className={`m-0 h-[20px] pt-[4px] font-inter text-[12px] font-normal leading-[16px] ${active ? "text-white/60" : "text-[#6B7590]"}`}>
+        {date}
+      </p>
+    </button>
+  );
+}
+
+function LegendItem({ label, colour }: { label: string; colour: string; }) {
+  return (
+    <div className="flex h-[16.5px] items-center gap-[6px]">
+      <span className="h-[8px] w-[8px] rounded-full" style={{ backgroundColor: colour }} />
+      <span className="font-inter text-[11px] font-normal leading-[16.5px] text-[#6B7590]">{label}</span>
+    </div>
+  );
+}
+
+function TimelineDivider({ time, label, compact = false }: { time: string; label: string; compact?: boolean; }) {
+  return (
+    <div className={`flex w-full items-center gap-[12px] px-[4px] ${compact ? "h-[28px] py-[6px]" : "h-[36px] pb-[6px] pt-[14px]"}`}>
+      <span className="w-[40px] shrink-0 font-mono text-[12px] font-normal leading-[16px] text-[#6B7590]">{time}</span>
+      <div className="h-px flex-1 bg-[#1C2E5A1A]" />
+      <span className="shrink-0 whitespace-nowrap font-inter text-[12px] font-normal leading-[16px] text-[#6B7590]">{label}</span>
+      <div className="h-px flex-1 bg-[#1C2E5A1A]" />
+    </div>
+  );
+}
+
+function SessionCard({ start, end, title, person, location, type }: SessionCardProps) {
+  const badgeStyles: Record<SessionType, string> = {
+    Plenary: "border-[#C5CFDF] bg-[#EEF1F9] text-[#1C2E5A]",
+    Breakout: "border-[#FDE68A] bg-[#FEF3C7] text-[#92400E]",
+    Workshop: "border-[#DDD6FE] bg-[#F5F3FF] text-[#7C3AED]",
+    Social: "border-[#FDBA74] bg-[#FFF7ED] text-[#C2410C]",
+  };
+
+  const dotStyles: Record<SessionType, string> = {
+    Plenary: "bg-[#1C2E5A]",
+    Breakout: "bg-[#F59E0B]",
+    Workshop: "bg-[#8B5CF6]",
+    Social: "bg-[#F97316]",
+  };
+
+  return (
+    <div className="h-[111px] w-full pt-[8px]">
+      <button type="button" className="h-[103px] w-full rounded-[24px] border border-[#1C2E5A1A] bg-white p-[16px] text-left shadow-[0_4px_16px_0_#1C2E5A12,0_1px_3px_0_#1C2E5A0D]">
+        <div className="flex h-[69px] w-full gap-[12px]">
+          <div className="h-[33px] w-[56px] shrink-0 pt-[2px] text-right">
+            <p className="m-0 h-[16px] font-mono text-[12px] font-bold leading-[16px] text-[#0E1726]">{start}</p>
+            <p className="m-0 h-[15px] font-inter text-[10px] font-normal leading-[15px] text-[#6B7590]">–{end}</p>
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex h-[27px] w-full items-start justify-between gap-[8px]">
+              <p className="m-0 min-w-0 flex-1 truncate font-inter text-[14px] font-semibold leading-[19.25px] text-[#0E1726]">{title}</p>
+
+              <div className={`flex h-[27px] shrink-0 items-center justify-center gap-[4px] rounded-full border px-[10px] py-[4px] ${badgeStyles[type]}`}>
+                <span className={`h-[6px] w-[6px] rounded-full ${dotStyles[type]}`} />
+                <span className="whitespace-nowrap font-inter text-[11px] font-semibold leading-[16.5px] tracking-[0.22px]">{type}</span>
+              </div>
+            </div>
+
+            {person ? (
+              <p className="m-0 h-[22px] w-full truncate pt-[6px] font-inter text-[12px] font-normal leading-[16px] text-[#6B7590]">{person}</p>
+            ) : (
+              <div className="h-[22px]" />
+            )}
+
+            <div className="flex h-[20px] w-full items-center gap-[4px] pt-[4px]">
+              <MapPin className="h-[10px] w-[10px] shrink-0 text-[#6B7590]" strokeWidth={1.2} />
+              <span className="truncate font-inter text-[12px] font-normal leading-[16px] text-[#6B7590]">{location}</span>
+              <ChevronDown className="ml-auto h-[14px] w-[14px] shrink-0 text-[#6B7590]" strokeWidth={1.2} />
+            </div>
+          </div>
+        </div>
+      </button>
+    </div>
+  );
+}
+</file>
+
 <file path="src/proxy.ts">
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -6407,9 +6305,8 @@ import {
   Globe,
   Grid2X2,
   ScanLine,
-  UserRound,
+  UserPlus,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 
 type NavigationItem = {
   label: string;
@@ -6418,36 +6315,44 @@ type NavigationItem = {
 };
 
 const navigationItems: NavigationItem[] = [
-  { label: "Register", href: "/register", icon: UserRound },
-  { label: "Check In", href: "/checkin", icon: ScanLine },
-  { label: "Programme", href: "/programme", icon: CalendarDays },
-  { label: "Partners", href: "/partners", icon: Globe },
-  { label: "Attendance", href: "/attendance", icon: Grid2X2 },
+  {
+    label: "Register",
+    href: "/register",
+    icon: UserPlus,
+  },
+  {
+    label: "Check In",
+    href: "/checkin",
+    icon: ScanLine,
+  },
+  {
+    label: "Programme",
+    href: "/programme",
+    icon: CalendarDays,
+  },
+  {
+    label: "Partners",
+    href: "/partners",
+    icon: Globe,
+  },
+  {
+    label: "Attendance",
+    href: "/attendance",
+    icon: Grid2X2,
+  },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
 
-  const [adminInfo, setAdminInfo] = useState<{
-    username: string;
-    is_master: boolean;
-  } | null>(null);
-
-  useEffect(() => {
-    fetch("/api/admin/me")
-      .then((res) => (res.ok ? res.json() : null))
-      .then(setAdminInfo)
-      .catch(() => {});
-  }, []);
-
-  const attendeeNavigation = navigationItems.filter(
+  const attendeeNavigation: NavigationItem[] = navigationItems.filter(
     (item) =>
       item.href === "/register" ||
       item.href === "/programme" ||
       item.href === "/partners"
   );
 
-  const checkInNavigation = navigationItems.filter(
+  const checkInNavigation: NavigationItem[] = navigationItems.filter(
     (item) =>
       item.href === "/checkin" ||
       item.href === "/programme" ||
@@ -6455,10 +6360,13 @@ export default function Sidebar() {
       item.href === "/attendance"
   );
 
-  const attendanceNavigation = navigationItems;
+  const attendanceNavigation: NavigationItem[] = navigationItems.filter(
+    (item) => item.href !== "/register"
+  );
 
   const isCheckInArea =
-    pathname === "/checkin" || pathname?.startsWith("/checkin/");
+    pathname === "/checkin" ||
+    pathname?.startsWith("/checkin/");
 
   const isAttendanceArea = pathname === "/attendance";
 
@@ -6468,9 +6376,29 @@ export default function Sidebar() {
       ? checkInNavigation
       : attendeeNavigation;
 
-  const desktopNavigation = adminInfo
-    ? navigationItems
-    : navigationItems;
+  const isRegisterOnlyArea = pathname === "/register";
+
+  const isAttendeeArea =
+    pathname === "/" ||
+    pathname === "/register" ||
+    pathname?.startsWith("/registration-preview") ||
+    pathname?.startsWith("/qr-code") ||
+    pathname === "/programme" ||
+    pathname === "/programme2" ||
+    pathname === "/partners" ||
+    pathname?.startsWith("/partners/");
+
+  const staffNavigation: NavigationItem[] = navigationItems.filter(
+    (item) => item.href !== "/register"
+  );
+
+  const desktopNavigation = isRegisterOnlyArea
+    ? navigationItems.filter((item) => item.href === "/register")
+    : isCheckInArea || isAttendanceArea
+      ? staffNavigation
+      : isAttendeeArea
+        ? attendeeNavigation
+        : navigationItems;
 
   function isActive(href: string) {
     if (href === "/register") {
@@ -6482,12 +6410,18 @@ export default function Sidebar() {
       );
     }
 
-    return pathname === href || pathname?.startsWith(`${href}/`);
+    return (
+      pathname === href ||
+      pathname?.startsWith(`${href}/`)
+    );
   }
 
   return (
     <>
-      {/* Desktop sidebar */}
+      {/* =========================================================
+          DESKTOP SIDEBAR
+      ========================================================= */}
+
       <div className="hidden w-[255px] min-w-[255px] shrink-0 overflow-hidden md:block">
         <aside
           className="
@@ -6500,13 +6434,15 @@ export default function Sidebar() {
             w-[255px]
             max-w-[255px]
             flex-col
-            overflow-hidden
+            overflow-x-hidden
+            overflow-y-auto
             border-r
             border-[#1C2E5A1A]
             bg-white
           "
         >
-          {/* Sidebar header */}
+          {/* SIDEBAR HEADER */}
+
           <div
             className="
               h-[130px]
@@ -6545,10 +6481,16 @@ export default function Sidebar() {
             </p>
           </div>
 
-          {/* Desktop navigation */}
+          {/* SIDEBAR NAVIGATION */}
+
           <nav
             aria-label="Desktop navigation"
-            className="flex-1 overflow-hidden p-4"
+            className="
+              flex-1
+              overflow-x-hidden
+              overflow-y-auto
+              p-4
+            "
           >
             {desktopNavigation.map((item) => {
               const Icon = item.icon;
@@ -6557,7 +6499,13 @@ export default function Sidebar() {
               return (
                 <div
                   key={item.href}
-                  className="h-12 w-[223px] max-w-full pt-1 first:pt-0"
+                  className="
+                    h-12
+                    w-[223px]
+                    max-w-full
+                    pt-1
+                    first:pt-0
+                  "
                 >
                   <Link
                     href={item.href}
@@ -6574,7 +6522,7 @@ export default function Sidebar() {
                       py-3
                       font-[var(--font-inter)]
                       text-[14px]
-                      font-semibold
+                      font-bold
                       leading-5
                       no-underline
                       ${
@@ -6597,7 +6545,8 @@ export default function Sidebar() {
             })}
           </nav>
 
-          {/* Sidebar footer */}
+          {/* SIDEBAR FOOTER */}
+
           <footer
             className="
               h-[73px]
@@ -6634,7 +6583,7 @@ export default function Sidebar() {
                     truncate
                     font-inter
                     text-[12px]
-                    font-semibold
+                    font-bold
                     leading-4
                     text-[#0E1726]
                   "
@@ -6660,7 +6609,10 @@ export default function Sidebar() {
         </aside>
       </div>
 
-      {/* Mobile bottom navigation */}
+      {/* =========================================================
+          MOBILE BOTTOM NAVIGATION
+      ========================================================= */}
+
       <nav
         aria-label="Mobile navigation"
         className="
@@ -6680,28 +6632,33 @@ export default function Sidebar() {
           px-[4px]
           py-[6px]
           backdrop-blur-[20px]
-          md:hidden
-        "
-      >
-        {mobileNavigation.map((item) => {
-          const Icon = item.icon;
-          const active = isActive(item.href);
+            md:hidden
+          "
+        >
+          {mobileNavigation.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={active ? "page" : undefined}
-              className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1"
-            >
-              <span
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
                 className={`
                   flex
-                  h-[19px]
-                  w-[19px]
-                  shrink-0
+                  h-[46px]
+                  min-w-0
+                  flex-1
+                  flex-col
                   items-center
                   justify-center
+                  gap-[2px]
+                  overflow-hidden
+                  rounded-[12px]
+                  px-[2px]
+                  py-[6px]
+                  text-center
+                  no-underline
                   ${
                     active
                       ? "text-[#162E55]"
@@ -6709,28 +6666,43 @@ export default function Sidebar() {
                   }
                 `}
               >
-                <Icon
-                  className="h-[19px] w-[19px]"
-                  strokeWidth={1.6}
-                  aria-hidden="true"
-                />
-              </span>
+                <span
+                  className={`
+                    flex
+                    h-[19px]
+                    w-[19px]
+                    shrink-0
+                    items-center
+                    justify-center
+                    ${
+                      active
+                        ? "text-[#162E55]"
+                        : "text-[#6B7590]"
+                    }
+                  `}
+                >
+                  <Icon
+                    className="h-[19px] w-[19px]"
+                    strokeWidth={1.6}
+                    aria-hidden="true"
+                  />
+                </span>
 
-              <span
-                className={`
-                  whitespace-nowrap
-                  font-inter
-                  text-[9px]
-                  font-bold
-                  leading-[14px]
-                  tracking-[0.22px]
-                  ${
-                    active
-                      ? "text-[#162E55]"
-                      : "text-[#6B7590]"
-                  }
-                `}
-              >
+                <span
+                  className={`
+                    whitespace-nowrap
+                    font-inter
+                    text-[9px]
+                    font-bold
+                    leading-[14px]
+                    tracking-[0.22px]
+                    ${
+                      active
+                        ? "text-[#162E55]"
+                        : "text-[#6B7590]"
+                    }
+                  `}
+                >
                 {item.label}
               </span>
             </Link>

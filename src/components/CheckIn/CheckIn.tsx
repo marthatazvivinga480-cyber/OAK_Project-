@@ -31,12 +31,18 @@ const SIMULATED_ATTENDEES = [
   },
 ] as const;
 
+interface CheckedInParticipant {
+  first_name: string;
+  last_name: string;
+  organization: string;
+  role: string;
+}
+
 export default function CheckIn() {
   const [manualCode, setManualCode] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
-  const [checkedInAttendee, setCheckedInAttendee] = useState<any>(null);
-  const [stats, setStats] = useState({ total_registered: 0, total_checked_in: 0 });
+  const [checkedInAttendee, setCheckedInAttendee] = useState<CheckedInParticipant | null>(null);
 
   async function handleCheckIn(code: string) {
     if (!code) return;
@@ -59,10 +65,9 @@ export default function CheckIn() {
         setStatus("success");
         setMessage("Check-in successful!");
         setCheckedInAttendee(data.participant);
-        if (data.live_stats) setStats(data.live_stats);
         setManualCode("");
       }
-    } catch (err) {
+    } catch {
       setStatus("error");
       setMessage("Network error occurred");
     }
