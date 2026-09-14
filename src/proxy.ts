@@ -1,13 +1,15 @@
 ﻿import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { PAGE_ACCESS, type Role } from "@/lib/types";
+import { verifyCookieValue } from "@/lib/cookieSecurity";
 
 const MASTER_ONLY_PATHS = ["/admin-manage", "/account/manage-admins"];
 const ADMIN_ONLY_PATHS = ["/checkin", "/attendance", "/admin-change-password", "/account"];
 
 export default function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  const isMaster = request.cookies.get("oak_is_master")?.value === "true";
+  const rawIsMaster = request.cookies.get("oak_is_master")?.value;
+  const isMaster = rawIsMaster ? verifyCookieValue(rawIsMaster) === "true" : false;
   const hasAdminSession = request.cookies.has("oak_admin_id");
 
   if (isMaster) {
