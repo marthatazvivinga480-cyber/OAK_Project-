@@ -202,7 +202,7 @@ export default function AccountPage() {
         <section className="rounded-2xl border border-[#1C2E5A1A] bg-white p-6">
           <h2 className="mb-4 font-chillax font-semibold text-[#0E1726]">Account Permissions</h2>
           <ul className="space-y-3">
-            {allPermissions.map(({ icon: Icon, label, href, description }) => (
+            {allPermissions.map(({ label, href, description }) => (
               <li key={href} className="flex items-start gap-3">
                 <CheckCircle2
                   className="mt-0.5 h-4 w-4 shrink-0 text-[#162E55]"

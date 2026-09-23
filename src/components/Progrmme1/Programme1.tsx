@@ -4,10 +4,19 @@ import { useState, useEffect } from "react";
 import {
   ChevronDown,
   MapPin,
-  Star,
 } from "lucide-react";
 
 import Sidebar from "@/components/Sidebar";
+
+type SessionRecord = {
+  id: string;
+  day: string;
+  start_time: string;
+  end_time?: string | null;
+  title: string;
+  speaker?: string | null;
+  venue?: string | null;
+};
 
 type DayKey = "day1" | "day2" | "day3";
 
@@ -29,13 +38,13 @@ type SessionCardProps = {
 export default function Programme() {
   const [selectedDay, setSelectedDay] = useState<DayKey>("day1");
   const [activeTab, setActiveTab] = useState<"schedule" | "docs">("schedule");
-  const [sessions, setSessions] = useState<any[]>([]);
+  const [sessions, setSessions] = useState<SessionRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/sessions")
       .then((res) => res.json())
-      .then((data) => {
+      .then((data: SessionRecord[]) => {
         setSessions(data || []);
         setLoading(false);
       })
@@ -104,7 +113,7 @@ export default function Programme() {
                     active={selectedDay === "day1"}
                     weekday="Mon"
                     day="Day 1"
-                    date="9 Mar"
+                    date="9 Nov"
                     onClick={() => setSelectedDay("day1")}
                   />
 
@@ -112,7 +121,7 @@ export default function Programme() {
                     active={selectedDay === "day2"}
                     weekday="Tue"
                     day="Day 2"
-                    date="10 Mar"
+                    date="10 Nov"
                     onClick={() => setSelectedDay("day2")}
                   />
 
@@ -120,7 +129,7 @@ export default function Programme() {
                     active={selectedDay === "day3"}
                     weekday="Wed"
                     day="Day 3"
-                    date="11 Mar"
+                    date="11 Nov"
                     onClick={() => setSelectedDay("day3")}
                   />
                 </div>

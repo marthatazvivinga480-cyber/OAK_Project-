@@ -3,6 +3,16 @@ import { supabaseAdmin } from "@/lib/supabaseClient";
 import { getAuthorizedStaff } from "@/lib/session";
 import type { Role } from "@/lib/types";
 
+type AttendanceParticipantRow = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  organization: string;
+  role: Role;
+  registration_date: string;
+  checkins?: Array<{ check_in_time: string | null }> | null;
+};
+
 export async function GET(request: Request) {
   const viewer = await getAuthorizedStaff();
   if (!viewer) {
@@ -13,11 +23,11 @@ export async function GET(request: Request) {
   const nameFilter = searchParams.get("name");
   const orgFilter = searchParams.get("organization");
   const roleFilter = searchParams.get("role") as Role | null;
-  const statusFilter = searchParams.get("status"); 
+  const statusFilter = searchParams.get("status");
 
   let query = supabaseAdmin
     .from("participants")
-    .select("*, checkins!participant_id(check_in_time)", { count: 'exact' });
+    .select("*, checkins!participant_id(check_in_time)", { count: "exact" });
 
   if (nameFilter) {
     query = query.or(`first_name.ilike.%${nameFilter}%,last_name.ilike.%${nameFilter}%`);
@@ -31,10 +41,10 @@ export async function GET(request: Request) {
   if (statusFilter === "checked_in") {
     query = supabaseAdmin
       .from("participants")
-      .select("*, checkins!inner(check_in_time)", { count: 'exact' });
-      if (nameFilter) query = query.or(`first_name.ilike.%${nameFilter}%,last_name.ilike.%${nameFilter}%`);
-      if (orgFilter) query = query.ilike("organization", `%${orgFilter}%`);
-      if (roleFilter) query = query.eq("role", roleFilter);
+      .select("*, checkins!inner(check_in_time)", { count: "exact" });
+    if (nameFilter) query = query.or(`first_name.ilike.%${nameFilter}%,last_name.ilike.%${nameFilter}%`);
+    if (orgFilter) query = query.ilike("organization", `%${orgFilter}%`);
+    if (roleFilter) query = query.eq("role", roleFilter);
   }
 
   const [participantsRes, statsRes] = await Promise.all([
@@ -42,8 +52,8 @@ export async function GET(request: Request) {
     Promise.all([
       supabaseAdmin.from("participants").select("id", { count: "exact", head: true }),
       supabaseAdmin.from("checkins").select("id", { count: "exact", head: true }),
-      supabaseAdmin.from("participants").select("role")
-    ])
+      supabaseAdmin.from("participants").select("role"),
+    ]),
   ]);
 
   if (participantsRes.error) {
@@ -61,18 +71,18 @@ export async function GET(request: Request) {
     Presenter: 0,
     Observer: 0,
   };
-  
+
   if (rolesRes.data) {
     for (const p of rolesRes.data) {
-      if (roleBreakdown[p.role as Role] !== undefined) {
+      if (p.role && p.role in roleBreakdown) {
         roleBreakdown[p.role as Role] += 1;
       }
     }
   }
 
-  let rows = participantsRes.data;
+  let rows = (participantsRes.data ?? []) as AttendanceParticipantRow[];
   if (statusFilter === "pending") {
-    rows = rows.filter((p: any) => !p.checkins || p.checkins.length === 0);
+    rows = rows.filter((p) => !p.checkins || p.checkins.length === 0);
   }
 
   return NextResponse.json({
@@ -83,14 +93,14 @@ export async function GET(request: Request) {
         totalRegistered === 0 ? 0 : Math.round((totalCheckedIn / totalRegistered) * 100),
       role_breakdown: roleBreakdown,
     },
-    participants: rows.map((p: any) => ({
+    participants: rows.map((p) => ({
       id: p.id,
       full_name: `${p.first_name} ${p.last_name}`,
       organization: p.organization,
       role: p.role,
       registration_date: p.registration_date,
-      attendance_status: (p.checkins && p.checkins.length > 0) ? "checked_in" : "pending",
-      check_in_time: p.checkins && p.checkins.length > 0 ? p.checkins[0]?.check_in_time : null,
+      attendance_status: p.checkins && p.checkins.length > 0 ? "checked_in" : "pending",
+      check_in_time: p.checkins && p.checkins.length > 0 ? p.checkins[0]?.check_in_time ?? null : null,
     })),
   });
 }

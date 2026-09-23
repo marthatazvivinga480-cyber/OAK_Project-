@@ -8,6 +8,26 @@ import {
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 
+type PartnerRecord = {
+  id: string;
+  name: string;
+  website_url?: string | null;
+  areas_of_work?: string | null;
+  logo_url?: string | null;
+  muted_logo?: boolean | null;
+};
+
+type Partner = {
+  initials: string;
+  name: string;
+  region: string;
+  tags: string[];
+  since: string;
+  website: string;
+  slug: string;
+  mutedLogo?: boolean;
+};
+
 const REGIONS = [
   "All Regions",
   "Global",
@@ -34,17 +54,6 @@ const SUB_PARTNERS = [
   },
 ];
 
-type Partner = {
-  initials: string;
-  name: string;
-  region: string;
-  tags: string[];
-  since: string;
-  website: string;
-  slug: string;
-  mutedLogo?: boolean;
-};
-
 export default function PartnersDirectory() {
   const [search, setSearch] = useState("");
   const [selectedRegion, setSelectedRegion] =
@@ -55,38 +64,22 @@ export default function PartnersDirectory() {
   useEffect(() => {
     fetch("/api/partners")
       .then((res) => res.json())
-      .then((data) => {
-        const mapped: Partner[] = (data || []).map(
-          (p: any) => ({
-            initials: p.name
-              ? p.name.substring(0, 3).toUpperCase()
-              : "PRT",
-
-            name: p.name || "Unknown",
-
-            region: "Global",
-
-            tags: p.areas_of_work
-              ? p.areas_of_work
-                  .split(",")
-                  .map((tag: string) => tag.trim())
-                  .filter(Boolean)
-              : ["Partner"],
-
-            since: "2024",
-
-            website: p.website_url
-              ? p.website_url.replace(
-                  /^https?:\/\//,
-                  ""
-                )
-              : "",
-
-            slug: String(p.id),
-
-            mutedLogo: Boolean(p.muted_logo),
-          })
-        );
+      .then((data: PartnerRecord[]) => {
+        const mapped: Partner[] = (data || []).map((p) => ({
+          initials: p.name ? p.name.substring(0, 3).toUpperCase() : "PRT",
+          name: p.name || "Unknown",
+          region: "Global",
+          tags: p.areas_of_work
+            ? p.areas_of_work
+                .split(",")
+                .map((tag: string) => tag.trim())
+                .filter(Boolean)
+            : ["Partner"],
+          since: "2024",
+          website: p.website_url ? p.website_url.replace(/^https?:\/\//, "") : "",
+          slug: String(p.id),
+          mutedLogo: Boolean(p.muted_logo),
+        }));
 
         setPartners(mapped);
         setLoading(false);

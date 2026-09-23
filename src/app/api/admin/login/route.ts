@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { supabaseAdmin } from "@/lib/supabaseClient";
 import { setAdminSessionCookie } from "@/lib/session";
+import { signCookieValue } from "@/lib/cookieSecurity";
 
 export async function POST(request: Request) {
   const { username, password } = await request.json();
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
   await setAdminSessionCookie(admin.id);
 
   const response = NextResponse.json({ is_master: admin.is_master });
-  response.cookies.set("oak_is_master", admin.is_master ? "true" : "false", {
+  response.cookies.set("oak_is_master", signCookieValue(admin.is_master ? "true" : "false"), {
     path: "/",
     maxAge: 60 * 60 * 8,
     httpOnly: true,

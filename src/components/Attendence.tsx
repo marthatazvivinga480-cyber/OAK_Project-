@@ -9,31 +9,44 @@ import {
 
 import Sidebar from "@/components/Sidebar";
 
-export default function Attendance() {
-  const [data, setData] =
-    useState<any>(null);
+type AttendanceApiResponse = {
+  stats?: {
+    total_registered: number;
+    total_checked_in: number;
+    attendance_percentage?: number;
+    role_breakdown?: Record<string, number>;
+  };
+  participants?: Array<{
+    id: string;
+    full_name: string;
+    organization: string;
+    role: string;
+    registration_date: string;
+    attendance_status: "checked_in" | "pending";
+    check_in_time?: string | null;
+  }>;
+};
 
-  const [loading, setLoading] =
-    useState(true);
+export default function Attendance() {
+  const [data, setData] = useState<AttendanceApiResponse | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/attendance")
       .then((res) => res.json())
-      .then((d) => {
+      .then((d: AttendanceApiResponse) => {
         setData(d);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
-  const stats =
-    data?.stats || {
-      total_registered: 0,
-      total_checked_in: 0,
-    };
+  const stats = data?.stats || {
+    total_registered: 0,
+    total_checked_in: 0,
+  };
 
-  const participants =
-    data?.participants || [];
+  const participants = data?.participants || [];
 
   return (
     <div className="flex min-h-[941px] bg-[#F4F5F7] pb-[80px] md:pb-0">
@@ -47,7 +60,7 @@ export default function Attendance() {
             </h1>
 
             <p className="font-inter text-[14px] text-[#6B7590]">
-              Check-in tracking · 9–11 March 2026
+              Check-in tracking · 9–11 November 2026
             </p>
           </header>
 
@@ -98,12 +111,11 @@ export default function Attendance() {
               </div>
             ) : (
               <div className="space-y-4">
-                {participants.map(
-                  (p: any) => (
-                    <div
-                      key={p.id}
-                      className="flex items-center justify-between rounded-xl bg-[#F4F5F7] p-4"
-                    >
+                {participants.map((p) => (
+                  <div
+                    key={p.id}
+                    className="flex items-center justify-between rounded-xl bg-[#F4F5F7] p-4"
+                  >
                       <div>
                         <p className="font-semibold text-[#0E1726]">
                           {p.full_name}

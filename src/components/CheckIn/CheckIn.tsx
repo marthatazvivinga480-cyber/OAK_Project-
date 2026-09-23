@@ -1,18 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Html5QrcodeScanner } from "html5-qrcode";
 import { ScanLine, CheckCircle2, AlertCircle } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
+
+type CheckInParticipant = {
+  first_name: string;
+  last_name: string;
+  organization: string;
+  role: string;
+};
 
 export default function CheckIn() {
   const [manualCode, setManualCode] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
-  const [checkedInAttendee, setCheckedInAttendee] = useState<any>(null);
+  const [checkedInAttendee, setCheckedInAttendee] = useState<CheckInParticipant | null>(null);
   const [stats, setStats] = useState({ total_registered: 0, total_checked_in: 0 });
+  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+  const lastScannedRef = useRef<string | null>(null);
 
   async function handleCheckIn(code: string) {
-    if (!code) return;
+    const trimmedCode = code.trim();
+    if (!trimmedCode) return;
+    if (lastScannedRef.current === trimmedCode) return;
+    lastScannedRef.current = trimmedCode;
+
     setStatus("loading");
     setMessage("");
     setCheckedInAttendee(null);
@@ -21,10 +35,10 @@ export default function CheckIn() {
       const res = await fetch("/api/checkin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ qr_code_id: code }),
+        body: JSON.stringify({ qr_code_id: trimmedCode }),
       });
       const data = await res.json();
-      
+
       if (!res.ok) {
         setStatus("error");
         setMessage(data.error || "Failed to check in");
@@ -35,11 +49,36 @@ export default function CheckIn() {
         if (data.live_stats) setStats(data.live_stats);
         setManualCode("");
       }
-    } catch (err) {
+    } catch {
       setStatus("error");
       setMessage("Network error occurred");
+    } finally {
+      setTimeout(() => {
+        lastScannedRef.current = null;
+      }, 3000);
     }
   }
+
+  useEffect(() => {
+    if (status !== "idle") return;
+
+    const scanner = new Html5QrcodeScanner(
+      "qr-reader",
+      { fps: 10, qrbox: { width: 250, height: 250 } },
+      false,
+    );
+
+    scanner.render((decodedText) => {
+      void handleCheckIn(decodedText);
+    }, () => {});
+
+    scannerRef.current = scanner;
+
+    return () => {
+      scannerRef.current?.clear().catch(() => {});
+      scannerRef.current = null;
+    };
+  }, [status]);
 
   return (
     <div className="flex min-h-[1394px] bg-[#F4F5F7] pb-[80px] md:pb-0">
@@ -65,14 +104,18 @@ export default function CheckIn() {
                   <p className="text-green-300 mt-1 font-semibold">{checkedInAttendee.role}</p>
                   <button onClick={() => setStatus("idle")} className="mt-8 px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition">Scan Next</button>
                 </div>
+              ) : status === "idle" ? (
+                <div className="relative h-full w-full">
+                  <div id="qr-reader" className="h-full w-full" />
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                    <div className="h-[211px] w-[211px] border-2 border-[#A8BBCE] border-dashed rounded-3xl opacity-70" />
+                  </div>
+                </div>
               ) : (
                 <div className="relative">
                   <div className="h-[211px] w-[211px] border-2 border-[#A8BBCE] border-dashed rounded-3xl opacity-50 flex items-center justify-center">
                     <ScanLine className="w-12 h-12 text-[#A8BBCE]/50" />
                   </div>
-                  <p className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-center text-[12px] text-[#A8BBCE]/50 whitespace-nowrap">
-                    Scanner coming soon. Use manual entry below.
-                  </p>
                 </div>
               )}
             </div>
