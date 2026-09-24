@@ -12,7 +12,7 @@ test('migration, real PostgreSQL constraints, pagination, session revocation and
   await db.query(`INSERT INTO participants(id,registration_id,first_name,last_name,organization,role,email) VALUES($1,'OAK-2026-TEST0001','Test','Person','Test','Partner','test@example.test')`,[participant]);
   await db.query(`INSERT INTO admins(id,username,password_hash,is_master) VALUES($1,'master','hash-a',true)`,[admin]);
   const attempts=await Promise.allSettled(Array.from({length:100},()=>db.query(`INSERT INTO checkins(participant_id,check_in_date) VALUES($1,'2026-11-09')`,[participant])));
-  assert.equal(attempts.filter(r=>r.status==='fulfilled').length,1);
+  assert.equal(attempts.filter((r: PromiseSettledResult<unknown>) => r.status === 'fulfilled').length,1);
   await db.query(`INSERT INTO checkins(participant_id,check_in_date) VALUES($1,'2026-11-10'),($1,'2026-11-11')`,[participant]);
   const report=await db.query<{report:{stats:{total_checked_in:number;attendance_percentage:number};participants:unknown[]}}>(`SELECT attendance_report('2026-11-09') AS report`);
   assert.equal(report.rows[0].report.stats.total_checked_in,1);
@@ -31,7 +31,7 @@ test('migration, real PostgreSQL constraints, pagination, session revocation and
   await db.query(`UPDATE participants SET recovery_token_hash=$1 WHERE id=$2`,['c'.repeat(64),participant]);
   assert.equal((await db.query<{n:number}>('SELECT count(*)::integer n FROM auth_sessions')).rows[0].n,0);
   const limits=await Promise.all(Array.from({length:25},()=>db.query<{allowed:boolean}>(`SELECT take_rate_limit('test-bucket',10,60) allowed`)));
-  assert.equal(limits.filter(r=>r.rows[0].allowed).length,10);
+  assert.equal(limits.filter((r: { rows: Array<{ allowed: boolean }> }) => r.rows[0].allowed).length,10);
   for(const role of ['anon','authenticated']) for(const table of ['admins','participants','checkins','sessions','session_notes','partners','auth_sessions','rate_limits','resources']) {
    const result=await db.query<{allowed:boolean}>(`SELECT has_table_privilege($1,$2,'SELECT') allowed`,[role,'public.'+table]);assert.equal(result.rows[0].allowed,false,`${role}:${table}`);
   }

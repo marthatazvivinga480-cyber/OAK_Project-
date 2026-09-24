@@ -122,7 +122,7 @@ async function main(){
 
   const resume=await call('/api/resume','',{registration_id:partner.registration_id,recovery_code:partner.recovery_code});assert.equal(resume.status,200);const resumed=cookie(resume);
   assert.equal((await call('/api/auth/logout',resumed,{})).status,200);assert.equal((await call('/qr-code',resumed)).status,307);
-  const stored=await sql.query<{token_hash:string}>('SELECT token_hash FROM auth_sessions');assert(stored.rows.every(r=>!users.some(u=>u.cookie.includes(r.token_hash))));
+  const stored=await sql.query<{token_hash:string}>('SELECT token_hash FROM auth_sessions');assert(stored.rows.every((r: { token_hash: string }) => !users.some(u => u.cookie.includes(r.token_hash))));
   record('Recovery sign-in works; copied session cookies fail after logout; only token hashes stored');
   const login=await call('/api/admin/login','',{username:'master',password:'Synthetic-password-2026'});assert.equal(login.status,200,await login.clone().text());const adminCookie=cookie(login);
   for(const page of ['/account','/account/manage-admins','/programme','/partners','/attendance'])assert.equal((await call(page,adminCookie)).status,200,page);
