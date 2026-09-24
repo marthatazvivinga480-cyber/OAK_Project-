@@ -109,7 +109,7 @@ html {
 body {
   min-height: 100vh;
 
-  font-family: var(--font-inter), Arial, sans-serif;
+  font-family: var(--font-inter, Arial), Arial, sans-serif;
 
   background: var(--oak-page);
   color: var(--oak-text);
@@ -147,7 +147,7 @@ textarea::placeholder {
 }
 
 .font-inter {
-  font-family: var(--font-inter), Arial, sans-serif;
+  font-family: var(--font-inter, Arial), Arial, sans-serif;
 }
 
 :focus-visible {
@@ -178,3 +178,12 @@ body {
     padding-bottom: 0;
   }
 }
+.portal-page { max-width: 820px; margin: 0 auto; padding: 32px 24px; }
+.portal-card { background: white; border: 1px solid #162e551a; border-radius: 24px; padding: 24px; box-shadow: 0 4px 16px #162e5508; }
+.portal-field { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; }
+.portal-input { width: 100%; min-width: 0; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px; color: #16243a; background: #f7f8fa; font-weight: 400; }
+.portal-input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid #162e55; outline-offset: 3px; }
+.portal-button { border-radius: 12px; background: #162e55; color: white; padding: 12px 18px; font-weight: 600; font-size: 14px; }
+.portal-button.secondary { background: #eef1f5; color: #162e55; }
+.portal-button:disabled { opacity: .5; }
+@media (max-width: 480px) { .portal-page { padding: 24px 16px; } .portal-card { padding: 20px; } }

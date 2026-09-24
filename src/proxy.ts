@@ -1,69 +1,24 @@
-﻿import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { verifyCookieValue } from "@/lib/cookieSecurity";
-import { PAGE_ACCESS, type Role } from "@/lib/types";
-
-const MASTER_ONLY_PATHS = ["/admin-manage", "/account/manage-admins"];
-const ADMIN_ONLY_PATHS = ["/checkin", "/attendance", "/admin-change-password", "/account"];
-
-export default function proxy(request: NextRequest) {
+import { NextResponse, type NextRequest } from 'next/server';
+import { viewerFromTokens, ADMIN_COOKIE, PARTICIPANT_COOKIE } from '@/lib/session';
+export default async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  const adminCookieValue = request.cookies.get("oak_admin_id")?.value;
-  const hasAdminSession = Boolean(adminCookieValue && verifyCookieValue(adminCookieValue));
-
-  const masterCookieValue = request.cookies.get("oak_is_master")?.value;
-  const isMaster = masterCookieValue ? verifyCookieValue(masterCookieValue) === "true" : false;
-
-  if (MASTER_ONLY_PATHS.some((p) => path === p || path.startsWith(p + "/"))) {
-    if (!hasAdminSession) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/admin-login";
-      return NextResponse.redirect(url);
-    }
-    if (!isMaster) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/account";
-      return NextResponse.redirect(url);
-    }
-    return NextResponse.next();
-  }
-
-  if (ADMIN_ONLY_PATHS.includes(path)) {
-    if (!hasAdminSession) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/admin-login";
-      return NextResponse.redirect(url);
-    }
-    return NextResponse.next();
-  }
-
-  const allowedRoles = PAGE_ACCESS[path];
-  if (!allowedRoles) return NextResponse.next();
-
-  const signedRole = request.cookies.get("oak_role")?.value;
-  const verifiedRole = signedRole ? verifyCookieValue(signedRole) : null;
-  const role = verifiedRole && allowedRoles.includes(verifiedRole as Role) ? (verifiedRole as Role) : undefined;
-
-  if (!role) {
+  try {
+    const { admin, participant } = await viewerFromTokens(request.cookies.get(ADMIN_COOKIE)?.value, request.cookies.get(PARTICIPANT_COOKIE)?.value);
+    const role = participant?.role;
+    let allowed = false;
+    if (path.startsWith('/account/manage-admins') || path === '/admin-manage') allowed = !!admin?.is_master;
+    else if (path.startsWith('/account') || path === '/admin-change-password') allowed = !!admin;
+    else if (path.startsWith('/attendance') || path.startsWith('/checkin') || path.startsWith('/check-in')) allowed = !!admin || role === 'Coordination Team';
+    else if (path === '/qr-code') allowed = role === 'Partner';
+    else if (path.startsWith('/partners')) allowed = !!admin || !!participant;
+    else if (path.startsWith('/programme')) allowed = !!admin || (!!role && role !== 'Partner');
+    if (allowed) return NextResponse.next();
     const url = request.nextUrl.clone();
-    url.pathname = "/";
-    url.searchParams.set("denied", path);
+    url.pathname = !admin && !participant ? (path.startsWith('/account') || path.startsWith('/admin-') || path.startsWith('/check') || path.startsWith('/attendance') ? '/admin-login' : '/register') : admin ? '/account' : role === 'Partner' ? '/qr-code' : '/programme';
+    url.search = '';
     return NextResponse.redirect(url);
+  } catch {
+    return new NextResponse('Sign-in verification is temporarily unavailable. Please try again.', { status: 503, headers: { 'Cache-Control': 'no-store' } });
   }
-  return NextResponse.next();
 }
-
-export const config = {
-  matcher: [
-    "/qr-code",
-    "/programme",
-    "/partners",
-    "/checkin",
-    "/attendance",
-    "/admin-manage",
-    "/admin-change-password",
-    "/admin-login",
-    "/account",
-    "/account/manage-admins",
-  ],
-};
+export const config = { matcher: ['/qr-code', '/programme/:path*', '/programme2', '/partners/:path*', '/checkin/:path*', '/check-in/:path*', '/attendance/:path*', '/account/:path*', '/admin-manage', '/admin-change-password'] };

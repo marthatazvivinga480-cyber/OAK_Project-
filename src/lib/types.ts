@@ -55,6 +55,8 @@ export interface SessionNote {
 }
 
 export interface Partner {
+  region: string | null;
+  partner_since: number | null;
   id: string;
   name: string;
   logo_url: string | null;

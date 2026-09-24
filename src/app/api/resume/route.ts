@@ -1,41 +1,14 @@
-import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabaseClient";
-import { setSessionCookie } from "@/lib/session";
-import { signCookieValue } from "@/lib/cookieSecurity";
-
-export async function POST(request: Request) {
-  const { registration_id, email } = await request.json();
-
-  if (!registration_id || !email) {
-    return NextResponse.json(
-      { error: "Provide both your Registration ID and Email" },
-      { status: 400 }
-    );
-  }
-
-  const { data: participant, error } = await supabaseAdmin
-    .from("participants")
-    .select("*")
-    .eq("registration_id", registration_id)
-    .eq("email", email)
-    .maybeSingle();
-
-  if (error || !participant) {
-    return NextResponse.json(
-      { error: "Invalid registration ID or email" },
-      { status: 401 }
-    );
-  }
-
-  await setSessionCookie(participant.registration_id);
-
-  const response = NextResponse.json({ role: participant.role });
-  response.cookies.set("oak_role", signCookieValue(participant.role), {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 14,
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-  return response;
-}
+import { db } from '@/lib/supabaseClient';
+import { createSession } from '@/lib/session';
+import { tokenHash } from '@/lib/security';
+import { recoverySchema } from '@/lib/validation';
+import { api, body, json, HttpError, databaseError, rateLimit } from '@/lib/http';
+export const POST = api(async request => {
+  const input = await body(request, recoverySchema);
+  await rateLimit('recovery', input.registration_id);
+  const { data, error } = await db().from('participants').select('id,role,credential_version').eq('registration_id', input.registration_id).eq('recovery_token_hash', tokenHash(input.recovery_code)).maybeSingle();
+  databaseError(error);
+  if (!data) throw new HttpError(401, 'Invalid registration ID or recovery code.');
+  await createSession('participant', data.id, data.credential_version);
+  return json({ role: data.role });
+});

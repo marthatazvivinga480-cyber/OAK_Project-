@@ -1,10 +1,3 @@
-import { NextResponse } from "next/server";
-import { getCurrentAdmin } from "@/lib/session";
-
-export async function GET() {
-  const admin = await getCurrentAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
-  }
-  return NextResponse.json(admin);
-}
+import { api, json } from '@/lib/http';
+import { requireAdmin } from '@/lib/session';
+export const GET = api(async () => json(await requireAdmin()));

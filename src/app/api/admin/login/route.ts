@@ -1,39 +1,14 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { supabaseAdmin } from "@/lib/supabaseClient";
-import { setAdminSessionCookie } from "@/lib/session";
-import { signCookieValue } from "@/lib/cookieSecurity";
-
-export async function POST(request: Request) {
-  const { username, password } = await request.json();
-  if (!username || !password) {
-    return NextResponse.json({ error: "Username and password required" }, { status: 400 });
-  }
-
-  const { data: admin, error } = await supabaseAdmin
-    .from("admins")
-    .select("id, password_hash, is_master")
-    .eq("username", username)
-    .maybeSingle();
-
-  if (error || !admin) {
-    return NextResponse.json({ error: "Invalid username or password" }, { status: 401 });
-  }
-
-  const passwordMatches = await bcrypt.compare(password, admin.password_hash);
-  if (!passwordMatches) {
-    return NextResponse.json({ error: "Invalid username or password" }, { status: 401 });
-  }
-
-  await setAdminSessionCookie(admin.id);
-
-  const response = NextResponse.json({ is_master: admin.is_master });
-  response.cookies.set("oak_is_master", signCookieValue(admin.is_master ? "true" : "false"), {
-    path: "/",
-    maxAge: 60 * 60 * 8,
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-  return response;
-}
+import bcrypt from 'bcryptjs';
+import { db } from '@/lib/supabaseClient';
+import { createSession } from '@/lib/session';
+import { loginSchema } from '@/lib/validation';
+import { api, body, json, HttpError, databaseError, rateLimit } from '@/lib/http';
+export const POST = api(async request => {
+  const input = await body(request, loginSchema);
+  await rateLimit('login', input.username);
+  const { data, error } = await db().from('admins').select('id,password_hash,is_master,credential_version').eq('username', input.username).maybeSingle();
+  databaseError(error);
+  if (!data || !(await bcrypt.compare(input.password, data.password_hash))) throw new HttpError(401, 'Invalid username or password.');
+  await createSession('admin', data.id, data.credential_version);
+  return json({ is_master: data.is_master });
+});

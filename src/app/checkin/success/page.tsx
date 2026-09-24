@@ -1,5 +1,2 @@
-import CheckInSuccess from "@/components/SuccesfullyCheckedIn/SuccessfullyChekedIn";
-
-export default function CheckInSuccessPage() {
-  return <CheckInSuccess />;
-}
+import { redirect } from 'next/navigation';
+export default function Page(){redirect('/checkin');}

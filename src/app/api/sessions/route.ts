@@ -1,15 +1,8 @@
-import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabaseClient";
-
-export async function GET() {
-  const { data, error } = await supabaseAdmin
-    .from("sessions")
-    .select("*")
-    .order("day", { ascending: true })
-    .order("start_time", { ascending: true });
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-  return NextResponse.json(data);
-}
+import { db } from '@/lib/supabaseClient';
+import { requireProgramme } from '@/lib/session';
+import { api, json, databaseError } from '@/lib/http';
+export const GET = api(async () => {
+  await requireProgramme();
+  const { data, error } = await db().from('sessions').select('*').order('day').order('start_time');
+  databaseError(error); return json(data);
+});

@@ -1,50 +1,5 @@
-"use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
-export default function AdminLoginPage() {
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setSubmitting(true);
-    setError(null);
-
-    const form = new FormData(e.currentTarget);
-    const res = await fetch("/api/admin/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: form.get("username"),
-        password: form.get("password"),
-      }),
-    });
-
-    if (!res.ok) {
-      const body = await res.json();
-      setError(body.error || "Login failed");
-      setSubmitting(false);
-      return;
-    }
-
-    const body = await res.json();
-    router.push(body.is_master ? "/account" : "/checkin");
-  }
-
-  return (
-    <main className="min-h-screen flex items-center justify-center px-6">
-      <form onSubmit={handleSubmit} className="max-w-sm w-full space-y-4">
-        <h1 className="text-xl font-semibold text-center">Coordination Team Login</h1>
-        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
-        <input name="username" placeholder="Username" required className="border rounded-md px-3 py-2 w-full" />
-        <input name="password" type="password" placeholder="Password" required className="border rounded-md px-3 py-2 w-full" />
-        <button type="submit" disabled={submitting} className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-medium px-6 py-3 rounded-md w-full">
-          {submitting ? "Signing in…" : "Sign in"}
-        </button>
-      </form>
-    </main>
-  );
-}
+'use client';
+import {useState,type FormEvent} from 'react';
+import {useRouter} from 'next/navigation';
+import {requestJson,errorMessage} from '@/lib/client-api';
+export default function Login(){const router=useRouter();const [busy,setBusy]=useState(false);const [error,setError]=useState('');async function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError('');try{await requestJson('/api/admin/login',Object.fromEntries(new FormData(e.currentTarget)));router.push('/account');router.refresh();}catch(e){setError(errorMessage(e));}finally{setBusy(false);}}return <main className="portal-page"><section className="portal-card"><h1 className="mb-6 text-2xl font-bold">Coordination team sign-in</h1><form className="space-y-4" onSubmit={submit}><label className="portal-field">Username<input className="portal-input" name="username" required maxLength={80} autoComplete="username"/></label><label className="portal-field">Password<input className="portal-input" name="password" type="password" required maxLength={200} autoComplete="current-password"/></label>{error&&<p role="alert" className="text-red-700">{error}</p>}<button className="portal-button" disabled={busy}>{busy?'Signing in...':'Sign in'}</button></form></section></main>;}

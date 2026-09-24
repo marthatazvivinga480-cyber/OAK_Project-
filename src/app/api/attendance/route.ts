@@ -1,106 +1,15 @@
-import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabaseClient";
-import { getAuthorizedStaff } from "@/lib/session";
-import type { Role } from "@/lib/types";
-
-type AttendanceParticipantRow = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  organization: string;
-  role: Role;
-  registration_date: string;
-  checkins?: Array<{ check_in_time: string | null }> | null;
-};
-
-export async function GET(request: Request) {
-  const viewer = await getAuthorizedStaff();
-  if (!viewer) {
-    return NextResponse.json({ error: "Not authorized" }, { status: 403 });
-  }
-
-  const { searchParams } = new URL(request.url);
-  const nameFilter = searchParams.get("name");
-  const orgFilter = searchParams.get("organization");
-  const roleFilter = searchParams.get("role") as Role | null;
-  const statusFilter = searchParams.get("status");
-
-  let query = supabaseAdmin
-    .from("participants")
-    .select("*, checkins!participant_id(check_in_time)", { count: "exact" });
-
-  if (nameFilter) {
-    query = query.or(`first_name.ilike.%${nameFilter}%,last_name.ilike.%${nameFilter}%`);
-  }
-  if (orgFilter) {
-    query = query.ilike("organization", `%${orgFilter}%`);
-  }
-  if (roleFilter) {
-    query = query.eq("role", roleFilter);
-  }
-  if (statusFilter === "checked_in") {
-    query = supabaseAdmin
-      .from("participants")
-      .select("*, checkins!inner(check_in_time)", { count: "exact" });
-    if (nameFilter) query = query.or(`first_name.ilike.%${nameFilter}%,last_name.ilike.%${nameFilter}%`);
-    if (orgFilter) query = query.ilike("organization", `%${orgFilter}%`);
-    if (roleFilter) query = query.eq("role", roleFilter);
-  }
-
-  const [participantsRes, statsRes] = await Promise.all([
-    query.limit(1000),
-    Promise.all([
-      supabaseAdmin.from("participants").select("id", { count: "exact", head: true }),
-      supabaseAdmin.from("checkins").select("id", { count: "exact", head: true }),
-      supabaseAdmin.from("participants").select("role"),
-    ]),
-  ]);
-
-  if (participantsRes.error) {
-    return NextResponse.json({ error: participantsRes.error.message }, { status: 500 });
-  }
-
-  const [totalRegRes, totalCheckRes, rolesRes] = statsRes;
-  const totalRegistered = totalRegRes.count ?? 0;
-  const totalCheckedIn = totalCheckRes.count ?? 0;
-
-  const roleBreakdown: Record<Role, number> = {
-    Partner: 0,
-    "OAK Staff": 0,
-    "Coordination Team": 0,
-    Presenter: 0,
-    Observer: 0,
-  };
-
-  if (rolesRes.data) {
-    for (const p of rolesRes.data) {
-      if (p.role && p.role in roleBreakdown) {
-        roleBreakdown[p.role as Role] += 1;
-      }
-    }
-  }
-
-  let rows = (participantsRes.data ?? []) as AttendanceParticipantRow[];
-  if (statusFilter === "pending") {
-    rows = rows.filter((p) => !p.checkins || p.checkins.length === 0);
-  }
-
-  return NextResponse.json({
-    stats: {
-      total_registered: totalRegistered,
-      total_checked_in: totalCheckedIn,
-      attendance_percentage:
-        totalRegistered === 0 ? 0 : Math.round((totalCheckedIn / totalRegistered) * 100),
-      role_breakdown: roleBreakdown,
-    },
-    participants: rows.map((p) => ({
-      id: p.id,
-      full_name: `${p.first_name} ${p.last_name}`,
-      organization: p.organization,
-      role: p.role,
-      registration_date: p.registration_date,
-      attendance_status: p.checkins && p.checkins.length > 0 ? "checked_in" : "pending",
-      check_in_time: p.checkins && p.checkins.length > 0 ? p.checkins[0]?.check_in_time ?? null : null,
-    })),
-  });
-}
+import { z } from 'zod';
+import { db } from '@/lib/supabaseClient';
+import { getAuthorizedStaff } from '@/lib/session';
+import { roles } from '@/lib/validation';
+import { eventDate } from '@/lib/security';
+import { api, json, HttpError, databaseError } from '@/lib/http';
+const filters = z.object({ date: z.iso.date().optional(), name: z.string().max(160).default(''), organization: z.string().max(160).default(''), role: z.enum(roles).optional(), status: z.enum(['pending', 'checked_in']).optional(), page: z.coerce.number().int().min(1).max(100000).default(1) });
+export const GET = api(async request => {
+  if (!(await getAuthorizedStaff())) throw new HttpError(403, 'Coordination Team access is required.');
+  const parsed = filters.safeParse(Object.fromEntries(new URL(request.url).searchParams));
+  if (!parsed.success) throw new HttpError(400, 'Invalid attendance filters.');
+  const input = parsed.data;
+  const { data, error } = await db().rpc('attendance_report', { event_day: input.date || eventDate(), search_name: input.name, search_org: input.organization, filter_role: input.role || null, filter_status: input.status || null, page_number: input.page });
+  databaseError(error); return json(data);
+});

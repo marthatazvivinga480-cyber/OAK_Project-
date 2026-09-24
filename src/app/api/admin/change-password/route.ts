@@ -1,52 +1,19 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { supabaseAdmin } from "@/lib/supabaseClient";
-import { getCurrentAdmin } from "@/lib/session";
-
-export async function POST(request: Request) {
-  const admin = await getCurrentAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
-  }
-
-  const { current_password, new_password } = await request.json();
-  if (!current_password || !new_password) {
-    return NextResponse.json(
-      { error: "Current and new password are required" },
-      { status: 400 }
-    );
-  }
-  if (new_password.length < 8) {
-    return NextResponse.json(
-      { error: "New password must be at least 8 characters" },
-      { status: 400 }
-    );
-  }
-
-  const { data: fullAdmin, error: lookupError } = await supabaseAdmin
-    .from("admins")
-    .select("id, password_hash")
-    .eq("id", admin.id)
-    .single();
-
-  if (lookupError || !fullAdmin) {
-    return NextResponse.json({ error: "Account not found" }, { status: 404 });
-  }
-
-  const currentMatches = await bcrypt.compare(current_password, fullAdmin.password_hash);
-  if (!currentMatches) {
-    return NextResponse.json({ error: "Current password is incorrect" }, { status: 401 });
-  }
-
-  const newHash = await bcrypt.hash(new_password, 10);
-  const { error: updateError } = await supabaseAdmin
-    .from("admins")
-    .update({ password_hash: newHash })
-    .eq("id", admin.id);
-
-  if (updateError) {
-    return NextResponse.json({ error: updateError.message }, { status: 500 });
-  }
-
-  return NextResponse.json({ success: true });
-}
+import bcrypt from 'bcryptjs';
+import { db } from '@/lib/supabaseClient';
+import { requireAdmin, clearSessionCookies } from '@/lib/session';
+import { changeSchema } from '@/lib/validation';
+import { api, body, json, HttpError, databaseError, rateLimit } from '@/lib/http';
+export const POST = api(async request => {
+  const admin = await requireAdmin();
+  const input = await body(request, changeSchema);
+  await rateLimit('password-change', admin.id);
+  const { data, error } = await db().from('admins').select('password_hash').eq('id', admin.id).single();
+  databaseError(error);
+  if (!data) throw new HttpError(401, 'Administrator not found.');
+  if (!(await bcrypt.compare(input.current_password, data.password_hash))) throw new HttpError(401, 'Current password is incorrect.');
+  const update = await db().from('admins').update({ password_hash: await bcrypt.hash(input.new_password, 12) }).eq('id', admin.id).eq('password_hash', data.password_hash).select('id').maybeSingle();
+  databaseError(update.error);
+  if (!update.data) throw new HttpError(409, 'Password changed during this request. Sign in again.');
+  await clearSessionCookies();
+  return json({ success: true, sign_in_required: true });
+});

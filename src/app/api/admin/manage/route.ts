@@ -1,65 +1,25 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { supabaseAdmin } from "@/lib/supabaseClient";
-import { getCurrentAdmin } from "@/lib/session";
-
-export async function POST(request: Request) {
-  const requester = await getCurrentAdmin();
-  if (!requester || !requester.is_master) {
-    return NextResponse.json({ error: "Only the master account can manage admins" }, { status: 403 });
-  }
-
-  
-  const { username, password } = await request.json();
-  if (!username || !password) {
-    return NextResponse.json({ error: "Username and password required" }, { status: 400 });
-  }
-
-  const password_hash = await bcrypt.hash(password, 10);
-  const { data, error } = await supabaseAdmin
-    .from("admins")
-    .insert({ username, password_hash, is_master: false })
-    .select("id, username")
-    .single();
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
-}
-
-export async function DELETE(request: Request) {
-  const requester = await getCurrentAdmin();
-  if (!requester || !requester.is_master) {
-    return NextResponse.json({ error: "Only the master account can manage admins" }, { status: 403 });
-  }
-
-  const { id } = await request.json();
-
-  const { data: target } = await supabaseAdmin
-    .from("admins")
-    .select("is_master")
-    .eq("id", id)
-    .maybeSingle();
-
-  if (target?.is_master) {
-    return NextResponse.json({ error: "Cannot remove a master account" }, { status: 403 });
-  }
-
-  const { error } = await supabaseAdmin.from("admins").delete().eq("id", id);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ deleted: id });
-}
-
-export async function GET() {
-  const requester = await getCurrentAdmin();
-  if (!requester || !requester.is_master) {
-    return NextResponse.json({ error: "Only the master account can view admins" }, { status: 403 });
-  }
-
-  const { data, error } = await supabaseAdmin
-    .from("admins")
-    .select("id, username, is_master")
-    .order("username");
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
-}
+import bcrypt from 'bcryptjs';
+import { db } from '@/lib/supabaseClient';
+import { requireAdmin } from '@/lib/session';
+import { adminSchema, idSchema } from '@/lib/validation';
+import { api, body, json, HttpError, databaseError } from '@/lib/http';
+export const GET = api(async () => {
+  await requireAdmin(true);
+  const { data, error } = await db().from('admins').select('id,username,is_master').order('username');
+  databaseError(error); return json(data);
+});
+export const POST = api(async request => {
+  await requireAdmin(true);
+  const input = await body(request, adminSchema);
+  const { data, error } = await db().from('admins').insert({ username: input.username, password_hash: await bcrypt.hash(input.password, 12), is_master: false }).select('id,username').single();
+  if (error?.code === '23505') throw new HttpError(409, 'Username already exists.');
+  databaseError(error); return json(data, 201);
+});
+export const DELETE = api(async request => {
+  await requireAdmin(true);
+  const { id } = await body(request, idSchema);
+  const { data, error } = await db().from('admins').delete().eq('id', id).eq('is_master', false).select('id').maybeSingle();
+  databaseError(error);
+  if (!data) throw new HttpError(404, 'Non-master administrator not found.');
+  return json({ deleted: id });
+});
