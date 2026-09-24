@@ -54,7 +54,7 @@ These checks do not establish hosted capacity, real email delivery, phone-camera
 
 ## SEO and recurring audits
 
-Set `SITE_URL` to the final public origin (for example, `https://event.example.org`) in production before building. Public home/registration pages share a canonical URL; the privacy page has its own canonical. The sitemap contains only public canonical pages. Private pages inherit `noindex, nofollow`, and APIs send `X-Robots-Tag`. Without a configured origin, and on Vercel preview deployments, public indexing stays disabled. Robots instructions complement authentication; they do not replace it.
+The canonical public origin defaults to the confirmed `https://oak-project-2.vercel.app`. Set `SITE_URL` before building to override it when moving to a custom domain. Public home/registration pages share a canonical URL; the privacy page has its own canonical. The sitemap contains only public canonical pages. Private pages inherit `noindex, nofollow`, and APIs send `X-Robots-Tag`. Vercel preview deployments keep indexing disabled. Robots instructions complement authentication; they do not replace it.
 
 The HTTP suite follows 20 routes across anonymous, forged-cookie, participant and administrator identities, exercises competing registrations, and records response-time percentiles at concurrency 10, 25 and 50. These measurements use local embedded PostgreSQL and do not represent hosted Supabase capacity.
 

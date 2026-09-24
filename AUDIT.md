@@ -25,11 +25,11 @@ These timings measure the local Windows test system and its small synthetic data
 
 Attendance now waits for each request to finish before scheduling another and cancels stale requests on filter changes/unmount. Client requests have a 45-second timeout. Malformed Origin headers receive controlled 403 responses instead of service errors. Email validation trims surrounding whitespace. Registration mode changes are disabled during submission.
 
-The QR canvas now has an accessible label. The skip link has a focusable target. Public metadata includes titles, descriptions and social-card text; canonical URLs and a public-only sitemap use SITE_URL. Root and registration share a canonical URL. Private pages default to noindex/nofollow, and APIs send X-Robots-Tag. Preview deployments and installations without SITE_URL remain noindex. Robots rules are not an authorization mechanism.
+The QR canvas now has an accessible label. The skip link has a focusable target. Public metadata includes titles, descriptions and social-card text; canonical URLs and a public-only sitemap use SITE_URL. Root and registration share a canonical URL. Private pages default to noindex/nofollow, and APIs send X-Robots-Tag. Preview deployments remain noindex. The approved public origin now defaults to https://oak-project-2.vercel.app. Robots rules are not an authorization mechanism.
 
 ## Remaining environment checks
 
-- Set the final SITE_URL in the production environment before building to enable public indexing and correct canonical/sitemap URLs. No final public domain was supplied during this audit.
+- The user subsequently confirmed https://oak-project-2.vercel.app; canonical links and the sitemap now use it by default. Set SITE_URL to override this when changing domains.
 - Local RESEND_API_KEY/EMAIL_FROM and STAFF_ACCESS_CODE are unset. Check Vercel separately; local settings do not prove what is configured there. Actual email delivery and staff invitation setup need verification.
 - Read-only live checks found one programme session, one partner and no resource records. Publish the real event content and resource files as required.
 - Test a physical phone camera and printed QR pass. Automated browser checks do not verify optical scanning.
@@ -37,3 +37,7 @@ The QR canvas now has an accessible label. The skip link has a focusable target.
 - Before the new audit changes were pushed, both Vercel integrations and GitHub CI for the previous release reported success.
 
 Detailed synthetic output and screenshots are under ignored test-results/. CI now runs the browser audit and retains synthetic artifacts for seven days.
+
+## Public deployment follow-up
+
+Both Vercel production builds and GitHub CI for c626ef5 succeeded. The individual deployment URLs require Vercel SSO, while the user-confirmed public alias https://oak-project-2.vercel.app is publicly reachable. Read-only checks returned 200 for the home, robots and sitemap, 307 to registration for unauthenticated programme access, 401 for anonymous identity, 403 for attendance and 404 for an unknown path. Email delivery and physical-camera testing remain pending; sender credentials and approved resource files have not been supplied.

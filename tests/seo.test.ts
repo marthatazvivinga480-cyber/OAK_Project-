@@ -7,7 +7,7 @@ test('SEO uses only the configured origin, omits private routes and prevents pre
  const previous=process.env.SITE_URL;const environment=process.env.VERCEL_ENV;
  try{
    delete process.env.SITE_URL;delete process.env.VERCEL_ENV;
-   assert.deepEqual(sitemap(),[]);assert.deepEqual(publicMetadata('Title','Description','/').robots,{index:false,follow:false});
+   assert.equal(siteOrigin(),'https://oak-project-2.vercel.app');assert.deepEqual(publicMetadata('Title','Description','/').robots,{index:true,follow:true});
    process.env.SITE_URL='https://event.example';
    assert.equal(siteOrigin(),'https://event.example');
    assert.equal(publicMetadata('Title','Description','/privacy').alternates?.canonical,'https://event.example/privacy');
