@@ -45,12 +45,11 @@ export interface EventSession {
   description: string | null;
 }
 
+// Public response from the private notes API; owner identifiers are not exposed.
 export interface SessionNote {
   id: string;
   session_id: string;
-  participant_id: string;
   note_text: string;
-  created_at: string;
   updated_at: string;
 }
 

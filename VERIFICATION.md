@@ -29,3 +29,7 @@ Live Supabase was reachable, but its old schema lacked the required session and 
 Live email delivery, physical camera scanning, browser visual checks and hosted infrastructure capacity still require environment-specific verification. No finite automated suite guarantees that all defects have been eliminated.
 
 The repository has Vercel production integrations (`oak-project` and `oak-project-2`). Remote branch synchronization is deferred until the live database migration succeeds, because a push can trigger production deployment. The tested integration can be committed and synchronized locally while the connection string is pending.
+
+## Programme follow-up
+
+Programme requests now retain successfully loaded sections when another section fails, expose retry controls, and prevent editing notes during an in-flight save. API response types match private-note fields. Expanded HTTP checks verify schedule access, invalid and missing note sessions, unavailable resources and the legacy programme redirect. Lint, production build, type checking and the expanded integration suite passed. The migration command accepts either SUPABASE_DB_URL or DATABASE_URL.

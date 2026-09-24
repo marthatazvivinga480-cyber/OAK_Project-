@@ -62,6 +62,14 @@ async function main(){
   await call('/api/notes',presenter.cookie,{session_id:session,note_text:'Updated private note.'});
   const notes=await (await call('/api/notes',presenter.cookie)).json();assert.equal(notes.length,1);assert.equal(notes[0].note_text,'Updated private note.');
   record('Duplicate emails and missing staff invitations rejected; notes stay private and editable');
+  const schedule=await call('/api/sessions',presenter.cookie);assert.equal(schedule.status,200);assert.equal((await schedule.json())[0].id,session);
+  assert.equal((await call('/api/sessions',partner.cookie)).status,403);
+  assert.equal((await call('/api/notes?session_id=invalid',presenter.cookie)).status,400);
+  assert.equal((await call('/api/notes',presenter.cookie,{session_id:'30000000-0000-4000-8000-000000000099',note_text:'Missing session must fail.'})).status,404);
+  const resources=await call('/api/resources',presenter.cookie);assert.equal(resources.status,200);assert.deepEqual(await resources.json(),[]);
+  assert.equal((await call('/api/resources?id=missing',presenter.cookie)).status,404);
+  assert.equal((await call('/programme2',presenter.cookie)).status,307);
+  record('Programme schedule, private note validation, missing resources and legacy route redirect pass');
   const timestamps=new Set<string>();let already=0;
   await batch(100,async()=>{const r=await call('/api/checkin',coordinator.cookie,{qr_code_id:partner.registration_id});assert.equal(r.status,200,await r.clone().text());const data=await r.json();timestamps.add(data.check_in_time);if(data.already)already++;});
   assert.equal(already,99);assert.equal(timestamps.size,1);assert.equal((await sql.query<{n:number}>('SELECT count(*)::integer n FROM checkins')).rows[0].n,1);

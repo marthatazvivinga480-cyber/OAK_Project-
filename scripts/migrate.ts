@@ -2,9 +2,10 @@ import { Client } from 'pg';
 import { readFile } from 'node:fs/promises';
 async function main(){
  try{process.loadEnvFile('.env.local');}catch{/* Environment variables can also supply the connection. */}
- if(!process.env.SUPABASE_DB_URL)throw new Error('Set SUPABASE_DB_URL in .env.local. Never commit it.');
+ const databaseUrl=process.env.SUPABASE_DB_URL||process.env.DATABASE_URL;
+ if(!databaseUrl)throw new Error('Set SUPABASE_DB_URL in .env.local. Never commit it.');
  if(!process.argv.includes('--apply')&&!process.argv.includes('--check'))throw new Error('Use --check to inspect or --apply to run the transactional migration.');
- const client=new Client({connectionString:process.env.SUPABASE_DB_URL,connectionTimeoutMillis:15000});
+ const client=new Client({connectionString:databaseUrl,connectionTimeoutMillis:15000});
  try{
   await client.connect();
   if(process.argv.includes('--apply')){

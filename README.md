@@ -6,7 +6,7 @@ Next.js application for registration, Partner QR passes, daily check-in, attenda
 
 1. Install Node.js 24 (minimum 22) and run `npm ci`.
 2. Copy `.env.example` to `.env.local` and configure `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Keep service keys and database credentials server-only and out of source control. Existing `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SECRET_KEY` aliases are supported.
-3. Set `SUPABASE_DB_URL` to the PostgreSQL connection string and run `npm run db:migrate -- --apply`. Alternatively execute **supabase/migrations/003_unified_backend.sql** in Supabase SQL Editor. `supabase/schema.sql` contains the same complete, idempotent migration; use either one. Run `npm run db:migrate -- --check` to inspect readiness.
+3. Set `SUPABASE_DB_URL` (or `DATABASE_URL`) to the PostgreSQL connection string and run `npm run db:migrate -- --apply`. Alternatively execute **supabase/migrations/003_unified_backend.sql** in Supabase SQL Editor. `supabase/schema.sql` contains the same complete, idempotent migration; use either one. Run `npm run db:migrate -- --check` to inspect readiness.
 4. If no master administrator exists, set `OAK_ADMIN_PASSWORD` in your shell, run `npm run admin:create -- --username your-admin-name`, then clear the password environment variable. Passwords require at least 12 characters and at most 72 UTF-8 bytes. Existing administrators keep their passwords.
 5. Run `npm run dev`, or `npm run build` and `npm start` for production. Production requires HTTPS for secure session cookies.
 
