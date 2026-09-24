@@ -28,8 +28,12 @@ Live Supabase was reachable, but its old schema lacked the required session and 
 
 Live email delivery, physical camera scanning, browser visual checks and hosted infrastructure capacity still require environment-specific verification. No finite automated suite guarantees that all defects have been eliminated.
 
-The repository has Vercel production integrations (`oak-project` and `oak-project-2`). Remote branch synchronization is deferred until the live database migration succeeds, because a push can trigger production deployment. The tested integration can be committed and synchronized locally while the connection string is pending.
+The repository has Vercel production integrations (`oak-project` and `oak-project-2`). A push can trigger production deployment, so remote synchronization was held until the live migration succeeded.
 
 ## Programme follow-up
 
 Programme requests now retain successfully loaded sections when another section fails, expose retry controls, and prevent editing notes during an in-flight save. API response types match private-note fields. Expanded HTTP checks verify schedule access, invalid and missing note sessions, unavailable resources and the legacy programme redirect. Lint, production build, type checking and the expanded integration suite passed. The migration command accepts either SUPABASE_DB_URL or DATABASE_URL.
+
+## Live database rollout, 24 September 2026
+
+The user approved removal of exactly the 11 registrations listed in the private duplicate report. Those records were backed up locally under ignored `backups/`, then deleted in the same transaction as migration 003. Four other participant registrations remain. No check-ins or notes were attached to the deleted records; administrator, partner and programme record counts were unchanged. SQL readiness checks and live Supabase API reads verified the new session schema, participant credential fields and attendance function. Case-insensitive email uniqueness is now enforced by the database.
