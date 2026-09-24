@@ -6,9 +6,20 @@ export default function Attendance() {
   const [data,setData]=useState<Report|null>(null); const [error,setError]=useState(''); const [name,setName]=useState(''); const [organization,setOrganization]=useState(''); const [role,setRole]=useState(''); const [status,setStatus]=useState(''); const [date,setDate]=useState(''); const [page,setPage]=useState(1); const [refresh,setRefresh]=useState(0);
   useEffect(() => {
     let active=true;
-    const load=async () => { try { const query=new URLSearchParams({name,organization,page:String(page)}); if(role)query.set('role',role);if(status)query.set('status',status);if(date)query.set('date',date); const report=await requestJson<Report>('/api/attendance?'+query);if(active){setData(report);setError('');} } catch(e){if(active)setError(errorMessage(e));} };
-    const timeout=setTimeout(load,200);const timer=setInterval(()=>{if(!document.hidden)void load();},15000);
-    return()=>{active=false;clearTimeout(timeout);clearInterval(timer);};
+    const controller=new AbortController();
+    let timer:ReturnType<typeof setTimeout>;
+    const load=async () => {
+      try {
+        if(document.hidden)return;
+        const query=new URLSearchParams({name,organization,page:String(page)});
+        if(role)query.set('role',role);if(status)query.set('status',status);if(date)query.set('date',date);
+        const report=await requestJson<Report>('/api/attendance?'+query,undefined,'GET',controller.signal);
+        if(active){setData(report);setError('');}
+      } catch(e){if(active)setError(errorMessage(e));}
+      finally {if(active)timer=setTimeout(load,15000);}
+    };
+    timer=setTimeout(load,200);
+    return()=>{active=false;clearTimeout(timer);controller.abort();};
   },[name,organization,role,status,date,page,refresh]);
   return <main className="portal-page"><h1 className="mb-2 text-2xl font-bold">Attendance</h1><p className="mb-6">Daily check-ins | Harare time</p>{error&&<p role="alert" className="mb-4 text-red-700">{error}</p>}
     {data&&<><div className="mb-6 grid grid-cols-3 gap-3">{[[data.stats.total_registered,'Registered'],[data.stats.total_checked_in,'Checked in'],[`${data.stats.attendance_percentage}%`,'Attendance']].map(([value,label])=><div className="portal-card p-3 text-center" key={label}><strong className="text-xl">{value}</strong><p className="text-xs">{label}</p></div>)}</div><p className="mb-4 text-sm">Showing {data.date}. {data.stats.total_registered-data.stats.total_checked_in} not checked in. Entry QR codes are issued to Partners.</p><div className="mb-6 flex flex-wrap gap-2">{Object.entries(data.stats.role_breakdown).map(([label,count])=><span className="rounded-lg bg-white px-3 py-2 text-xs" key={label}>{label}: {count}</span>)}</div></>}

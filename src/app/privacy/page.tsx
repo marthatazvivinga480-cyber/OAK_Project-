@@ -1,3 +1,5 @@
+import { publicMetadata } from '@/lib/seo';
+export const metadata=publicMetadata('Privacy notice', 'How registration information is used for the OAK Partner Convening 2026.', '/privacy');
 
 
 export default function PrivacyPage() {

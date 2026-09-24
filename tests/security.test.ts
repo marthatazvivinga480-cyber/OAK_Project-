@@ -4,7 +4,7 @@ import { registrationSchema, password, noteSchema } from '../src/lib/validation'
 import { eventDate, newToken, tokenHash, secretMatches, validToken } from '../src/lib/security';
 import { body, api, json } from '../src/lib/http';
 
-const valid = {first_name:' Maria ',last_name:'Smith',organization:'Test',role:'Partner',email:'MARIA@EXAMPLE.TEST',phone:'+263123',consent:true};
+const valid = {first_name:' Maria ',last_name:'Smith',organization:'Test',role:'Partner',email:' MARIA@EXAMPLE.TEST ',phone:'+263123',consent:true};
 test('registration normalizes names and email and requires consent, valid contact information and bounded text', () => {
   const parsed = registrationSchema.parse(valid);
   assert.equal(parsed.first_name,'Maria'); assert.equal(parsed.email,'maria@example.test');
@@ -36,5 +36,7 @@ test('malformed, oversized, cross-origin and invalid requests return controlled 
   assert.equal((await call('x'.repeat(20000))).status,413);
   assert.equal((await call(JSON.stringify(valid),{origin:'https://other.test'})).status,403);
   assert.equal((await call(JSON.stringify(valid),{'content-type':'text/plain'})).status,415);
+  assert.equal((await call(JSON.stringify(valid),{origin:'null'})).status,403);
+  assert.equal((await call(JSON.stringify(valid),{origin:'not a URL'})).status,403);
   assert.equal((await call(JSON.stringify(valid))).status,200);
 });

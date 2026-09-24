@@ -13,7 +13,9 @@ export function api(handler: (request: Request) => Promise<Response>) {
     try {
       if (!['GET', 'HEAD'].includes(request.method)) {
         const origin = request.headers.get('origin');
-        if (request.headers.get('sec-fetch-site') === 'cross-site' || (origin && new URL(origin).origin !== new URL(request.url).origin)) throw new HttpError(403, 'Request origin is not allowed.');
+        let allowedOrigin = !origin;
+        if (origin) { try { allowedOrigin = new URL(origin).origin === new URL(request.url).origin; } catch { allowedOrigin = false; } }
+        if (request.headers.get('sec-fetch-site') === 'cross-site' || !allowedOrigin) throw new HttpError(403, 'Request origin is not allowed.');
         if (!request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) throw new HttpError(415, 'Send JSON with Content-Type application/json.');
       }
       return await handler(request);

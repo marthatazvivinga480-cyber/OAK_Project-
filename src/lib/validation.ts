@@ -4,7 +4,7 @@ const short = z.string().trim().min(1).max(160);
 const optionalText = z.string().trim().max(500).nullish().transform(v => v || null);
 export const registrationSchema = z.object({
   first_name: short, last_name: short, organization: short,
-  role: z.enum(roles), email: z.email().max(254).transform(v => v.toLowerCase()),
+  role: z.enum(roles), email: z.string().trim().max(254).pipe(z.email()).transform(v => v.toLowerCase()),
   phone: z.string().trim().min(1).max(40),
   sub_partner_program_area: optionalText, dietary_requirements: optionalText,
   accessibility_requirements: optionalText, travel_requirements: optionalText,

@@ -20,4 +20,13 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      - run: npx playwright install --with-deps chromium
       - run: npm run test:integration
+        env:
+          BROWSER_AUDIT: '1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: audit-results
+          path: test-results/
+          retention-days: 7

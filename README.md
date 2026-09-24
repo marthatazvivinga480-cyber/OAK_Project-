@@ -51,3 +51,11 @@ Upload event documents to the private `event-resources` Supabase Storage bucket.
 Database tests execute the production SQL in embedded PostgreSQL. Integration tests run the production Next.js server against that database through a local PostgREST test adapter, with synthetic users and no live emails or database writes. They cover all roles, forged cookies, registration validation, concurrent check-ins, private notes, recovery, session revocation and rate limits. Reports are written to ignored `test-results/`. GitHub Actions runs lint, tests, build and HTTP integration checks on pushes and pull requests.
 
 These checks do not establish hosted capacity, real email delivery, phone-camera compatibility or deployed Supabase configuration. See `VERIFICATION.md` for the branch comparison and measured results.
+
+## SEO and recurring audits
+
+Set `SITE_URL` to the final public origin (for example, `https://event.example.org`) in production before building. Public home/registration pages share a canonical URL; the privacy page has its own canonical. The sitemap contains only public canonical pages. Private pages inherit `noindex, nofollow`, and APIs send `X-Robots-Tag`. Without a configured origin, and on Vercel preview deployments, public indexing stays disabled. Robots instructions complement authentication; they do not replace it.
+
+The HTTP suite follows 20 routes across anonymous, forged-cookie, participant and administrator identities, exercises competing registrations, and records response-time percentiles at concurrency 10, 25 and 50. These measurements use local embedded PostgreSQL and do not represent hosted Supabase capacity.
+
+For browser and accessibility checks, install Chromium with `npx playwright install chromium`, set `BROWSER_AUDIT=1`, then run `npm run test:integration` after a production build. Windows can use installed Edge by also setting `AUDIT_BROWSER_CHANNEL=msedge`. Synthetic screenshots and accessibility findings are saved under `test-results/browser/`. CI runs these checks and retains synthetic audit artifacts for seven days. Physical camera scanning and actual email delivery still require their configured services and devices.

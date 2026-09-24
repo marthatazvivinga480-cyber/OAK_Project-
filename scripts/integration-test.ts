@@ -23,7 +23,26 @@ async function main(){
  const call=(route:string,cookie='',body?:unknown,method=body===undefined?'GET':'POST')=>fetch(base+route,{method,redirect:'manual',headers:{...(cookie?{cookie}:{}),...(body===undefined?{}:{'content-type':'application/json'})},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(30000)});
  const cookie=(r:Response)=>r.headers.getSetCookie().map(v=>v.split(';')[0]).filter(v=>/^oak_(admin|participant)_session=.+/.test(v)).join('; ');
  async function batch(n:number,action:(i:number)=>Promise<void>){let index=0;await Promise.all(Array.from({length:25},async()=>{while(index<n)await action(index++);}));}
+ const redirectRoutes=['/','/register','/registration-preview','/staff','/admin-login','/admin-manage','/admin-change-password','/account','/account/manage-admins','/qr-code','/programme','/programme2','/partners','/partners/40000000-0000-4000-8000-000000000001','/checkin','/check-in','/checkin/success','/checkin/failed','/attendance','/privacy'];
+ let redirectCases=0;
+ async function followRoutes(label:string,sessionCookie:string){
+   for(const route of redirectRoutes){
+     let url=base+route;const visited=new Set<string>();
+     for(let hop=0;hop<8;hop++){
+       assert(!visited.has(url),`${label}: redirect loop from ${route} at ${url}`);visited.add(url);
+       const response=await fetch(url,{redirect:'manual',headers:{cookie:sessionCookie},signal:AbortSignal.timeout(30000)});
+       await response.text();
+       if([301,302,303,307,308].includes(response.status)){
+         assert(response.headers.get('location'),'Redirect missing location');url=new URL(response.headers.get('location')!,url).href;
+         assert.equal(new URL(url).origin,base,'Unexpected external redirect');assert(hop<7,'Too many redirect hops');
+       }else{assert([200,404].includes(response.status),`${label}:${route} terminated with ${response.status}`);break;}
+     }
+     redirectCases++;
+   }
+ }
  const results:string[]=[];
+ const performanceResults:unknown[]=[];
+
  const record=(text:string)=>{results.push(text);console.log('PASS: '+text);};
  try{
   let ready=false;for(let i=0;i<100;i++){try{await call('/favicon.ico');ready=true;break;}catch{}if(child.exitCode!==null)break;await new Promise(r=>setTimeout(r,300));}
@@ -32,7 +51,14 @@ async function main(){
    for(const forged of ['', 'oak_admin_id=fake; oak_is_master=true; oak_role=Presenter'])assert.equal((await call(route,forged)).status,307,route);
   }
   for(const route of ['/api/attendance','/api/partners','/api/sessions','/api/notes','/api/resources'])assert([401,403].includes((await call(route)).status),route);
+  await followRoutes('anonymous','');
+  await followRoutes('forged','oak_admin_id=fake; oak_is_master=true');
   record('Protected pages, nested routes and APIs reject anonymous and forged legacy cookies');
+  const home=await call('/');const html=await home.text();assert.match(html,/<title>[^<]+<\/title>/);assert.match(html,/<meta name="description"/);assert.match(html,/<html lang="en"/);assert.match(html,/name="robots"/);
+  assert.equal(home.headers.get('x-content-type-options'),'nosniff');assert.equal(home.headers.get('x-frame-options'),'DENY');
+  assert.equal((await call('/robots.txt')).status,200);assert.equal((await call('/sitemap.xml')).status,200);assert.equal((await call('/not-a-real-route')).status,404);
+  const apiHeaders=await call('/api/auth/me');assert.match(apiHeaders.headers.get('cache-control')||'',/no-store/);assert.match(apiHeaders.headers.get('x-robots-tag')||'',/noindex/);
+  record('Public metadata, robots, sitemap, security headers, API cache protection and true 404 pass');
   await batch(500,async i=>{const r=await call('/api/register','',{first_name:' ',last_name:'Test',organization:'Synthetic',email:'bad'+i,role:'Partner',consent:false});assert.equal(r.status,400);});
   assert.equal((await sql.query<{n:number}>('SELECT count(*)::integer n FROM participants')).rows[0].n,0);
   record('500 invalid registrations rejected at concurrency 25; zero rows inserted');
@@ -51,6 +77,8 @@ async function main(){
     assert.equal((await call(page,cookie(r))).status,allowed?200:307,`${role}:${page}`);
    }
   }
+  for(const user of users)await followRoutes(user.role,user.cookie);
+  const privateHtml=await (await call('/programme',users[3].cookie)).text();assert.match(privateHtml,/<meta name="robots" content="noindex, nofollow"/);
   record('All five roles register with correct QR policy; 25 page access checks pass');
   const duplicate=await call('/api/register','',{first_name:'Test',last_name:'Test',organization:'Test',role:'Partner',email:'SYNTHETIC0@EXAMPLE.TEST',phone:'123',consent:true});assert.equal(duplicate.status,409);
   const noInvite=await call('/api/register','',{first_name:'Test',last_name:'Test',organization:'Test',role:'Coordination Team',email:'noinvite@example.test',phone:'123',consent:true});assert.equal(noInvite.status,403);
@@ -70,6 +98,7 @@ async function main(){
   assert.equal((await call('/api/resources?id=missing',presenter.cookie)).status,404);
   assert.equal((await call('/programme2',presenter.cookie)).status,307);
   record('Programme schedule, private note validation, missing resources and legacy route redirect pass');
+  if(process.env.BROWSER_AUDIT==='1'){const {browserAudit}=await import('./browser-audit');await browserAudit(base,users);}
   const timestamps=new Set<string>();let already=0;
   await batch(100,async()=>{const r=await call('/api/checkin',coordinator.cookie,{qr_code_id:partner.registration_id});assert.equal(r.status,200,await r.clone().text());const data=await r.json();timestamps.add(data.check_in_time);if(data.already)already++;});
   assert.equal(already,99);assert.equal(timestamps.size,1);assert.equal((await sql.query<{n:number}>('SELECT count(*)::integer n FROM checkins')).rows[0].n,1);
@@ -78,6 +107,19 @@ async function main(){
   await sql.query(`INSERT INTO checkins(participant_id,check_in_date) VALUES($1,'2026-11-09'),($1,'2026-11-10'),($1,'2026-11-11') ON CONFLICT DO NOTHING`,[pid]);
   const report=await (await call('/api/attendance?date=2026-11-09',coordinator.cookie)).json();assert.equal(report.stats.total_checked_in,1);assert.equal(report.stats.attendance_percentage,20);
   record('Daily attendance counts one person across three event days, not three people');
+  for(const concurrency of [10,25,50]){
+    const elapsed:number[]=[];let index=0;const started=performance.now();
+    await Promise.all(Array.from({length:concurrency},async()=>{while(index++<200){const start=performance.now();const route=['/api/attendance','/api/sessions','/api/notes','/api/partners'][index%4];const r=await call(route,coordinator.cookie);await r.text();assert.equal(r.status,200,route);elapsed.push(performance.now()-start);}}));
+    elapsed.sort((a,b)=>a-b);const seconds=(performance.now()-started)/1000;
+    const measured={requests:elapsed.length,concurrency,requestsPerSecond:Math.round(elapsed.length/seconds),p50ms:Math.round(elapsed[Math.floor(elapsed.length*.5)]),p95ms:Math.round(elapsed[Math.floor(elapsed.length*.95)]),maxMs:Math.round(elapsed.at(-1)!)};
+    performanceResults.push(measured);console.log('LOAD: '+JSON.stringify(measured));
+  }
+  const duplicateStatuses:number[]=[];
+  await batch(100,async()=>{const r=await call('/api/register','',{first_name:'Concurrent',last_name:'Registration',organization:'Test',role:'Partner',email:'concurrent@example.test',phone:'123',consent:true});await r.text();duplicateStatuses.push(r.status);});
+  assert.equal(duplicateStatuses.filter(s=>s===201).length,1);assert(duplicateStatuses.every(s=>[201,409,429].includes(s)));
+  assert.equal((await sql.query<{n:number}>("SELECT count(*)::int n FROM participants WHERE email='concurrent@example.test'")).rows[0].n,1);
+  record('600 authenticated API reads at concurrency 10/25/50 and 100 competing registrations passed without server errors or duplicate rows');
+
   const resume=await call('/api/resume','',{registration_id:partner.registration_id,recovery_code:partner.recovery_code});assert.equal(resume.status,200);const resumed=cookie(resume);
   assert.equal((await call('/api/auth/logout',resumed,{})).status,200);assert.equal((await call('/qr-code',resumed)).status,307);
   const stored=await sql.query<{token_hash:string}>('SELECT token_hash FROM auth_sessions');assert(stored.rows.every(r=>!users.some(u=>u.cookie.includes(r.token_hash))));
@@ -86,6 +128,8 @@ async function main(){
   for(const page of ['/account','/account/manage-admins','/programme','/partners','/attendance'])assert.equal((await call(page,adminCookie)).status,200,page);
   const create=await call('/api/admin/manage',adminCookie,{username:'assistant',password:'Synthetic-helper-2026'});assert.equal(create.status,201);const helper=await create.json();
   const helperLogin=await call('/api/admin/login','',{username:'assistant',password:'Synthetic-helper-2026'});const helperCookie=cookie(helperLogin);
+  await followRoutes('master',adminCookie);await followRoutes('administrator',helperCookie);
+  record(`${redirectCases} route/identity combinations terminate without redirect loops`);
   assert.equal((await call('/api/admin/manage',helperCookie)).status,403);
   assert.equal((await call('/api/admin/manage/reset-password',adminCookie,{id:helper.id,new_password:'Synthetic-changed-2026'})).status,200);
   assert.equal((await call('/api/admin/me',helperCookie)).status,403);
@@ -101,7 +145,7 @@ async function main(){
   const invalids:number[]=[];for(let i=0;i<12;i++)invalids.push((await call('/api/admin/login','',{username:'nobody',password:'Wrong-password-2026'})).status);
   assert.equal(invalids.filter(s=>s===401).length,10);assert.equal(invalids.filter(s=>s===429).length,2);
   record('Expired sessions are rejected and persistent login rate limiting returns 429');
-  await mkdir('test-results',{recursive:true});await writeFile('test-results/integration.json',JSON.stringify({testedAt:new Date().toISOString(),scope:'Production Next.js over HTTP with embedded PostgreSQL and local PostgREST adapter; no live services',results},null,2));
+  await mkdir('test-results',{recursive:true});await writeFile('test-results/integration.json',JSON.stringify({testedAt:new Date().toISOString(),scope:'Production Next.js over HTTP with embedded PostgreSQL and local PostgREST adapter; no live services',redirectCases,performanceResults,results},null,2));
  }finally{child.kill();backend.closeAllConnections();await new Promise<void>(resolve=>backend.close(()=>resolve()));await sql.close();await mkdir('test-results',{recursive:true});await writeFile('test-results/server.log',log);}
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});
